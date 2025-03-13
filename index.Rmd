@@ -1,0 +1,93 @@
+---
+title: "Airline Customer Satisfaction - Group 17"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    toc_float: true
+  pdf_document: default
+date: "2025-02-27"
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Project Background <a name="1"></a>
+
+Lorem Ipsum
+
+
+## Abstract <a name="1.1"></a>
+
+Lorem Ipsum
+
+## Business Problem <a name="1.2"></a>
+
+Lorem Ipsum
+
+## Setting Up the R Workplace <a name="1.3"></a>
+
+Lorem Ipsum
+
+## Dataset <a name="1.4"></a>
+
+Lorem Ipsum
+
+## Workflow: Machine-Learning Task Translation <a name="1.5"></a>
+
+Lorem Ipsum
+
+## Reflection and Limitation <a name="1.6"></a>
+
+Lorem Ipsum
+
+# Data Exploration and Preparation <a name="2"></a>
+
+Lorem Ipsum
+
+## Data Exploration <a name="2.1"></a>
+
+Lorem Ipsum
+
+## Data Cleaning and Preparation <a name="2.2"></a>
+
+Lorem Ipsum
+
+## Feature Engineering <a name="2.3"></a>
+
+Lorem Ipsum
+
+## Data Tranformation <a name="2.4"></a>
+
+Lorem Ipsum
+
+## Initial Plotting <a name="2.5"></a>
+
+Lorem Ipsum
+
+## Reflections <a name="2.6"></a>
+
+Lorem Ipsum
+
+# Data Modeling <a name="3"></a>
+
+Lorem Ipsum
+
+## Modeling preparation <a name="3.1"></a>
+
+Lorem Ipsum
+
+## Classification Method <a name="3.2"></a>
+
+Lorem Ipsum
+
+## Logistic Regression <a name="3.3"></a>
+
+Lorem Ipsum
+
+
+
+
