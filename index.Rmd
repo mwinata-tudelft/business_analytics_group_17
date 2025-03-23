@@ -44,16 +44,55 @@ library(DataExplorer)
 
 ## Dataset <a name="1.4"></a>
 
-Lorem Ipsum
+In this assignment, we use data set of [Airline Passenger Satisfaction Dataset](https://www.kaggle.com/datasets/mysarahmadbhat/airline-passenger-satisfaction) through Kaggle.The data consist of 24 variables from 129,880 passengers. Data cleaning and preparation are required to ensure the data is ready for analysis.
+
+Firstly import all the data, csv file to be used in the data analysis process. The before using the data, it is important to undertand all data type included in the data set.Subsequently, understanding statistic perofile in the data set could help to prepare the data before using it.
 
 ```{r}
 # Read Data
+# please note that the csv needs to be put into the same folders as this file for ensuring everything works properly
+# the dataset should be downloaded from the Kaggle, or unzip from our submission in BrightSpace.
 data <- read.csv("airline_passenger_satisfaction.csv")
-str(data)
 
-# Summary of Data
+#Understanding the data types
+str(data)
+```
+```{r}
+# Summary of Data statistics
 summary(data)
 ```
+## Data Dictionary
+Based on Kaggle, Here is the definition of each column in the data set.
+Please Create a table for explanation of each column in the data set.
+## Data Dictionary
+
+| Field Name                           | Description |
+|--------------------------------------|-------------|
+| **ID** | Unique passenger identifier |
+| **Gender** | Gender of the passenger (Female/Male) |
+| **Age** | Age of the passenger |
+| **Customer Type** | Type of airline customer (First-time/Returning) |
+| **Type of Travel** | Purpose of the flight (Business/Personal) |
+| **Class** | Travel class in the airplane for the passenger seat |
+| **Flight Distance** | Flight distance in miles |
+| **Departure Delay** | Flight departure delay in minutes |
+| **Arrival Delay** | Flight arrival delay in minutes |
+| **Departure and Arrival Time Convenience** | Satisfaction level with the convenience of the flight departure and arrival times from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Ease of Online Booking** | Satisfaction level with the online booking experience from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Check-in Service** | Satisfaction level with the check-in service from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Online Boarding** | Satisfaction level with the online boarding experience from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Gate Location** | Satisfaction level with the gate location in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **On-board Service** | Satisfaction level with the on-boarding service in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Seat Comfort** | Satisfaction level with the comfort of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Leg Room Service** | Satisfaction level with the leg room of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Cleanliness** | Satisfaction level with the cleanliness of the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Food and Drink** | Satisfaction level with the food and drinks on the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **In-flight Service** | Satisfaction level with the in-flight service from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **In-flight Wifi Service** | Satisfaction level with the in-flight Wifi service from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **In-flight Entertainment** | Satisfaction level with the in-flight entertainment from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Baggage Handling** | Satisfaction level with the baggage handling from the airline from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
+| **Satisfaction** | Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied) |
+
 * ID : Unique passenger identifier
 * Gender : Gender of the passenger (Female/Male)
 * Age : Age of the passenger
@@ -80,8 +119,13 @@ summary(data)
 * Satisfaction : Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied)
 
 ## Workflow: Machine-Learning Task Translation <a name="1.5"></a>
+The business analysis focuses on what key parameters from passengers' perspective that define their satisfactory level towards airline services. The analysis will be conducted by perfroming predictive modelling (regression analysis) as well as classification.
+Run code belows to see the workflow of the analysis.
+```{r}
+file_path <- "Workflow_Group17.png"
+knitr::include_graphics(file_path)
+```
 
-Lorem Ipsum
 
 ## Reflection and Limitation <a name="1.6"></a>
 
