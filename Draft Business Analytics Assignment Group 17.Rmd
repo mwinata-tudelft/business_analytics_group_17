@@ -197,10 +197,249 @@ theme_bw()
 Median imputation is appropriate when the distribution of the data is skewed.
 
 ```{r}
-data$Flight.Distance[data$Flight.Distance %in% boxplot(data$Flight.Distance)$out] = median(data$Flight.Distance)
-data$Arrival.Delay[data$Arrival.Delay %in% boxplot(data$Arrival.Delay)$out] = median(data$Arrival.Delay)
-data$Departure.Delay[data$Departure.Delay %in% boxplot(data$Departure.Delay)$out] = median(data$Departure.Delay)
+data$Flight.Distance[which(
+  data$Flight.Distance > (quantile(data$Flight.Distance, 0.75, na.rm = TRUE) + 1.5 * IQR(data$Flight.Distance, na.rm = TRUE))
+)] <- median(data$Flight.Distance, na.rm = TRUE)
+
+data$Arrival.Delay[which(
+  data$Arrival.Delay > (quantile(data$Arrival.Delay, 0.75, na.rm = TRUE) + 1.5 * IQR(data$Arrival.Delay, na.rm = TRUE))
+)] <- median(data$Arrival.Delay, na.rm = TRUE)
+
+data$Departure.Delay[which(
+  data$Departure.Delay > (quantile(data$Departure.Delay, 0.75, na.rm = TRUE) + 1.5 * IQR(data$Departure.Delay, na.rm = TRUE))
+)] <- median(data$Departure.Delay, na.rm = TRUE)
 ```
+
+Now we can see the distribution of the data after the imputation.
+
+```{r}
+plot_histogram(data[ , c('Flight.Distance','Arrival.Delay','Departure.Delay')], ncol=2,ggtheme = theme_minimal())
+```
+
+```{r}
+ggplot(data, aes(x=Departure.Delay)) +
+geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
+theme_bw()
+```
+```{r}
+ggplot(data, aes(x=Arrival.Delay)) +
+geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
+theme_bw()
+```
+
+### Association Between Two Numerical Variable
+
+```{r}
+library(corrplot)
+```
+
+
+```{r}
+numeric_data <- data[sapply(data, is.numeric)]
+numeric_data <- na.omit(numeric_data)
+
+# Compute correlation matrix
+cor_matrix <- cor(numeric_data)
+
+# Print the correlation matrix
+print(cor_matrix)
+
+# Visualize the correlation matrix
+options(repr.plot.width=10, repr.plot.height=8)
+corrplot(cor_matrix,
+         method = "color",       # Use colored squares
+         type = "upper",         # Show only upper triangle
+         order = "hclust",       # Cluster similar variables together
+         tl.col = "black",       # Text color
+         tl.srt = 45,            # Label text rotation
+         tl.cex = 0.8,           # Label text size
+         number.cex = 0.7,       # Correlation number size
+         addCoef.col = "black",  # Show correlation numbers
+         diag = FALSE)           # Hide diagonal (all 1s)
+```
+
+Lorem Ipsum
+
+```{r}
+# Discover strong correlation
+cor_matrix_flat <- as.data.frame(as.table(cor_matrix))
+filtered <- subset(cor_matrix_flat, abs(Freq) > 0.5 & Var1 != Var2)
+filtered <- filtered[!duplicated(t(apply(filtered[, 1:2], 1, sort))), ]
+
+print(filtered)
+```
+
+In-flight comfort and service such as Seat Comfort, Leg Room Service, Cleanliness, Food and Drink, In-flight Service, In-flight Wifi Service, and In-flight Entertainment are highly correlated with each other. This is expected as they are all related to the comfort and service provided during the flight.
+
+Digital service such as Ease of Online Booking, Online Boarding, and In-flight Wifi Service are also highly correlated with each other. This is expected as they are all related to the digital service provided by the airline.
+
+```{r}
+count_data <- as.data.frame(table(data$In.flight.Service, data$On.board.Service))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "In-flight Service vs On-board Service (in %)",
+       x = "In-flight Service Rating",
+       y = "On-board Service Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum
+
+```{r}
+count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Food.and.Drink))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "In-flight Entertainment vs Food and Drink (in %)",
+       x = "In-flight Entertainment Rating",
+       y = "Food and Drink Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum
+
+```{r}
+count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Cleanliness))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "In-flight Entertainment vs Cleanliness (in %)",
+       x = "In-flight Entertainment Rating",
+       y = "Cleanliness Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum 
+
+
+```{r}
+count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Seat.Comfort))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "In-flight Entertainment vs Seat Comfort (in %)",
+       x = "In-flight Entertainment Rating",
+       y = "Seat Comfort Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum 
+
+```{r}
+count_data <- as.data.frame(table(data$Food.and.Drink, data$Cleanliness))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "Food and Drink vs Cleanliness (in %)",
+       x = "Food and Drink Rating",
+       y = "Cleanliness Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum 
+
+```{r}
+count_data <- as.data.frame(table(data$Food.and.Drink, data$Seat.Comfort))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "Food and Drink vs Seat Comfort (in %)",
+       x = "Food and Drink Rating",
+       y = "Seat Comfort Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum 
+
+```{r}
+count_data <- as.data.frame(table(data$Cleanliness, data$Seat.Comfort))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "Cleanliness vs Seat Comfort (in %)",
+       x = "Cleanliness Rating",
+       y = "Seat Comfort Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum 
+
+```{r}
+count_data <- as.data.frame(table(data$In.flight.Wifi.Service, data$Ease.of.Online.Booking))
+count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
+
+# Plot heatmap
+ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(Percent, "%")), color = "black", size = 3) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "In-Flight Wifi Service vs Ease of Online Booking (in %)",
+       x = "In-Flight Wifi Service Rating",
+       y = "Ease of Online Booking Rating",
+       fill = "Percentage") +
+  theme_minimal()
+```
+
+Lorem Ipsum 
+
+```{r}
+ggplot(data, aes(x = Flight.Distance, y = Departure.Delay)) +
+  geom_point(alpha = 0.2, color = "steelblue", size = 1.5) +
+  labs(title = "Flight Distance vs Departure Delay",
+       x = "Flight Distance",
+       y = "Departure Delay") +
+  geom_smooth(method = "lm", se = FALSE, color = "red", linewidth = 1) +
+  theme_minimal()
+```
+
+Lorem Ipsum 
+
+```{r}
+ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
+  geom_point(alpha = 0.2, color = "steelblue", size = 1.5) +
+  labs(title = "Flight Distance vs Arrival Delay",
+       x = "Flight Distance",
+       y = "Arrival Delay") +
+  geom_smooth(method = "lm", se = FALSE, color = "red", linewidth = 1) +
+  theme_minimal()
+```
+
 
 ## Feature Engineering <a name="2.3"></a>
 
