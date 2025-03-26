@@ -8,7 +8,6 @@ output:
     toc_float: true
   pdf_document: default
 date: "2025-02-27"
-    
 ---
 
 ```{r setup, include=FALSE}
@@ -19,10 +18,42 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Lorem Ipsum
 
-
 ## Abstract <a name="1.1"></a>
 
-Lorem Ipsum
+**Framework for abstract:**
+
+-   Introduction to airline industry
+
+-   What the data is about
+
+    -   customer satisfaction scores from 120,000+ passengers
+
+    -   Nothing about the carrier
+
+    -   Nothing about the price
+
+-   What the research seeks to find
+
+    -   Predict whether future customer would be satisfied given the details of service
+
+    -   Determine the aspects of service that are important towards customer satisfaction
+
+-   Methods of analysis
+
+-   What the data tells us (findings)
+
+**Draft of abstract:**
+
+After industry-wide setbacks from the COVID-19 pandemic, the airline industry is experiencing a strong recovery in profitability. According to the International Air Transport Association (IATA), airlines worldwide have seen improved projections since 2024. The market is projected to showcase an annual growth rate (CAGR 2025-2029) of 4.36%, resulting in a projected market volume of US\$771.26bn by 2029, worldwide (Statista, 2024). However, low-cost carriers (LCCs) are shifting the traditional perceptions of value and service among travelers by offering lower fares with fewer amenities. As traditional full-service airlines compete in this market environment, understanding the main drivers of customer satisfaction becomes critical to maintain competitiveness.
+
+In this research, we analyze data from over 120,000+ airline passengers, including information on passenger demographics, flight characteristics (delays and distance), as well as service evaluations. Since this data lacks information on the specific airlines and ticket pricing, we will focus on analyzing the service-related factors that universally impact passenger satisfaction. This research aims to:
+
+1.  **Predict whether future customer would be satisfied given the details of service**
+2.  **Determine the aspects of service that are important towards customer satisfaction**
+
+In our analysis, we initially explore the dataset to understand the variables and their distributions, as well as detect missing values. Data preparation procedures such as cleaning, normalization, and transformation are conducted before analysis. We utilize Principal Component Analysis (PCA) to reduce dimensionality as well as to determine key variables. Clustering is then implemented to gain deeper insights on passenger groups and patterns of service satisfaction.**\<- placeholder aja, bisa diubah**
+
+In summary.... **(hasil temuan)**
 
 ## Business Problem <a name="1.2"></a>
 
@@ -41,7 +72,6 @@ library(skimr)
 library(DataExplorer)
 ```
 
-
 ## Dataset <a name="1.4"></a>
 
 In this assignment, we use data set of [Airline Passenger Satisfaction Dataset](https://www.kaggle.com/datasets/mysarahmadbhat/airline-passenger-satisfaction) through Kaggle.The data consist of 24 variables from 129,880 passengers. Data cleaning and preparation are required to ensure the data is ready for analysis.
@@ -57,17 +87,18 @@ data <- read.csv("airline_passenger_satisfaction.csv")
 #Understanding the data types
 str(data)
 ```
+
 ```{r}
 # Summary of Data statistics
 summary(data)
 ```
-## Data Dictionary
-Based on Kaggle, Here is the definition of each column in the data set.
-Please Create a table for explanation of each column in the data set.
+
 ## Data Dictionary
 
-| Field Name                           | Description |
-|--------------------------------------|-------------|
+Based on Kaggle, Here is the definition of each column in the data set. Please Create a table for explanation of each column in the data set. \## Data Dictionary
+
+| Field Name | Description |
+|-----------------------------------------------------|-------------------|
 | **ID** | Unique passenger identifier |
 | **Gender** | Gender of the passenger (Female/Male) |
 | **Age** | Age of the passenger |
@@ -93,43 +124,45 @@ Please Create a table for explanation of each column in the data set.
 | **Baggage Handling** | Satisfaction level with the baggage handling from the airline from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
 | **Satisfaction** | Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied) |
 
-* ID : Unique passenger identifier
-* Gender : Gender of the passenger (Female/Male)
-* Age : Age of the passenger
-* Customer Type : Type of airline customer (First-time/Returning)
-* Type of Travel : Purpose of the flight (Business/Personal)
-* Class : Travel class in the airplane for the passenger seat
-* Flight Distance : Flight distance in miles
-* Departure Delay : Flight departure delay in minutes
-* Arrival Delay : Flight arrival delay in minutes
-* Departure and Arrival Time Convenience : Satisfaction level with the convenience of the flight departure and arrival times from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Ease of Online Booking : Satisfaction level with the online booking experience from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Check-in Service : Satisfaction level with the check-in service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Online Boarding : Satisfaction level with the online boarding experience from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Gate Location : Satisfaction level with the gate location in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* On-board Service : Satisfaction level with the on-boarding service in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Seat Comfort : Satisfaction level with the comfort of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Leg Room Service : Satisfaction level with the leg room of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Cleanliness : Satisfaction level with the cleanliness of the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Food and Drink : Satisfaction level with the food and drinks on the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* In-flight Service : Satisfaction level with the in-flight service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* In-flight Wifi Service : Satisfaction level with the in-flight Wifi service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* In-flight Entertainment	Satisfaction level with the in-flight entertainment from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Baggage Handling : Satisfaction level with the baggage handling from the airline from 1 (lowest) to 5 (highest) - 0 means "not applicable"
-* Satisfaction : Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied)
+-   ID : Unique passenger identifier
+-   Gender : Gender of the passenger (Female/Male)
+-   Age : Age of the passenger
+-   Customer Type : Type of airline customer (First-time/Returning)
+-   Type of Travel : Purpose of the flight (Business/Personal)
+-   Class : Travel class in the airplane for the passenger seat
+-   Flight Distance : Flight distance in miles
+-   Departure Delay : Flight departure delay in minutes
+-   Arrival Delay : Flight arrival delay in minutes
+-   Departure and Arrival Time Convenience : Satisfaction level with the convenience of the flight departure and arrival times from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Ease of Online Booking : Satisfaction level with the online booking experience from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Check-in Service : Satisfaction level with the check-in service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Online Boarding : Satisfaction level with the online boarding experience from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Gate Location : Satisfaction level with the gate location in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   On-board Service : Satisfaction level with the on-boarding service in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Seat Comfort : Satisfaction level with the comfort of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Leg Room Service : Satisfaction level with the leg room of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Cleanliness : Satisfaction level with the cleanliness of the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Food and Drink : Satisfaction level with the food and drinks on the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   In-flight Service : Satisfaction level with the in-flight service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   In-flight Wifi Service : Satisfaction level with the in-flight Wifi service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   In-flight Entertainment Satisfaction level with the in-flight entertainment from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Baggage Handling : Satisfaction level with the baggage handling from the airline from 1 (lowest) to 5 (highest) - 0 means "not applicable"
+-   Satisfaction : Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied)
 
 ## Workflow: Machine-Learning Task Translation <a name="1.5"></a>
-The business analysis focuses on what key parameters from passengers' perspective that define their satisfactory level towards airline services. The analysis will be conducted by perfroming predictive modelling (regression analysis) as well as classification.
-Run code belows to see the workflow of the analysis.
+
+The business analysis focuses on what key parameters from passengers' perspective that define their satisfactory level towards airline services. The analysis will be conducted by perfroming predictive modelling (regression analysis) as well as classification. Run code belows to see the workflow of the analysis.
+
 ```{r}
 file_path <- "Workflow_Group17.png"
 knitr::include_graphics(file_path)
 ```
 
-
 ## Reflection and Limitation <a name="1.6"></a>
 
-Lorem Ipsum
+In this research, we aim to predict **whether future customer would be satisfied given the details of service** by determining **the aspects of service that are important towards customer satisfaction.** From the dataset, we hypothesize that service characteristics such as arrival and departure delays, on-board service, and comfort play a significant role towards customer satisfaction.
+
+Given that the dataset does not provide information on the specific airline or ticket pricing, we will focus to analyzing the service-related factors that universally impact passenger satisfaction. Understanding and preparing the the dataset will be crucial, as it may contain missing values or quality issues. Hence, we will dedicate the next section on data exploration and preparation. In doing so, we will first visualize the variables to get an understanding of the distributions.
 
 # Data Exploration and Preparation <a name="2"></a>
 
@@ -138,10 +171,12 @@ Lorem Ipsum
 ## Data Cleaning and Preparation <a name="2.1"></a>
 
 Lorem Ipsum
+
 ```{r}
 any(is.na(data))
 colMeans(is.na(data))
 ```
+
 Null only exist for 0.3% and only in column Arrival Delay, therefore this would not significantly affecting the whole dataset. We'll fill the Arrival Delay null with mean and median of Arrival Delay whic is 0.
 
 ```{r}
@@ -149,12 +184,12 @@ data$Departure.Delay = as.numeric(data$Departure.Delay)
 data$Arrival.Delay[is.na(data$Arrival.Delay)] <-0
 any(is.na(data))
 ```
+
 We succesfully eliminate null value in the dataset.
 
-Lorem Ipsum
-## Data Exploration <a name="2.2"></a>
+Lorem Ipsum \## Data Exploration <a name="2.2"></a>
 
-Now we visualize the distribution in each categorical column 
+Now we visualize the distribution in each categorical column
 
 ```{r}
 plot_bar(data, ncol=2, order_bar=TRUE, ggtheme = theme_minimal())
@@ -162,7 +197,7 @@ plot_bar(data, ncol=2, order_bar=TRUE, ggtheme = theme_minimal())
 
 We can notice that the gender distribution is equal. The type of travel is focusing on business with most of the customer are the returning customer rather than the first time. We can notice that focus in increasing satisfaction of loyal customer will bring significant impact to the overall of airline customer satisfaction rate.
 
-Next we will visualize the distribution in each numerical column 
+Next we will visualize the distribution in each numerical column
 
 ```{r}
 plot_histogram(data, ncol=2,ggtheme = theme_minimal())
@@ -204,7 +239,7 @@ data$Departure.Delay[data$Departure.Delay %in% boxplot(data$Departure.Delay)$out
 
 ## Feature Engineering <a name="2.3"></a>
 
-We notice that the age distribution have high variation, therefore we try to create the age_group column 
+We notice that the age distribution have high variation, therefore we try to create the age_group column
 
 ```{r}
 data = data %>% mutate(Age_Range = if_else(Age <= 16,"Children",
@@ -216,7 +251,7 @@ if_else(30 < Age & Age <= 45,"Middle Aged","Old"))))
 plot_bar(data$Age_Range,ncol=2,order_bar=T,ggtheme = theme_minimal())
 ```
 
-Now we can interpret from the age group that the largest segment of our customer is belong to old age group which is >45 years old.
+Now we can interpret from the age group that the largest segment of our customer is belong to old age group which is \>45 years old.
 
 Another data we can group is the flight distance which currently right skewed
 
@@ -230,7 +265,8 @@ if_else(3000 < Flight.Distance & Flight.Distance < 4000,"3000-4000","Above 4000"
 ```{r}
 plot_bar(data$Distance_Group,ncol=2,order_bar=T,ggtheme = theme_minimal())
 ```
-Our target is the satisfaction rate of the airlines services, therefore we need to identified how each variable are correlated to the satisfaction 
+
+Our target is the satisfaction rate of the airlines services, therefore we need to identified how each variable are correlated to the satisfaction
 
 ```{r}
 plot_bar(data,by='Satisfaction',ncol=2)
@@ -255,6 +291,7 @@ data %>% group_by(Customer.Type, Satisfaction) %>%
 summarize(num=n()) %>%
 mutate(percentage=round(num*100/sum(num),2))
 ```
+
 76% of first time customer are feels dissatisfied with the airline services, this could be a problem because in the long term it will reducing airlines capability in increasing customer retention.
 
 ```{r}
@@ -298,6 +335,7 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   theme_minimal() +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
+
 We can identify that from the first time customer, the services that dissapointing them most in Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service.
 
 ```{r}
@@ -323,6 +361,7 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   theme_minimal() +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
+
 We can identify that from the Personal type of travel customers, the services that dissapointing them most in Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service.
 
 ```{r}
@@ -348,6 +387,7 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   theme_minimal() +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
+
 We can identify that from the Economy class customers, the services that dissapointing them most in Online Boarding, Ease of Online Booking, and Wifi Service.
 
 ## Data Tranformation <a name="2.4"></a>
@@ -377,7 +417,3 @@ Lorem Ipsum
 ## Logistic Regression <a name="3.3"></a>
 
 Lorem Ipsum
-
-
-
-
