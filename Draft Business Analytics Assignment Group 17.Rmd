@@ -93,12 +93,38 @@ str(data)
 summary(data)
 ```
 
-## Data Dictionary
+### Data Dictionary
+Based on Kaggle, here is the definition of each column in the dataset. This is useful for later stage to understand the data characteristics and how to use it.
 
-Based on Kaggle, Here is the definition of each column in the data set. Please Create a table for explanation of each column in the data set. \## Data Dictionary
 
-| Field Name | Description |
-|-----------------------------------------------------|-------------------|
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    background-color: #87CEEB; /* Sky blue header */
+    color: white;
+    text-align: left;
+    padding: 8px;
+  }
+  td {
+    padding: 8px;
+    text-align: left;
+  }
+  th, td {
+    border: 1px solid #ddd;
+  }
+  th:first-child, td:first-child {
+    width: 200px; /* Adjust field name column width */
+  }
+  th:last-child, td:last-child {
+    width: 600px; /* Adjust description column width */
+  }
+</style>
+
+| **Field Name**  | **Description**  |
+|----------------|----------------|
 | **ID** | Unique passenger identifier |
 | **Gender** | Gender of the passenger (Female/Male) |
 | **Age** | Age of the passenger |
@@ -122,32 +148,8 @@ Based on Kaggle, Here is the definition of each column in the data set. Please C
 | **In-flight Wifi Service** | Satisfaction level with the in-flight Wifi service from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
 | **In-flight Entertainment** | Satisfaction level with the in-flight entertainment from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
 | **Baggage Handling** | Satisfaction level with the baggage handling from the airline from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
-| **Satisfaction** | Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied) |
+| **Satisfaction** | Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied) | 
 
--   ID : Unique passenger identifier
--   Gender : Gender of the passenger (Female/Male)
--   Age : Age of the passenger
--   Customer Type : Type of airline customer (First-time/Returning)
--   Type of Travel : Purpose of the flight (Business/Personal)
--   Class : Travel class in the airplane for the passenger seat
--   Flight Distance : Flight distance in miles
--   Departure Delay : Flight departure delay in minutes
--   Arrival Delay : Flight arrival delay in minutes
--   Departure and Arrival Time Convenience : Satisfaction level with the convenience of the flight departure and arrival times from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Ease of Online Booking : Satisfaction level with the online booking experience from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Check-in Service : Satisfaction level with the check-in service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Online Boarding : Satisfaction level with the online boarding experience from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Gate Location : Satisfaction level with the gate location in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   On-board Service : Satisfaction level with the on-boarding service in the airport from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Seat Comfort : Satisfaction level with the comfort of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Leg Room Service : Satisfaction level with the leg room of the airplane seat from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Cleanliness : Satisfaction level with the cleanliness of the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Food and Drink : Satisfaction level with the food and drinks on the airplane from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   In-flight Service : Satisfaction level with the in-flight service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   In-flight Wifi Service : Satisfaction level with the in-flight Wifi service from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   In-flight Entertainment Satisfaction level with the in-flight entertainment from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Baggage Handling : Satisfaction level with the baggage handling from the airline from 1 (lowest) to 5 (highest) - 0 means "not applicable"
--   Satisfaction : Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied)
 
 ## Workflow: Machine-Learning Task Translation <a name="1.5"></a>
 
