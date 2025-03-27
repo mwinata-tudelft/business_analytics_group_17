@@ -77,22 +77,22 @@ Competitive Advantage: by addressing the service issue, the airline can stand ou
 
 Lorem IpsumBesides the Basic R Functions, this  project uses multiple packages to enhance the R functionalities and improve the data analytics and visualization quality. This section explains all the packages and functions beyond the Basic R functionalities that we are using in this project in each step of the business analytics process from data cleaning to modeling.
 
-* Data Cleaning
+* Data Cleaning and Preparation
 
 **dplyr** : used to filter rows, select columns, sort data, create new columns, and summarize data.
+**tidyr** : imported to be used to clean and tidy the data, such as reshaping the data from wide to long format.
 
 * Data Exploration
 
 **skimr** : designed to provide summary of statistical measures for each variables in data frames.
 **DataExplorer** : used to display comprehensive and convenient interface for data exploration and data visualization.
 
-* Data Preparation
-
 * Data Transformation
 
 * Data Visualization
 
 **ggplot2** : a package that is useful to visualize data in a more complex and customizable way compared to the basic R plotting functions.
+**corrplot** : used to visualize correlation matrix between two variables in a more visually appealing and informative way.
 
 * Data Modeling
 
