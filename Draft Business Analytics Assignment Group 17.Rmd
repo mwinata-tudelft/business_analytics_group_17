@@ -3,11 +3,11 @@ title: "Airline Customer Satisfaction - Group 17"
 output:
   html_document:
     toc: true
-    toc_depth: 2
+    toc_depth: 3
     number_sections: true
     toc_float: true
   pdf_document: default
-date: "2025-02-27"
+date: "2025-03-27"
 ---
 
 ```{r setup, include=FALSE}
@@ -107,6 +107,8 @@ library(dplyr)
 library(ggplot2)
 library(skimr)
 library(DataExplorer)
+library(corrplot)
+library(tidyr)
 ```
 
 ## Dataset <a name="1.4"></a>
@@ -228,22 +230,6 @@ We succesfully eliminate null value in the dataset.
 
 Lorem Ipsum 
 
-## Data Exploration <a name="2.2"></a>
-
-Now we visualize the distribution in each categorical column
-
-```{r}
-plot_bar(data, ncol=2, order_bar=TRUE, ggtheme = theme_minimal())
-```
-
-We can notice that the gender distribution is equal. The type of travel is focusing on business with most of the customer are the returning customer rather than the first time. We can notice that focus in increasing satisfaction of loyal customer will bring significant impact to the overall of airline customer satisfaction rate.
-
-Next we will visualize the distribution in each numerical column
-
-```{r}
-plot_histogram(data, ncol=2,ggtheme = theme_minimal())
-```
-
 We notice that there is some outliers in the Arrival Delay, Departure Delay, and the Flight Distance. Let's see in the boxplot format :
 
 Flight Distance
@@ -303,12 +289,29 @@ geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
 theme_bw()
 ```
 
-### Association Between Two Numerical Variable
+Lorem Ipsum
+
+## Data Exploration <a name="2.2"></a>
+
+Lorem Ipsum
+
+### Univariate Data Analysis
+
+Now we visualize the distribution in each categorical column
 
 ```{r}
-library(corrplot)
+plot_bar(data, ncol=2, order_bar=TRUE, ggtheme = theme_minimal())
 ```
 
+We can notice that the gender distribution is equal. The type of travel is focusing on business with most of the customer are the returning customer rather than the first time. We can notice that focus in increasing satisfaction of loyal customer will bring significant impact to the overall of airline customer satisfaction rate.
+
+Next we will visualize the distribution in each numerical column
+
+```{r}
+plot_histogram(data, ncol=2,ggtheme = theme_minimal())
+```
+
+### Association Between Two Numerical Variable
 
 ```{r corrplot, fig.width=14, fig.height=12}
 numeric_data <- data[sapply(data, is.numeric)]
@@ -520,8 +523,6 @@ ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
 Lorem ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Satisfaction, Age, Flight.Distance, Departure.Delay,
          Arrival.Delay)
@@ -546,8 +547,6 @@ Lorem Ipsum
 
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Satisfaction, Ease.of.Online.Booking, Check.in.Service, Online.Boarding,
          Gate.Location, On.board.Service, Leg.Room.Service, Flight.Distance)
@@ -569,8 +568,6 @@ ggplot(data_long, aes(x = Value, fill = Satisfaction)) +
 ```
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Satisfaction, Seat.Comfort, In.flight.Service, Baggage.Handling,
          In.flight.Entertainment, In.flight.Wifi.Service, Food.and.Drink, Cleanliness)
@@ -594,8 +591,6 @@ ggplot(data_long, aes(x = Value, fill = Satisfaction)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Class, Age, Flight.Distance, Departure.Delay,
          Arrival.Delay)
@@ -619,8 +614,6 @@ ggplot(data_long, aes(x = Class, y = Value, fill = Class)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Class, Ease.of.Online.Booking, Check.in.Service, Online.Boarding,
          Gate.Location, On.board.Service, Leg.Room.Service, Flight.Distance)
@@ -642,8 +635,6 @@ ggplot(data_long, aes(x = Value, fill = Class)) +
 ```
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Class, Seat.Comfort, In.flight.Service, Baggage.Handling,
          In.flight.Entertainment, In.flight.Wifi.Service, Food.and.Drink, Cleanliness)
@@ -667,8 +658,6 @@ ggplot(data_long, aes(x = Value, fill = Class)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Type.of.Travel, Age, Flight.Distance, Departure.Delay,
          Arrival.Delay)
@@ -692,8 +681,6 @@ ggplot(data_long, aes(x = Type.of.Travel, y = Value, fill = Type.of.Travel)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Type.of.Travel, Ease.of.Online.Booking, Check.in.Service, Online.Boarding,
          Gate.Location, On.board.Service, Leg.Room.Service, Flight.Distance)
@@ -715,8 +702,6 @@ ggplot(data_long, aes(x = Value, fill = Type.of.Travel)) +
 ```
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Type.of.Travel, Seat.Comfort, In.flight.Service, Baggage.Handling,
          In.flight.Entertainment, In.flight.Wifi.Service, Food.and.Drink, Cleanliness)
@@ -740,8 +725,6 @@ ggplot(data_long, aes(x = Value, fill = Type.of.Travel)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Gender, Age, Flight.Distance, Departure.Delay,
          Arrival.Delay)
@@ -765,8 +748,6 @@ ggplot(data_long, aes(x = Gender, y = Value, fill = Gender)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Gender, Ease.of.Online.Booking, Check.in.Service, Online.Boarding,
          Gate.Location, On.board.Service, Leg.Room.Service, Flight.Distance)
@@ -788,8 +769,6 @@ ggplot(data_long, aes(x = Value, fill = Gender)) +
 ```
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Gender, Seat.Comfort, In.flight.Service, Baggage.Handling,
          In.flight.Entertainment, In.flight.Wifi.Service, Food.and.Drink, Cleanliness)
@@ -813,8 +792,6 @@ ggplot(data_long, aes(x = Value, fill = Gender)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Customer.Type, Age, Flight.Distance, Departure.Delay,
          Arrival.Delay)
@@ -838,8 +815,6 @@ ggplot(data_long, aes(x = Customer.Type, y = Value, fill = Customer.Type)) +
 Lorem Ipsum
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Customer.Type, Ease.of.Online.Booking, Check.in.Service, Online.Boarding,
          Gate.Location, On.board.Service, Leg.Room.Service, Flight.Distance)
@@ -861,8 +836,6 @@ ggplot(data_long, aes(x = Value, fill = Customer.Type)) +
 ```
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Customer.Type, Seat.Comfort, In.flight.Service, Baggage.Handling,
          In.flight.Entertainment, In.flight.Wifi.Service, Food.and.Drink, Cleanliness)
@@ -1023,8 +996,6 @@ plot_bar(data,by='Satisfaction',ncol=2)
 Satisfaction for new features :
 
 ```{r}
-library(tidyr)
-
 data_subset <- data %>%
   select(Satisfaction, Flight.Service, Flight.Entertainment, Digital.Service, Comfort.Service)
 
