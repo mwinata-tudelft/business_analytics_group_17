@@ -57,25 +57,25 @@ In summary.... **(hasil temuan)**
 
 ## Business Problem <a name="1.2"></a>
 
-In this project, Group 17 serves as business consultants, with a focus on improving customer experience in the industry. Our responsibilities are from analyzing customer satisfaction statistics, developing measures to improve the airline's overall performance. Therefore, the business problem that we solve is "how the airline can improve its strategy of services and activities to significantly increase customer satisfaction, especially between segments and main service areas, thus promoting customer loyalty and achieving stronger competitive advantages?". 
+In this project, Group 17 serves as business consultants, with a focus on improving customer experience in the industry. Our responsibilities are from analyzing customer satisfaction statistics, developing measures to improve the airline's overall performance. Therefore, the business problem that we solve is "how can airlines improve its strategy of services and activities to increase customer satisfaction, especially between segments and main service areas, to achieve stronger competitive advantages?".
 
 **The reason why we chose airline industry as our focus :**
 
-* We provide comprehensive data from Kaggle across various aspects of the flying experience which allows us to in-depth analysis.  
+-   Low-cost carriers (LCCs) are shifting the traditional perceptions of value and service among travelers by offering lower fares with fewer amenities.
 
-* Intense rivalry airline industry has intense competition among company, and it could be easily justified by customer satisfaction. Thus, higher customer satisfaction leads to increased client retention and overall business performance.   
+-   Intense rivalry among airlines could be easily justified by customer satisfaction. Thus, higher customer satisfaction leads to increased client retention and overall business performance.
 
-* Concentrating on major market segments may be an efficient technique for improving overall consumer satisfaction. 
+-   Concentrating on major market segments may provide a more general view of the aspects contributing to consumer satisfaction.
 
-**Why focus on customer satisfaction?** 
+**Why focus on customer satisfaction?**
 
-Enhance customer loyalty: improving on these key segments and service areas will enhance customer satisfaction that potentially increases customer loyalty rate. 
+Enhance customer loyalty: improving on these key segments and service areas will enhance customer satisfaction that potentially increases customer loyalty rate.
 
 Competitive Advantage: by addressing the service issue, the airline can stand out from the competitors.
 
 ## Setting Up the R Workplace <a name="1.3"></a>
 
-Lorem IpsumBesides the Basic R Functions, this  project uses multiple packages to enhance the R functionalities and improve the data analytics and visualization quality. This section explains all the packages and functions beyond the Basic R functionalities that we are using in this project in each step of the business analytics process from data cleaning to modeling.
+Lorem IpsumBesides the Basic R Functions, this project uses multiple packages to enhance the R functionalities and improve the data analytics and visualization quality. This section explains all the packages and functions beyond the Basic R functionalities that we are using in this project in each step of the business analytics process from data cleaning to modeling.
 
 * Data Cleaning and Preparation
 
@@ -133,9 +133,10 @@ summary(data)
 ```
 
 ### Data Dictionary
+
 Based on Kaggle, here is the definition of each column in the dataset. This is useful for later stage to understand the data characteristics and how to use it.
 
-
+```{=html}
 <style>
   table {
     width: 100%;
@@ -161,9 +162,10 @@ Based on Kaggle, here is the definition of each column in the dataset. This is u
     width: 600px; /* Adjust description column width */
   }
 </style>
+```
 
-| **Field Name**  | **Description**  |
-|----------------|----------------|
+| **Field Name** | **Description** |
+|------------------------------------|------------------------------------|
 | **ID** | Unique passenger identifier |
 | **Gender** | Gender of the passenger (Female/Male) |
 | **Age** | Age of the passenger |
@@ -187,8 +189,7 @@ Based on Kaggle, here is the definition of each column in the dataset. This is u
 | **In-flight Wifi Service** | Satisfaction level with the in-flight Wifi service from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
 | **In-flight Entertainment** | Satisfaction level with the in-flight entertainment from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
 | **Baggage Handling** | Satisfaction level with the baggage handling from the airline from 1 (lowest) to 5 (highest) - 0 means "not applicable" |
-| **Satisfaction** | Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied) | 
-
+| **Satisfaction** | Overall satisfaction level with the airline (Satisfied/Neutral or unsatisfied) |
 
 ## Workflow: Machine-Learning Task Translation <a name="1.5"></a>
 
@@ -207,32 +208,43 @@ Given that the dataset does not provide information on the specific airline or t
 
 # Data Exploration and Preparation <a name="2"></a>
 
-Lorem Ipsum
+In this chapter, we will use visual and descriptive data exploration methods to gain a deeper understanding of the distributions and the characteristics of variables in our dataset. We will begin by cleaning the data from any null variables, as well has handle outliers in the data. Later in this chapter, we will continue to explore each variable and interpret features. Finally, we will conduct initial plotting of the data to show how the features are correlated to each other.
 
 ## Data Cleaning and Preparation <a name="2.1"></a>
 
-Lorem Ipsum
+We will start the exploration phase by checking for missing data using the `is.na()` function.
 
-```{r}
+```{r check_missing_data}
 any(is.na(data))
 colMeans(is.na(data))
 ```
 
-Null only exist for 0.3% and only in column Arrival Delay, therefore this would not significantly affecting the whole dataset. We'll fill the Arrival Delay null with mean and median of Arrival Delay whic is 0.
+We find that null data only exists for 0.3% and only in the **Arrival Delay** column, therefore this would not significantly affecting the whole dataset. We'll fill the Arrival Delay null with the mean and median of Arrival Delay which is 0.
 
-```{r}
+```{r eliminating_null_values}
 data$Departure.Delay = as.numeric(data$Departure.Delay)
 data$Arrival.Delay[is.na(data$Arrival.Delay)] <-0
 any(is.na(data))
 ```
 
-We succesfully eliminate null value in the dataset.
+We succesfully replace the null values in the dataset. Let's check for numerical outliers using the `summary()` function, we will look for major differences between the median and the mean.
 
-Lorem Ipsum 
+```{r summary_of_data}
+# Extract summary statistics for numerical columns
+numerical_summary <- data.frame(t(sapply(data[sapply(data, is.numeric)], summary)))
 
-We notice that there is some outliers in the Arrival Delay, Departure Delay, and the Flight Distance. Let's see in the boxplot format :
+# Add a column to calculate the difference between mean and median
+numerical_summary$Mean_Median_Difference <- abs(numerical_summary$Mean - numerical_summary$Median)
 
-Flight Distance
+# Tabulate the output
+knitr::kable(numerical_summary, caption = "Summary of Numerical Columns with Mean-Median Differences")
+
+remove(numerical_summary)
+```
+
+We notice that there are large outliers in the Flight Distance, as well as in Arrival and Departure Delay. Let's see in the boxplot format :
+
+**Flight Distance**
 
 ```{r}
 ggplot(data, aes(x=Flight.Distance)) +
@@ -240,7 +252,7 @@ geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
 theme_bw()
 ```
 
-Departure Delay :
+**Departure Delay**
 
 ```{r}
 ggplot(data, aes(x=Departure.Delay)) +
@@ -248,7 +260,7 @@ geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
 theme_bw()
 ```
 
-Arrival Delay :
+**Arrival Delay**
 
 ```{r}
 ggplot(data, aes(x=Arrival.Delay)) +
@@ -256,60 +268,70 @@ geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
 theme_bw()
 ```
 
-Median imputation is appropriate when the distribution of the data is skewed.
+From the boxplots above, we can see that Flight Distance is slightly skewed while Arrival Delay and Departure Delay is heavily skewed. We will use median imputation, which is appropriate when the distribution of the data is skewed.
 
-```{r}
+```{r median_imputation}
+# Imputation of flight.distance variable
 data$Flight.Distance[which(
   data$Flight.Distance > (quantile(data$Flight.Distance, 0.75, na.rm = TRUE) + 1.5 * IQR(data$Flight.Distance, na.rm = TRUE))
 )] <- median(data$Flight.Distance, na.rm = TRUE)
 
+# Imputation of arrival.delay variable
 data$Arrival.Delay[which(
   data$Arrival.Delay > (quantile(data$Arrival.Delay, 0.75, na.rm = TRUE) + 1.5 * IQR(data$Arrival.Delay, na.rm = TRUE))
 )] <- median(data$Arrival.Delay, na.rm = TRUE)
 
+# Imputation of departure.delay variable
 data$Departure.Delay[which(
   data$Departure.Delay > (quantile(data$Departure.Delay, 0.75, na.rm = TRUE) + 1.5 * IQR(data$Departure.Delay, na.rm = TRUE))
 )] <- median(data$Departure.Delay, na.rm = TRUE)
 ```
 
-Now we can see the distribution of the data after the imputation.
+Now let's check the distribution of the data after the imputation.
 
-```{r}
+```{r histogram_of_imputed_variables}
 plot_histogram(data[ , c('Flight.Distance','Arrival.Delay','Departure.Delay')], ncol=2,ggtheme = theme_minimal())
 ```
+
+Below, we will also take a look again at the boxplots for Departure Delay and Arrival Delay. Note that before the imputation, the plots were skewed to the point that the boxes were almost no longer visible.
 
 ```{r}
 ggplot(data, aes(x=Departure.Delay)) +
 geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
 theme_bw()
 ```
+
 ```{r}
 ggplot(data, aes(x=Arrival.Delay)) +
 geom_boxplot(fill = 2,alpha = 0.5,color = 1,outlier.colour = 2) +
 theme_bw()
 ```
 
-Lorem Ipsum
+We can see that we have significantly normalized the skewness of the data. Thus, we have successfully eliminated all missing values and normalized all outliers in the data. Next, we will continue further into the data exploration phase.
 
 ## Data Exploration <a name="2.2"></a>
 
-Lorem Ipsum
+In this subchapter, we will begin by conducting descriptive univariate data analysis which is followed by association between numerical and categorical variables.
 
 ### Univariate Data Analysis
 
 Now we visualize the distribution in each categorical column
 
-```{r}
+```{r visualizing_categorical_variables}
+
+# Bar chart will be used for categorical data
 plot_bar(data, ncol=2, order_bar=TRUE, ggtheme = theme_minimal())
 ```
 
-We can notice that the gender distribution is equal. The type of travel is focusing on business with most of the customer are the returning customer rather than the first time. We can notice that focus in increasing satisfaction of loyal customer will bring significant impact to the overall of airline customer satisfaction rate.
+We can see that the gender distribution is equal. Furthermore, the majority type of travel is business which is also reflected in the customer type, where the majority is returning customers rather than first-time. Hence, increasing satisfaction of loyal customers will bring significant impact to the overall of airline customer satisfaction rate. Next, we will visualize the distribution in each numerical column. The ID column is left out as it is just a list of numbers.
 
-Next we will visualize the distribution in each numerical column
+```{r visualizing_numerical_variables}
 
-```{r}
-plot_histogram(data, ncol=2,ggtheme = theme_minimal())
+# Numerical variables are visualized using histogram
+plot_histogram(data[ , !names(data) %in% "ID"], ncol=2, ggtheme = theme_minimal())
 ```
+
+From the visualizations above, it is not immediately clear which variables may be strongly influencing each other. Hence, we will continue the exploration by analyzing the associations between numerical variables.
 
 ### Association Between Two Numerical Variable
 
@@ -403,8 +425,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum 
-
+Lorem Ipsum
 
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Seat.Comfort))
@@ -422,7 +443,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum 
+Lorem Ipsum
 
 ```{r}
 count_data <- as.data.frame(table(data$Food.and.Drink, data$Cleanliness))
@@ -440,7 +461,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum 
+Lorem Ipsum
 
 ```{r}
 count_data <- as.data.frame(table(data$Food.and.Drink, data$Seat.Comfort))
@@ -458,7 +479,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum 
+Lorem Ipsum
 
 ```{r}
 count_data <- as.data.frame(table(data$Cleanliness, data$Seat.Comfort))
@@ -476,7 +497,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum 
+Lorem Ipsum
 
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Wifi.Service, data$Ease.of.Online.Booking))
@@ -494,7 +515,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum 
+Lorem Ipsum
 
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Departure.Delay)) +
@@ -506,7 +527,7 @@ ggplot(data, aes(x = Flight.Distance, y = Departure.Delay)) +
   theme_minimal()
 ```
 
-Lorem Ipsum 
+Lorem Ipsum
 
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
@@ -544,7 +565,6 @@ ggplot(data_long, aes(x = Satisfaction, y = Value, fill = Satisfaction)) +
 ```
 
 Lorem Ipsum
-
 
 ```{r}
 data_subset <- data %>%
@@ -940,7 +960,6 @@ Flight Experience : In Flight Wifi Service, In Flight Entertainment
 Digital services : Ease of Online Booking, Online Boarding
 Comfort services : Seat Comfort, Leg Room Service, Cleanliness
 
-
 ```{r}
 data$Flight.Service = rowSums(data[,c('Food.and.Drink','In.flight.Service')],na.rm = TRUE)
 data$Flight.Entertainment = rowSums(data[,c('In.flight.Wifi.Service','In.flight.Entertainment')],na.rm = TRUE)
@@ -1141,16 +1160,15 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
 
 We can identify that from the Economy class customers, the services that dissapointing them most in Online Boarding, Ease of Online Booking, and Wifi Service.
 
-### Summary of Initial Plotting 
+### Summary of Initial Plotting
 
-- 43% of total passengers have liked the airline service. The majority of customers who are satisfied are from business class
-- 57% of total passengers are not satisfied. The majority of them are from Economy class
-- Only 18% of people have travelled for first time in our airline service. Out of those customers, nearly 76% of customers are not satisfied with our service which could create a chance in future of not returing of customers to our service again. When passengers are coming for first time, most of them have chosen the economy class
-- Out of the customers who opted for business class, nearly 69% of customers are satisfied with the business class. Out of the customers who opted for economy class, nearly 81% of them are not satisfied with it. Customers who opted for economy plus class,nearly 75% of them are not satisfied with it.
-- Whether people are coming for first time or not and also irrespective of their travel type, they are mostly not satisfied with the Economy and Economy Plus classes. There is strong need for the improvement of Economy class since 45% of total passengers are from economy class. Moreover, 60% of passengers travel less than 10k km and most of them prefer economy class.
-- Passengers are not so satisfied with online booking, Online Boarding and the Wifi service mostly.
-- 82% of total passengers are returning to the airline service. Out of those 105773 passengers,50% of passengers are from busines class and 42% of passengers are from economy class. Customer who are returning to our service are aged above 30 and make business travel and travel less than 1000 km mostly
-
+-   43% of total passengers have liked the airline service. The majority of customers who are satisfied are from business class
+-   57% of total passengers are not satisfied. The majority of them are from Economy class
+-   Only 18% of people have travelled for first time in our airline service. Out of those customers, nearly 76% of customers are not satisfied with our service which could create a chance in future of not returing of customers to our service again. When passengers are coming for first time, most of them have chosen the economy class
+-   Out of the customers who opted for business class, nearly 69% of customers are satisfied with the business class. Out of the customers who opted for economy class, nearly 81% of them are not satisfied with it. Customers who opted for economy plus class,nearly 75% of them are not satisfied with it.
+-   Whether people are coming for first time or not and also irrespective of their travel type, they are mostly not satisfied with the Economy and Economy Plus classes. There is strong need for the improvement of Economy class since 45% of total passengers are from economy class. Moreover, 60% of passengers travel less than 10k km and most of them prefer economy class.
+-   Passengers are not so satisfied with online booking, Online Boarding and the Wifi service mostly.
+-   82% of total passengers are returning to the airline service. Out of those 105773 passengers,50% of passengers are from busines class and 42% of passengers are from economy class. Customer who are returning to our service are aged above 30 and make business travel and travel less than 1000 km mostly
 
 ## Reflections <a name="2.6"></a>
 
