@@ -77,23 +77,26 @@ Competitive Advantage: by addressing the service issue, the airline can stand ou
 
 Lorem IpsumBesides the Basic R Functions, this project uses multiple packages to enhance the R functionalities and improve the data analytics and visualization quality. This section explains all the packages and functions beyond the Basic R functionalities that we are using in this project in each step of the business analytics process from data cleaning to modeling.
 
--   Data Cleaning and Preparation
+* Data Cleaning and Preparation
 
-**dplyr** : used to filter rows, select columns, sort data, create new columns, and summarize data. **tidyr** : imported to be used to clean and tidy the data, such as reshaping the data from wide to long format.
+**dplyr** : used to filter rows, select columns, sort data, create new columns, and summarize data.
+**tidyr** : imported to be used to clean and tidy the data, such as reshaping the data from wide to long format.
 
--   Data Exploration
+* Data Exploration
 
-**skimr** : designed to provide summary of statistical measures for each variables in data frames. **DataExplorer** : used to display comprehensive and convenient interface for data exploration and data visualization.
+**skimr** : designed to provide summary of statistical measures for each variables in data frames.
+**DataExplorer** : used to display comprehensive and convenient interface for data exploration and data visualization.
 
--   Data Transformation
+* Data Transformation
 
--   Data Visualization
+* Data Visualization
 
-**ggplot2** : a package that is useful to visualize data in a more complex and customizable way compared to the basic R plotting functions. **corrplot** : used to visualize correlation matrix between two variables in a more visually appealing and informative way.
+**ggplot2** : a package that is useful to visualize data in a more complex and customizable way compared to the basic R plotting functions.
+**corrplot** : used to visualize correlation matrix between two variables in a more visually appealing and informative way.
 
--   Data Modeling
+* Data Modeling
 
--   Data Analysis
+* Data Analysis
 
 Below we will find the commands to install and import the required libraries:
 
@@ -927,7 +930,7 @@ if_else(30 < Age & Age <= 45,"Middle Aged","Old"))))
 plot_bar(data$Age_Range,ncol=2,order_bar=T,ggtheme = theme_minimal())
 ```
 
-Now we can interpret from the age group that the largest segment of our customer is belong to old age group which is \>45 years old.
+Now we can interpret from the age group that the largest segment of our customer is belong to old age group which is >45 years old.
 
 Another data we can group is the flight distance which currently right skewed
 
@@ -952,7 +955,10 @@ plot_bar(data$delay.status,ncol=2,order_bar=T,ggtheme = theme_minimal())
 
 We'll try to grouping the features into category of services that could be improved by the airline :
 
-Flight General services : Food and Drink, In-flight Service Flight Experience : In Flight Wifi Service, In Flight Entertainment Digital services : Ease of Online Booking, Online Boarding Comfort services : Seat Comfort, Leg Room Service, Cleanliness
+Flight General services : Food and Drink, In-flight Service
+Flight Experience : In Flight Wifi Service, In Flight Entertainment
+Digital services : Ease of Online Booking, Online Boarding
+Comfort services : Seat Comfort, Leg Room Service, Cleanliness
 
 ```{r}
 data$Flight.Service = rowSums(data[,c('Food.and.Drink','In.flight.Service')],na.rm = TRUE)
