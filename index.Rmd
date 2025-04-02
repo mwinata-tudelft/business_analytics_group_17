@@ -7,7 +7,7 @@ output:
     number_sections: true
     toc_float: true
   pdf_document: default
-date: "2025-03-27"
+date: "2025-04-02"
 ---
 
 ```{r setup, include=FALSE}
@@ -358,7 +358,7 @@ corrplot(cor_matrix,
          diag = FALSE)
 ```
 
-Lorem Ipsum
+**Correlation Matrix of Numerical Variables**
 
 ```{r}
 # Discover strong correlation
@@ -369,9 +369,10 @@ filtered <- filtered[!duplicated(t(apply(filtered[, 1:2], 1, sort))), ]
 print(filtered)
 ```
 
-In-flight comfort and service such as Seat Comfort, Leg Room Service, Cleanliness, Food and Drink, In-flight Service, In-flight Wifi Service, and In-flight Entertainment are highly correlated with each other. This is expected as they are all related to the comfort and service provided during the flight.
 
-Digital service such as Ease of Online Booking, Online Boarding, and In-flight Wifi Service are also highly correlated with each other. This is expected as they are all related to the digital service provided by the airline.
+From the graph, we can see that there are some variables that have a strong correlation with each other, which is Seat Comfort, Leg Room Service, Cleanliness, Food & Drink, and In-flight Service exhibit strong positive correlations with each other. This suggests that customers who rate one aspect of the service highly tend to rate others positively as well. Furthermore, A high correlation between Departure Delay and Arrival Delay indicates that flights that depart late are also likely to arrive late. Other numerical factors such as Flight Distance may have weaker correlations with customer satisfaction, indicating that distance alone is not a major factor in satisfaction levels.
+
+**In-flight Service vs On-board Service (in %)**
 
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Service, data$On.board.Service))
@@ -389,7 +390,9 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+The heatmap above shows a strong positive correlation between In-flight Service and On-board Service. This suggests that passengers who rate one aspect of the service highly also tend to rate the other positively. Darker shades indicate higher percentages, with the highest concentration (20.2%) at ( In-flight Service= 4, On-board Service = 4), suggesting a tendency for passengers to rate both aspects positively together.
+
+**In-flight Service vs Food and Drink (in %)**
 
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Food.and.Drink))
@@ -407,7 +410,9 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+From the heatmap above, we can see that there is a strong positive correlation between In-flight Entertainment and Food and Drink. he most common rating combination is (4,4), accounting for 16.9% of responses, followed by (5,5) with 14.8%, indicating This suggests that passengers who rate the in-flight entertainment highly also tend to rate the food and drink positively.
+
+**In-flight Entertainment vs Cleanliness (in %)**
 
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Cleanliness))
@@ -425,7 +430,9 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+We can see from the heatmap above that there is a positive correlation between In-flight Entertainment and Cleanliness with frequent rating pair is (4,4) at 17.9%, followed by (5,5) at 15.4%,. This suggests that passengers who rate the in-flight entertainment highly also tend to rate the cleanliness positively.
+
+**In-flight Entertainment vs Seat Comfort (in %)**
 
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Seat.Comfort))
@@ -443,7 +450,8 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+This heatmap depicts a positive correlation between In-flight Entertainment and Seat Comfort. The most common rating combination is (4,4) at 17.9%, followed by (5,5) at 15.1%. This suggests that
+passengers who rate the in-flight entertainment highly also tend to rate the seat comfort positively.
 
 ```{r}
 count_data <- as.data.frame(table(data$Food.and.Drink, data$Cleanliness))
@@ -461,7 +469,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+**Food and Drink vs Seat Comfront (in %)**
 
 ```{r}
 count_data <- as.data.frame(table(data$Food.and.Drink, data$Seat.Comfort))
@@ -479,7 +487,9 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+This heatmap illustrates a positive correlation between Food and Drink and Seat Comfort. The most common rating combination is (4,4) at 16%, followed by (5,5) at 13.8%. This suggests that passengers who rate the food and drink highly also tend to rate the seat comfort positively.
+
+**Cleanliness vs Seat Comfort (in %)**
 
 ```{r}
 count_data <- as.data.frame(table(data$Cleanliness, data$Seat.Comfort))
@@ -497,7 +507,9 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+This heatmap shows a positive correlation between Cleanliness and Seat Comfort. The most common rating combination is (4,4) at 17.9%, followed by (5,5) at 15.1%. This suggests that passengers who rate the cleanliness highly also tend to rate the seat comfort positively.
+
+**In-Flight Wifi Service vs Ease of Online Booking (in %)**
 
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Wifi.Service, data$Ease.of.Online.Booking))
@@ -515,7 +527,9 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+This heatmap shows a positive correlation between In-flight Wifi Service and Ease of Online Booking. The most common rating pair is (2,3) at 18.1%, closely followed by (1,2) at 18% and (1,1) at 12.5%, suggesting that many passengers who rated WiFi service poorly also found online booking less convenient. Interestingly, higher ratings for online booking (4-5) are associated with mixed ratings for WiFi, with 8.1% rating both as (5,5). This pattern implies that while passengers may find booking easy, WiFi service still receives moderate to low ratings.
+
+**Flight Distance vs Departure Delay**
 
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Departure.Delay)) +
@@ -527,7 +541,9 @@ ggplot(data, aes(x = Flight.Distance, y = Departure.Delay)) +
   theme_minimal()
 ```
 
-Lorem Ipsum
+From the scatter plot above, we can see that there is a slight positive correlation between Flight Distance and Departure Delay. The red line likely represents a trend or regression line, showing the general pattern in the data. The data appears to be highly discrete, with many flights experiencing common delay times (e.g., 0, 5, 10, 15 minutes). The trend line suggests that departure delays slightly increase as flight distance increases, but the relationship is not strong. There is significant variability in departure delays across all flight distances, meaning other factors likely influence delays beyond just distance..
+
+**Flight Distance vs Arrival Delay**
 
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
@@ -539,9 +555,10 @@ ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
   theme_minimal()
 ```
 
-### Association Between Numerical and Categorical Variable
+The scatter plot above shows a slight positive correlation between Flight Distance and Arrival Delay.he red line, likely a trend or regression line, suggests that the average arrival delay remains relatively low regardless of flight distance. While there is some variability, the data does not indicate a strong correlation between flight distance and arrival delay.
 
-Lorem ipsum
+
+### Association Between Numerical and Categorical Variable
 
 ```{r}
 data_subset <- data %>%
@@ -564,7 +581,8 @@ ggplot(data_long, aes(x = Satisfaction, y = Value, fill = Satisfaction)) +
   )
 ```
 
-Lorem Ipsum
+The boxplots compare numeric variables (Age, Arrival Delay, Departure Delay, and Flight Distance) by satisfaction levels (Neutral or Dissatisfied vs. Satisfied). Satisfied customers tend to have higher ages and longer flight distances, as indicated by the higher medians and broader distributions for these groups. Conversely, Arrival and Departure Delays show minimal differences between satisfaction groups, with both distributions being highly skewed and overlapping significantly. This suggests that delays may not strongly influence satisfaction compared to age and flight distance.
+
 
 ```{r}
 data_subset <- data %>%
@@ -608,7 +626,8 @@ ggplot(data_long, aes(x = Value, fill = Satisfaction)) +
   )
 ```
 
-Lorem Ipsum
+The histograms display the distribution of numeric variables grouped by customer satisfaction levels which is Neutral or Dissatisfied (pink) and Satisfied (blue) across various aspects of airline services. In general, higher ratings (closer to 5) for services such as Check-in Service, Ease of Online Booking, Leg Room Service, Online Boarding, and Gate Location correspond more strongly with satisfied customers. Conversely, dissatisfaction is more prevalent at lower ratings (closer to 0 or 1). For Flight Distance, satisfied customers are slightly more common in longer flights. Similarly, variables like Baggage Handling, Cleanliness, Food and Drink, In-flight Entertainment, In-flight Service, In-flight Wi-Fi Service, and Seat Comfort show a similar trend where higher ratings indicate greater satisfaction, while lower ratings are associated with dissatisfaction. These distributions suggest that satisfaction is closely tied to the quality of services provided across these dimensions.
+
 
 ```{r}
 data_subset <- data %>%
@@ -631,7 +650,8 @@ ggplot(data_long, aes(x = Class, y = Value, fill = Class)) +
   )
 ```
 
-Lorem Ipsum
+The boxplots compare Age, Arrival Delay, Departure Delay, and Flight Distance across Business, Economy, and Economy Plus classes. Business class passengers are generally older, with a higher median age compared to Economy and Economy Plus, which show similar distributions. Arrival and departure delays have medians near zero across all classes, indicating most flights are on time, but all classes exhibit outliers representing extreme delays. Flight distance is notably higher for Business class, with a greater median and variability compared to the shorter and more consistent distances in Economy and Economy Plus. This suggests Business class is preferred for longer flights and by older passengers, while delays are consistent across all classes.
+
 
 ```{r}
 data_subset <- data %>%
@@ -675,7 +695,7 @@ ggplot(data_long, aes(x = Value, fill = Class)) +
   )
 ```
 
-Lorem Ipsum
+The histograms compare numeric variables across flight classes (Business, Economy, and Economy Plus) to assess customer satisfaction. Business class consistently receives higher ratings across most variables, such as Check-in Service, Leg Room Service, Online Boarding, On-board Service, Cleanliness, Food and Drink, In-flight Entertainment, In-flight Wifi Service, and Seat Comfort, highlighting its superior service quality and comfort. Economy Plus generally performs better than Economy but falls short of Business class ratings. Economy class exhibits greater variability in ratings and is often skewed toward lower scores for services like legroom, onboard service, food quality, and seat comfort. Flight Distance shows Business class dominating longer flights, while Economy handles shorter distances. Variables like Gate Location and Ease of Online Booking show relatively even distributions across classes. Overall, the data emphasizes the premium experience associated with Business class compared to Economy and Economy Plus.
 
 ```{r}
 data_subset <- data %>%
@@ -698,7 +718,7 @@ ggplot(data_long, aes(x = Type.of.Travel, y = Value, fill = Type.of.Travel)) +
   )
 ```
 
-Lorem Ipsum
+The boxplots illustrate the distribution of four numeric variables,Age, Arrival Delay, Departure Delay, and Flight Distance grouped by the type of travel (Business or Personal). Business travelers tend to be slightly older on average than personal travelers, with a narrower age range. Both groups experience similar patterns in arrival and departure delays, though delays for personal travel show more variability and outliers. Flight distance varies significantly between the two groups, with business travelers generally covering shorter distances compared to personal travelers, which exhibit a wider range and more outliers.
 
 ```{r}
 data_subset <- data %>%
@@ -742,7 +762,8 @@ ggplot(data_long, aes(x = Value, fill = Type.of.Travel)) +
   )
 ```
 
-Lorem Ipsum
+The histograms illustrate, Across most variables, Business travelers dominate the counts, particularly for higher ratings (4 and 5), indicating greater satisfaction. In contrast, Personal travelers are fewer and show a more even distribution across lower and higher ratings. Flight Distance shows a distinct peak for shorter distances, with Business travelers being more frequent. Overall, Business travelers tend to rate services higher than Personal travelers.
+
 
 ```{r}
 data_subset <- data %>%
@@ -765,7 +786,7 @@ ggplot(data_long, aes(x = Gender, y = Value, fill = Gender)) +
   )
 ```
 
-Lorem Ipsum
+The boxplots compare four numeric variables of Age, Arrival Delay, Departure Delay, and Flight Distance by gender (Female and Male). For Age, males have a slightly higher median than females, with similar interquartile ranges (IQRs) and no visible outliers. Arrival Delay and Departure Delay show comparable distributions for both genders, with medians near zero, narrow IQRs, and numerous outliers indicating extreme delays. Flight Distance reveals a slightly higher median and wider variability among males compared to females, with some outliers in both groups representing unusually long flights. Overall, the distributions of delays are similar across genders, while Flight Distance shows more variability for males.
 
 ```{r}
 data_subset <- data %>%
@@ -809,7 +830,7 @@ ggplot(data_long, aes(x = Value, fill = Gender)) +
   )
 ```
 
-Lorem Ipsum
+The histograms illustrate the distribution of ratings for various airline service attributes (Baggage Handling, Cleanliness, Food and Drink, In-flight Entertainment, In-flight Service, In-flight WiFi Service, and Seat Comfort) segmented by gender (Female and Male). Across most categories, ratings of 4 and 5 are predominant, indicating overall positive feedback. Both genders exhibit similar patterns in their evaluations, with slight variations in proportions. For example, females appear to rate slightly higher in categories like In-flight Entertainment and Cleanliness compared to males. Conversely, males seem to have a marginally higher count in lower ratings (1–3) for some categories like Seat Comfort and In-flight WiFi Service. This suggests gender-based nuances in satisfaction levels but overall consistency in favoring higher ratings across services
 
 ```{r}
 data_subset <- data %>%
@@ -832,7 +853,8 @@ ggplot(data_long, aes(x = Customer.Type, y = Value, fill = Customer.Type)) +
   )
 ```
 
-Lorem Ipsum
+The boxplots compare numeric variables (Age, Arrival Delay, Departure Delay, and Flight Distance) between two customer types: First-time and Returning. For Age, returning customers tend to be older, with a higher median and wider range compared to first-time customers. Arrival Delay and Departure Delay show similar distributions for both groups, with most values concentrated around zero and a significant number of outliers indicating occasional long delays. For Flight Distance, returning customers generally travel longer distances, as evidenced by a higher median and greater variability compared to first-time customers. Overall, returning customers exhibit distinct patterns in age and flight distance, while delays are similarly distributed across both groups.
+
 
 ```{r}
 data_subset <- data %>%
@@ -876,7 +898,7 @@ ggplot(data_long, aes(x = Value, fill = Customer.Type)) +
   )
 ```
 
-Lorem Ipsum
+The two sets of histograms display the distribution of numeric variables related to customer satisfaction across two customer types: "First-time" and "Returning." Each variable, such as "Check.in.Service," "Flight.Distance," "Leg.Room.Service," and others, is rated on a scale (likely 0–5), and the counts for each rating are shown separately for the two customer types, with "Returning" customers represented in teal and "First-time" customers in pink. Across most variables, returning customers consistently dominate the counts, suggesting they are more frequent or engaged with the airline. Ratings of 4 and 5 tend to have higher counts for both groups in service-related categories like "Ease.of.Online.Booking," "Leg.Room.Service," and "Seat.Comfort," indicating general satisfaction. However, some variables like "Gate.Location" and "In.flight.Wifi.Service" show substantial variability, suggesting room for improvement in these areas. Overall, the histograms provide insights into customer preferences and satisfaction trends based on experience type.
 
 ### Association Between Two Categorical Variable
 
