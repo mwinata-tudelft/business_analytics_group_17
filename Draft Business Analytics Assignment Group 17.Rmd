@@ -80,11 +80,13 @@ Lorem IpsumBesides the Basic R Functions, this project uses multiple packages to
 * Data Cleaning and Preparation
 
 **dplyr** : used to filter rows, select columns, sort data, create new columns, and summarize data.
+
 **tidyr** : imported to be used to clean and tidy the data, such as reshaping the data from wide to long format.
 
 * Data Exploration
 
 **skimr** : designed to provide summary of statistical measures for each variables in data frames.
+
 **DataExplorer** : used to display comprehensive and convenient interface for data exploration and data visualization.
 
 * Data Transformation
@@ -92,13 +94,14 @@ Lorem IpsumBesides the Basic R Functions, this project uses multiple packages to
 * Data Visualization
 
 **ggplot2** : a package that is useful to visualize data in a more complex and customizable way compared to the basic R plotting functions.
+
 **corrplot** : used to visualize correlation matrix between two variables in a more visually appealing and informative way.
 
 * Data Modeling
 
 * Data Analysis
 
-Below we will find the commands to install and import the required libraries:
+Below we will find the commands to install the required libraries so that the code can run properly.The libraries only need to be imported only once, later we only need to call the necessary libraries when needed on the specific sections.
 
 ```{r}
 # Importing Library
@@ -902,98 +905,122 @@ The two sets of histograms display the distribution of numeric variables related
 
 ### Association Between Two Categorical Variable
 
+Recalling the Univariate Data Analysis, we will use five categories or variables that we deemed important as the base for further analysis, specifically to see the association between two categorical variables. These variables are distribution of gender, customer type, type of travel, class, and the disparity of numbers between satisfacted and unsatisfied passengers.
+
 ```{r}
 plot_bar(data,ncol=2)
 ```
-
-Lorem ipsum
+We will use the plot_bar function to visualize the association between these variables. For each of the following five sections, we take out one of the category and plot the association between each of the remaining four categories with the missing category. We start with creating the association between customer's satisfaction with the other four variables.
 
 ```{r}
 plot_bar(data,by='Satisfaction',ncol=2)
 ```
 
-Lorem ipsum
+From the univariate data distribution, we already know the numbers of satisfied and unsatisfied passengers is not equal with noticeable difference, with the majority of passengers being unsatisfied. So it is not surprising that regardless of the association between passengers' satisfaction with other categories, most graphs are showing the skew towards the neutral or dissatisfied category.
+
+However, it could be noticed that the distribution of satisfaction level across both genders are relatively equal, while the first time flyers are more likely to be unsatisfied rather than the frequent travelers. Business travelers also tend to be more satisfied than the economy class passengers. This is also the case for the business class passengers. We will see in the other section that passengers with business intention are more likely to fly on business class, so the correlation is consistent in the satisfaction level as well. *This is understandable, since airlines with business class are more likely to have extra services and better quality of basic services, which means that it is more likely to satisfy the passengers. (belum tau info ini mending dimasukin di sini atau bagian data analysis).* Hence, the focus on improving the satisfaction rate of passengers should be on the economy class passengers with leisure intention, especially those who are first time flyers.
 
 ```{r}
 plot_bar(data,by='Gender',ncol=2)
 ```
 
-Lorem ipsum
+In this section, we show the distribution of genders in four other categories, which is relatively balanced across all graphs. Hence, we can conclude that genders are not the deciding factor that we need to analyze further in the data analysis section, meaning that it is not important enough as a consideration point to improve the satisfaction rate.
 
 ```{r}
 plot_bar(data,by='Customer.Type',ncol=2)
 ```
 
-Lorem ipsum
+From the customer type distribution and association graphs, it can be noticed that the majority of first time passengers are flying economy class, and also more likely to have the less-favorable first imnpression towards their flying experience, which can be seen in its relation with satisfaction level.
 
 ```{r}
 plot_bar(data,by='Type.of.Travel',ncol=2)
 ```
 
-Lorem ipsum
+As we can see above, the majority of business travelers fly on the business class as well, and they are also more likely to be satisfied with their flying experience. This is consistent with our observation and discussion on the previous section. On the oppositem, travelers with personal reason, such as leisure, are more likely to fly on both of the economy classes and also less likely to be satisfied with their flying experience. 
 
 ```{r}
 plot_bar(data,by='Class',ncol=2)
 ```
 
-Lorem ipsum
+**Rencana hapus section ini karena dirasa ga nambah observasi apapun, TBD**
 
 ## Feature Engineering <a name="2.3"></a>
 
-We notice that the age distribution have high variation, therefore we try to create the age_group column
+We noticed that the age distribution have high variation, therefore we try to create the age_group column to divide the age group into four categories: children, youth, adult, and senior. This categorization is based on most of the division range used in a lot of transportation services across Europe. The age group is defined and plotted in R as follows:
 
 ```{r}
-data = data %>% mutate(Age_Range = if_else(Age <= 16,"Children",
-if_else(17 <= Age & Age <= 30,"Youth",
-if_else(30 < Age & Age <= 45,"Middle Aged","Old"))))
+data = data %>% mutate(Age_Range = if_else(Age <= 15,"Children",
+if_else(16 <= Age & Age <= 25,"Youth",
+if_else(26 < Age & Age <= 60,"Adult","Senior"))))
 ```
 
 ```{r}
 plot_bar(data$Age_Range,ncol=2,order_bar=T,ggtheme = theme_minimal())
 ```
 
-Now we can interpret from the age group that the largest segment of our customer is belong to old age group which is >45 years old.
+Now we can interpret from the age group that the largest segment of our customer is belong to adult age group. This is understandable since the adult group has the widest range of age compared to other age groups.
 
-Another data we can group is the flight distance which currently right skewed
+Another data we can group is the flight distance which currently right skewed. We will create new variables of flight distance by grouping them into three categories: short-haul, medium-haul, and long-haul. The division of distance is based on the limit defined by David W. Wragg in his book A Dictionary of Aviation:
+
+Short-haul Flights: 0 - 900 miles (0 - 1,450 km)
+
+Medium-haul Flights: 900 - 2,200 miles (1,450 - 3,540 km)
+
+Long-haul Flights: 2,200 miles (3,540 km) and above
 
 ```{r}
-data = data %>% mutate(Distance_Group = if_else(Flight.Distance < 1000,"Below 1000",
-if_else(1000 <= Flight.Distance & Flight.Distance <= 2000,"1000-2000",
-if_else(2000 < Flight.Distance & Flight.Distance < 3000,"2000-3000",
-if_else(3000 < Flight.Distance & Flight.Distance < 4000,"3000-4000","Above 4000")))))
+data = data %>% mutate(Distance_Group = if_else(Flight.Distance < 900,"Short-haul",
+if_else(900 <= Flight.Distance & Flight.Distance <= 2200,"Medium-haul","Long-haul")))
 ```
 
 ```{r}
-plot_bar(data$Distance_Group,ncol=2,order_bar=T,ggtheme = theme_minimal())
+
+plot_bar(data$Distance_Group, ncol = 2, order_bar = TRUE, ggtheme = theme_minimal())
+
 ```
 
-We can divide which customer experiencing delay or not based on departure delay and arrival delay
+We can divide which customer experiencing delay or not based on departure delay and arrival delay. United States' Federal Aviation Administration (FAA) defines a flight as delayed if it is 15 minutes or more behind schedule. We can use the following code to create the new variables to show the comparison of the numbers of flight with departure delay and arrival delay.
 
 ```{r}
-data$delay.status = ifelse(data$Departure.Delay > 0 | data$Arrival.Delay > 0, "Delayed", "On Time")
+data$departure.delay.status = ifelse(data$Departure.Delay > 15, "Delayed", "On Time")
+data$arrival.delay.status = ifelse(data$Arrival.Delay > 15, "Delayed", "On Time")
+
+plot_bar(data$departure.delay.status,ncol=2,order_bar=T,ggtheme = theme_minimal())
+plot_bar(data$arrival.delay.status,ncol=2,order_bar=T,ggtheme = theme_minimal())
+```
+
+Because both departure and arrival delay status are equally important, we can combine them into one variable called **delay.status** with OR operator is used to display the total number of delayed flights.
+
+```{r}
+data$delay.status = ifelse(data$Departure.Delay > 15 | data$Arrival.Delay > 15, "Delayed", "On-time")
 
 plot_bar(data$delay.status,ncol=2,order_bar=T,ggtheme = theme_minimal())
 ```
 
-We'll try to grouping the features into category of services that could be improved by the airline :
+Next, We group the features into category of services that could be improved by the airline:
 
-Flight General services : Food and Drink, In-flight Service
-Flight Experience : In Flight Wifi Service, In Flight Entertainment
-Digital services : Ease of Online Booking, Online Boarding
-Comfort services : Seat Comfort, Leg Room Service, Cleanliness
+**Flight General Service:** On-board Service, Food and Drink, In-flight Service
+
+**Flight Entertainment:** In Flight Wifi Service, In Flight Entertainment
+
+**Pre-flight Service:** Ease of Online Booking, Check-in Service, Online Boarding
+
+**Comfortability:** Seat Comfort, Leg Room Service, Cleanliness
 
 ```{r}
-data$Flight.Service = rowSums(data[,c('Food.and.Drink','In.flight.Service')],na.rm = TRUE)
+data$In.flight.service = rowSums(data[,c('On.board.Service','Food.and.Drink','In.flight.Service')],na.rm = TRUE)
 data$Flight.Entertainment = rowSums(data[,c('In.flight.Wifi.Service','In.flight.Entertainment')],na.rm = TRUE)
-data$Digital.Service = rowSums(data[,c('Ease.of.Online.Booking','Online.Boarding')],na.rm = TRUE)
-data$Comfort.Service = rowSums(data[,c('Seat.Comfort','Leg.Room.Service','Cleanliness')],na.rm = TRUE)
+data$Pre.flight.service = rowSums(data[,c('Ease.of.Online.Booking','Check.in.Service','Online.Boarding')],na.rm = TRUE)
+data$Comfortability = rowSums(data[,c('Seat.Comfort','Leg.Room.Service','Cleanliness')],na.rm = TRUE)
 
-plot_histogram(data[ , c("Flight.Service", "Flight.Entertainment", "Digital.Service", "Comfort.Service")], ncol=2,ggtheme = theme_minimal())
+plot_histogram(data[ , c("In.flight.service", "Flight.Entertainment", "Pre.flight.service", "Comfortability")], ncol=2,ggtheme = theme_minimal())
 ```
 
-Lorem Ipsum
+Combining several category of services into one variable is useful to see the overall satisfaction of the airline services in numerous area of improvement. For example, as we can see above that in general the passengers found that the flights they are taking are relatively comfortable. However, the pre-flight service and flight entertainment category received mixed reviews and can be considered as an improvement area for the airline, where further analysis could be done to see which of the element of those services are the most dissatisfying for the passengers.
 
-## Data Tranformation <a name="2.4"></a>
+**DARI FEATURE ENGINEERING KE SECTION SELANJUTNYA HARUS CROSSCHECK, BEBERAPA VARIABEL BARU BERUBAH RANGE DAN PENAMAANNYA**
+
+## Data Transformation <a name="2.4"></a>
 
 ```{r}
 plot_histogram(data, ncol=2,ggtheme = theme_minimal())
