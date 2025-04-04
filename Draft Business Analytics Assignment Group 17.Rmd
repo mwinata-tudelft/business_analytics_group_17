@@ -1108,7 +1108,8 @@ According to the graphic above, we can see that:
 
 ```{r}
 data_subset <- data %>%
-  select(Satisfaction, Flight.Service, Flight.Entertainment, Digital.Service, Comfort.Service)
+  select(Satisfaction, In.flight.service, Flight.Entertainment, Pre.flight.service, Comfortability)
+
 
 # Convert to long format
 data_long <- pivot_longer(data_subset, -Satisfaction, names_to = "Variable", values_to = "Value")
@@ -1346,10 +1347,10 @@ top_vars <- apply(abs(loadings[, 1:12]), 2, function(x) names(sort(x, decreasing
 print(top_vars)
 ```
 PC1 – In-Flight Amenities & Comfort
-Driven by Flight.Entertainment, Comfort.Service, In.flight.Entertainment, Flight.Service, and Cleanliness. This component captures the overall in-flight experience focused on comfort and entertainment.
+Driven by Flight.Entertainment, Comfortability, In.flight.Entertainment, In.flight.service, and Cleanliness. This component captures the overall in-flight experience focused on comfort and entertainment.
 
 PC2 – Digital & Booking Experience
-Influenced by Ease.of.Online.Booking, Digital.Service, and In.flight.Wifi.Service. It represents passengers’ interaction with digital services before and during the flight.
+Influenced by Ease.of.Online.Booking, Pre.flight.service, and In.flight.Wifi.Service. It represents passengers’ interaction with digital services before and during the flight.
 
 PC3 – Operational Onboard Service
 Dominated by In.flight.Service, Baggage.Handling, and Seat.Comfort, this component reflects service reliability and seat-related comfort during the flight.
@@ -1370,10 +1371,10 @@ PC8 – Age-Based Travel Patterns
 Mainly driven by Age, Flight.Distance, and Check.in.Service, this component shows how age may influence travel experience and expectations.
 
 PC9 – Comfort in Long Trips
-Includes Leg.Room.Service, Flight.Distance, and Comfort.Service, highlighting comfort needs for longer or more frequent flights.
+Includes Leg.Room.Service, Flight.Distance, and Comfortability, highlighting comfort needs for longer or more frequent flights.
 
 PC10 – In-Flight Consumables
-Composed of On.board.Service, Flight.Service, and Food.and.Drink, focusing on passengers’ satisfaction with in-flight consumables.
+Composed of On.board.Service, In.flight.service, and Food.and.Drink, focusing on passengers’ satisfaction with in-flight consumables.
 
 PC11 – Delays & Terminal Logistics
 Influenced by Arrival.Delay, Departure.Delay, and Gate.Location, this component represents disruptions tied to flight and gate logistics.
@@ -1419,7 +1420,12 @@ Lorem Ipsum
 
 ```{r}
 # Create copy of dataset for the purpose of classification only, convert to factor
-data_clsf <- as.data.frame(lapply(data, as.factor))
+data_clsf <- data %>%
+      mutate(across(-c(ID, Age, Flight.Distance, Departure.Delay, Arrival.Delay, 
+                   Departure.Delay.Duration,
+                   Arrival.Delay.Duration, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+                   Departure.Delay.Duration.log, Departure.Delay.Duration.log.z, Flight.Distance.log,
+                   Flight.Distance.log.z, Age.log, Age.log.z), as.factor))
 
 # Encode Target Variable
 data_clsf$Satisfaction <- ifelse(data_clsf$Satisfaction=="Satisfied",1,0)
@@ -1652,7 +1658,7 @@ Accuracy increase 95.4%
 **Using Ranger to implement random forest to the database with high cardinality**
 
 ```{r}
-install.packages("ranger")
+# install.packages("ranger")
 library(ranger)
 ```
 
@@ -2106,8 +2112,8 @@ p-value < 0.05
 training_signif <- training %>% subset(select = -c(Departure.Delay, Arrival.Delay, Flight.Distance, 
                                                   In.flight.Wifi.Service, Food.and.Drink, 
                                                   In.flight.Entertainment, Age_Range, Distance_Group,
-                                                  Flight.Service, Flight.Entertainment, 
-                                                  Comfort.Service, Digital.Service, 
+                                                  In.flight.service, Flight.Entertainment, 
+                                                  Comfortability, Pre.flight.service, 
                                                   Flight.Distance.log.z, Age.log.z))
 
 model_log_signif <- glm(Satisfaction ~., 
@@ -2158,18 +2164,6 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, testing$Satisfaction)
 ```
 
-
-
-
-```{r}
-print("Confusion matrix for Logistic Regression")
-CrossTable(testing$Satisfaction, pred_class,
-           prop.chisq = FALSE,
-           prop.c = FALSE,
-           prop.r = FALSE,
-           prop.t = FALSE,
-           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
-```
 
 Performance not increase significantly
 
