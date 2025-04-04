@@ -1200,14 +1200,973 @@ Lorem Ipsum
 
 Lorem Ipsum
 
-## Modeling preparation <a name="3.1"></a>
+## Dimension Reduction <a name="3.1"></a>
+
+PCA can be used to reduce the dimensionality of the dataset while ensuring that we dont lose too much information
+
+**PCA with Numeric Variable Only**
+
+```{r}
+# Use the standardized data
+data_standardized <- data %>%
+  select(-c(ID, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+            Departure.Delay.Duration.log, Departure.Delay.Duration.log.z, Flight.Distance.log,
+            Flight.Distance.log.z,Departure.Delay.Duration, Arrival.Delay.Duration,
+            Age.log, Age.log.z)) %>% 
+  select(where(is.numeric)) %>%
+  scale(center = TRUE, scale = TRUE)
+
+results <- prcomp(data_standardized)
+summary(results)
+```
+
+Cummulative value already achieved 90% using 12 Principal Components as below
+
+```{r}
+results$rotation[ , c(1:2) ]
+```
+To focus on variable with high loadings, we set the threshold of 0.2 and only select the first principal component.
+
+```{r}
+loadings <- data.frame(results$rotation)
+threshold <- 0.20
+indices <- abs(loadings$PC1) >= threshold
+data.frame(variable = rownames(loadings)[indices], 
+           loading = loadings$PC1[indices])
+```
 
 Lorem Ipsum
+
+```{r}
+loadings_df <- data.frame(
+  variable = rownames(loadings)[indices],
+  loading = loadings$PC1[indices]
+)
+
+# Plot
+ggplot(loadings_df, aes(x = reorder(variable, -loading), y = loading, fill = loading > 0)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(title = "Top Loadings for PC1",
+       x = "Variable",
+       y = "Loading Value") +
+  scale_fill_manual(values = c("steelblue", "tomato")) +
+  theme_minimal()
+```
+
+Analyzing top contributor in PC1-PC12
+
+```{r}
+loadings <- as.data.frame(results$rotation)
+loadings$Variable <- rownames(loadings)
+
+# Top contributors for PC1–PC12
+top_vars <- apply(abs(loadings[, 1:12]), 2, function(x) names(sort(x, decreasing = TRUE)[1:5]))
+print(top_vars)
+```
+PC1 – In-Flight Amenities & Comfort
+Driven by Flight.Entertainment, Comfort.Service, In.flight.Entertainment, Flight.Service, and Cleanliness. This component captures the overall in-flight experience focused on comfort and entertainment.
+
+PC2 – Digital & Booking Experience
+Influenced by Ease.of.Online.Booking, Digital.Service, and In.flight.Wifi.Service. It represents passengers’ interaction with digital services before and during the flight.
+
+PC3 – Operational Onboard Service
+Dominated by In.flight.Service, Baggage.Handling, and Seat.Comfort, this component reflects service reliability and seat-related comfort during the flight.
+
+PC4 – Flight Timing & Boarding
+Characterized by Arrival.Delay, Departure.Delay, and Online.Boarding. It relates to punctuality and boarding process efficiency.
+
+PC5 – Passenger Profile & Journey
+Shaped by Online.Boarding, Flight.Distance, Age, and Gate.Location, this component reflects demographic and journey-specific traits.
+
+PC6 – Schedule & Gate Convenience
+Led by Departure.and.Arrival.Time.Convenience, Gate.Location, and Age, this component captures how convenient flight times and gate accessibility are for passengers.
+
+PC7 – Pre-Flight & Cabin Space
+Defined by Check.in.Service, Leg.Room.Service, and Flight.Distance, combining service before boarding with cabin comfort.
+
+PC8 – Age-Based Travel Patterns
+Mainly driven by Age, Flight.Distance, and Check.in.Service, this component shows how age may influence travel experience and expectations.
+
+PC9 – Comfort in Long Trips
+Includes Leg.Room.Service, Flight.Distance, and Comfort.Service, highlighting comfort needs for longer or more frequent flights.
+
+PC10 – In-Flight Consumables
+Composed of On.board.Service, Flight.Service, and Food.and.Drink, focusing on passengers’ satisfaction with in-flight consumables.
+
+PC11 – Delays & Terminal Logistics
+Influenced by Arrival.Delay, Departure.Delay, and Gate.Location, this component represents disruptions tied to flight and gate logistics.
+
+PC12 – Check-In & Time Coordination
+Driven by Departure.and.Arrival.Time.Convenience and Check.in.Service, highlighting the efficiency of early-stage travel processes.
+
+```{r}
+screeplot(results, type = "lines")
+```
+
+Lorem Ipsum
+
+**PCA with One Hot Encoding**
+
+```{r}
+library(caret)
+
+# Use the standardized data
+data_standardized <- data %>%
+  select(-c(ID, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+            Departure.Delay.Duration.log, Departure.Delay.Duration.log.z, Flight.Distance.log,
+            Flight.Distance.log.z,Departure.Delay.Duration, Arrival.Delay.Duration,
+            Age.log, Age.log.z))
+
+dummies <- dummyVars(~ ., data = data_standardized)
+data_encoded <- predict(dummies, newdata = data_standardized)
+
+data_encoded_standardized <- scale(data_encoded, center = TRUE, scale = TRUE)
+
+results <- prcomp(data_encoded_standardized)
+summary(results)
+```
+
+When PCA was applied to numeric-only variables, the first 12 components explained over 90% of the variance, indicating strong inter-variable correlation and compact data structure.
+However, after including one-hot encoded categorical variables, the number of components required to achieve the same level of variance increased to 20. This suggests that categorical variables contribute additional but more dispersed variance, requiring more dimensions to capture the overall structure.
 
 ## Classification Method <a name="3.2"></a>
 
 Lorem Ipsum
 
+### Model Preparation <a name="3.2.1"></a>
+
+```{r}
+# Create copy of dataset for the purpose of classification only, convert to factor
+data_clsf <- as.data.frame(lapply(data, as.factor))
+
+# Encode Target Variable
+data_clsf$Satisfaction <- ifelse(data_clsf$Satisfaction=="Satisfied",1,0)
+data_clsf$Satisfaction <- factor(data_clsf$Satisfaction, levels = c(0, 1))
+
+# For experiment, create subset of untransformed data, data with log, and data with normalization
+data_clsf_ori <- data_clsf %>%
+  select(-c(ID, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+            Departure.Delay.Duration.log, Departure.Delay.Duration.log.z, Flight.Distance.log,
+            Flight.Distance.log.z, Age.log, Age.log.z)) 
+
+data_clsf_log <- data_clsf %>%
+  select(-c(ID, Arrival.Delay.Duration.log.z, Departure.Delay.Duration.log.z, Flight.Distance.log.z,
+            Departure.Delay.Duration, Arrival.Delay.Duration, Age.log.z, Arrival.Delay.Duration,
+            Departure.Delay.Duration, Flight.Distance, Age)) 
+
+data_clsf_norm <- data_clsf %>%
+  select(-c(ID, Arrival.Delay.Duration.log,
+            Departure.Delay.Duration.log, Flight.Distance.log,
+            Age.log, Arrival.Delay.Duration,
+            Departure.Delay.Duration, Flight.Distance, Age)) 
+```
+
+Lorem Ipsum
+
+**Start with Untransformed Dataset**
+
+**Split Dataset Training Testing**
+
+```{r}
+set.seed(46748717)
+
+library (rsample)
+
+proportion <-  0.7
+split <- initial_split(data_clsf_ori, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+```
+
+Lorem Ipsum
+
+### Training a decision tree model on the data <a name="3.2.2"></a>
+
+```{r}
+model <- C50::C5.0(Satisfaction ~., 
+                   data = training)
+summary(model)
+```
+
+Lorem Ipsum
+
+```{r}
+print("Confusion matrix based on testing data")
+pred.test <- predict(model, testing)
+gmodels::CrossTable(testing$Satisfaction, pred.test,
+                    prop.chisq = FALSE,
+                    prop.c = FALSE,
+                    prop.r = FALSE,
+                    prop.t = FALSE,
+                    dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+
+
+```{r}
+# Calculating Accuracy
+
+accuracy = (21498 + 15676) / 38964
+print(accuracy)
+```
+
+Accuracy already high with 95.4%
+
+**Try with dataset that already log transformed**
+
+```{r}
+set.seed(46748717)
+
+library (rsample)
+
+proportion <-  0.7
+split <- initial_split(data_clsf_log, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model <- C50::C5.0(Satisfaction ~., 
+                   data = training)
+summary(model)
+
+print("Confusion matrix based on testing data")
+pred.test <- predict(model, testing)
+gmodels::CrossTable(testing$Satisfaction, pred.test,
+                    prop.chisq = FALSE,
+                    prop.c = FALSE,
+                    prop.r = FALSE,
+                    prop.t = FALSE,
+                    dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+The result is almost identical since the algorithm determine the transformed data is not have significant importance. Therefore the improvement will focus on tuning the parameter of the model.
+
+### Model Improvement <a name="3.3.3"></a>
+
+**Boosting**
+
+Lorem Ipsum
+
+
+```{r}
+library(C50)
+library(gmodels)
+
+set.seed(46748717)
+
+proportion <-  0.7
+split <- initial_split(data_clsf_ori, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model_boost <- C5.0(Satisfaction ~.,
+                    data = training,
+                    trials = 10)
+
+# Predicting on the testing data
+print("Confusion matrix based on testing data (boosting)")
+pred.test <- predict(model_boost, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+
+```{r}
+# Calculating Accuracy with Booster
+
+accuracy = (21229 + 15816) / 38964
+print(accuracy)
+```
+
+Accuracy didnt increase significant
+
+Lorem Ipsum
+
+**Assigning Cost to Mistake**
+
+More costly to predict dissatisfied customer satisfied, cost higher in False Positive
+
+```{r}
+# Specifying the cost matrix
+cost.matrix <- matrix(c(NA, 1,  # FN costs of predicting "Disatisfied" whereas actual value is "Satisfied"
+                        2, NA), # FP costs of predicting "Satisfied" whereas actual value is "Disatisfeid"
+                      nrow = 2, 
+                      ncol = 2,
+                      byrow = FALSE)
+rownames(cost.matrix) <- colnames(cost.matrix) <- c(1, 0)
+
+# Estimating the model with the cost matrix
+model.cost <- C5.0(Satisfaction ~., 
+              data = training,
+              costs = cost.matrix)
+
+print("Confusion matrix based on testing data (costs")
+pred.test <- predict(model.cost, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r}
+# Calculating Accuracy with Booster
+
+accuracy = (21755  + 15087 ) / 38964
+print(accuracy)
+```
+
+Accuracy decrease slightly
+
+```{r}
+# Calculating Decrease in False Positive
+
+decrease_fp = (495   - 238  ) / 495
+print(decrease_fp)
+```
+
+False positive decrease by 51.9%, from 495 to 238
+
+**Random Forest**
+
+```{r random forest}
+data_randfor <- data_clsf_ori %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age)) 
+
+proportion <-  0.7
+split <- initial_split(data_randfor, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.forest <- randomForest::randomForest(Satisfaction ~., 
+                                           data = training,
+                                           ntree = 500, # how many trees should be grown?
+                                           mtry = 2, # how many variables to sample at each split?
+                                           replace = TRUE,
+                                           importance = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix based on testing data (costs")
+pred.test <- predict(model.forest, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r}
+# Calculating Accuracy with Random Forest
+
+accuracy = (21410   + 15793  ) / 38964
+print(accuracy)
+```
+
+Accuracy increase 95.4%
+
+**Using Ranger to implement random forest to the database with high cardinality**
+
+```{r}
+install.packages("ranger")
+library(ranger)
+```
+
+```{r}
+proportion <-  0.7
+split <- initial_split(data_clsf_ori, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.ranger <- ranger(Satisfaction ~., 
+                       data = training,
+                       num.trees = 500, # how many trees should be grown?
+                       mtry = 2, # how many variables to sample at each split?
+                       replace = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix based on testing data (costs")
+pred.test <- predict(model.ranger, testing)$predictions
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r}
+# Calculating Accuracy with Ranger
+
+accuracy = (21412   + 15739  ) / 38964
+print(accuracy)
+```
+
+Accuracy didnt increase significant
+
+### Variable Importance <a name="3.4"></a>
+
+```{r}
+library(randomForest)
+
+importance <- importance(model.forest)
+print(importance)
+```
+
+Plot the importance
+
+```{r varimp-plot, fig.width=10, fig.height=8}
+varImpPlot(model.forest)
+```
+
+Lorem Ipsum
+
+High satisfaction on :
+- Type of travel : Business
+- Class : Business
+- Customer Type : Returning
+
+Type of Travel : Business
+
+```{r fig.width=10, fig.height=8}
+data_randfor <- data_clsf_ori[ which(data_clsf_ori$Type.of.Travel == "Business"), ]
+data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
+                                           Flight.Distance, Age, Type.of.Travel)) 
+
+proportion <-  0.7
+split <- initial_split(data_randfor, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.forest <- randomForest::randomForest(Satisfaction ~., 
+                                           data = training,
+                                           ntree = 500, # how many trees should be grown?
+                                           mtry = 2, # how many variables to sample at each split?
+                                           replace = TRUE,
+                                           importance = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix for Random Forest Type of Travel Business")
+pred.test <- predict(model.forest, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+
+```
+
+```{r fig.width=10, fig.height=8}
+varImpPlot(model.forest)
+```
+
+Lorem Ipsum
+
+Class : Business
+
+```{r}
+data_randfor <- data_clsf_ori[ which(data_clsf_ori$Class == "Business"), ]
+data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
+                                           Flight.Distance, Age, Class)) 
+
+proportion <-  0.7
+split <- initial_split(data_randfor, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.forest <- randomForest::randomForest(Satisfaction ~., 
+                                           data = training,
+                                           ntree = 500, # how many trees should be grown?
+                                           mtry = 2, # how many variables to sample at each split?
+                                           replace = TRUE,
+                                           importance = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix for Random Forest Class Business")
+pred.test <- predict(model.forest, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r fig.width=10, fig.height=8}
+varImpPlot(model.forest)
+```
+
+Lorem Ipsum
+
+Customer Type : Returning
+
+```{r fig.width=10, fig.height=8}
+data_randfor <- data_clsf_ori[ which(data_clsf_ori$Customer.Type == "Returning"), ]
+data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
+                                           Flight.Distance, Age, Customer.Type)) 
+
+proportion <-  0.7
+split <- initial_split(data_randfor, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.forest <- randomForest::randomForest(Satisfaction ~., 
+                                           data = training,
+                                           ntree = 500, # how many trees should be grown?
+                                           mtry = 2, # how many variables to sample at each split?
+                                           replace = TRUE,
+                                           importance = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix for Random Forest Customer Type Returning")
+pred.test <- predict(model.forest, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r fig.width=10, fig.height=8}
+varImpPlot(model.forest)
+```
+
+Lorem Ipsum
+
+Low Satisfaction on :
+- Type of Travel Personal
+- Class Economy and Economy Plus
+- Customer Type First Time
+
+Type of travel personal
+
+```{r}
+data_randfor <- data_clsf_ori[ which(data_clsf_ori$Type.of.Travel == "Personal"), ]
+data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
+                                           Flight.Distance, Age, Type.of.Travel)) 
+
+proportion <-  0.7
+split <- initial_split(data_randfor, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.forest <- randomForest::randomForest(Satisfaction ~., 
+                                           data = training,
+                                           ntree = 500, # how many trees should be grown?
+                                           mtry = 2, # how many variables to sample at each split?
+                                           replace = TRUE,
+                                           importance = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix for Random Forest Type of Travel Personal")
+pred.test <- predict(model.forest, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r fig.width=10, fig.height=8}
+varImpPlot(model.forest)
+```
+
+Lorem Ipsum
+
+Class Economy and Economy Plus
+
+```{r}
+data_randfor <- data_clsf_ori[ which(data_clsf_ori$Class %in% c("Economy", "Economy Plus")), ]
+data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
+                                           Flight.Distance, Age, Class)) 
+
+proportion <-  0.7
+split <- initial_split(data_randfor, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.forest <- randomForest::randomForest(Satisfaction ~., 
+                                           data = training,
+                                           ntree = 500, # how many trees should be grown?
+                                           mtry = 2, # how many variables to sample at each split?
+                                           replace = TRUE,
+                                           importance = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix for Random Forest Type of Class Economy and Economy Plus")
+pred.test <- predict(model.forest, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r fig.width=10, fig.height=8}
+varImpPlot(model.forest)
+```
+
+Lorem Ipsum
+
+
+Customer Type First Time
+
+```{r}
+data_randfor <- data_clsf_ori[ which(data_clsf_ori$Customer.Type %in% "First-time"), ]
+data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
+                                           Flight.Distance, Age, Customer.Type)) 
+
+proportion <-  0.7
+split <- initial_split(data_randfor, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+
+model.forest <- randomForest::randomForest(Satisfaction ~., 
+                                           data = training,
+                                           ntree = 500, # how many trees should be grown?
+                                           mtry = 2, # how many variables to sample at each split?
+                                           replace = TRUE,
+                                           importance = TRUE) # sampling of cases with or without replacement?
+
+print("Confusion matrix for Random Forest Type of Customer Type First Time")
+pred.test <- predict(model.forest, testing)
+CrossTable(testing$Satisfaction, pred.test,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+```{r fig.width=10, fig.height=8}
+varImpPlot(model.forest)
+```
+
+Lorem Ipsum
+
 ## Logistic Regression <a name="3.3"></a>
+
+Why Logistic Regression?
+
+### Model Preparation <a name="3.3.1"></a>
+
+```{r}
+# Split training and testing data
+
+set.seed(46748756)
+
+library (rsample)
+
+# Create copy of dataset for the purpose of classification only, convert to factor
+data_logreg <- data %>%
+  mutate(across(-c(ID, Age, Flight.Distance, Departure.Delay, Arrival.Delay, 
+                   Departure.Delay.Duration,
+                   Arrival.Delay.Duration, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+                   Departure.Delay.Duration.log, Departure.Delay.Duration.log.z, Flight.Distance.log,
+                   Flight.Distance.log.z, Age.log, Age.log.z), as.factor)) %>% subset(
+                     select = -c(ID, Departure.Delay.Duration,
+                   Arrival.Delay.Duration, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+                   Departure.Delay.Duration.log, Departure.Delay.Duration.log.z)
+                     )
+
+# Cleaning column from zero score that only exist in small quantity (most of them only have 1 data, cant be splitted to training and testing)
+cols_to_clean <- c("On.board.Service", "Check.in.Service", "Seat.Comfort",
+                   "In.flight.Service", "Gate.Location", "Cleanliness", 
+                   "In.flight.Entertainment")
+
+for (col in cols_to_clean) {
+  data_logreg <- subset(data_logreg, data_logreg[[col]] != "0")
+  data_logreg[[col]] <- droplevels(data_logreg[[col]])
+}
+
+proportion <-  0.7
+split <- initial_split(data_logreg, prop = proportion)
+training <- training(split)
+testing <- testing(split)
+```
+
+Lorem Ipsum
+
+### Training Logistic Regression Model <a name="3.3.2"></a>
+
+```{r}
+# Using all data
+model_log <- glm(Satisfaction ~., 
+               data = training, family = "binomial")
+
+summary(model_log)
+```
+
+Lorem Ipsum
+
+### Interpretation of the Model <a name="3.3.3"></a>
+
+Lorem Ipsum
+
+**Interpret the coefficient**
+
+```{r}
+exp(coef(model_log))
+```
+
+Lorem Ipsum
+
+**Visualize the coefficient**
+
+```{r fig.width=10, fig.height=20}
+coefs <- summary(model_log)$coefficients
+coef_df <- data.frame(
+  Variable = rownames(coefs),
+  Estimate = coefs[, "Estimate"],
+  StdError = coefs[, "Std. Error"],
+  p_value = coefs[, "Pr(>|z|)"]
+)
+
+# Remove intercept for clarity
+coef_df <- coef_df[coef_df$Variable != "(Intercept)", ]
+
+# Plot using ggplot2
+library(ggplot2)
+
+ggplot(coef_df, aes(x = reorder(Variable, Estimate), y = Estimate)) +
+  geom_point(color = "darkblue") +
+  geom_errorbar(aes(ymin = Estimate - 1.96 * StdError,
+                    ymax = Estimate + 1.96 * StdError), width = 0.2) +
+  coord_flip() +
+  labs(title = "Logistic Regression Coefficients",
+       x = "Predictor",
+       y = "Coefficient Estimate (log-odds)") +
+  theme_minimal()
+```
+
+Lorem Ipsum
+
+**Interpreting Z Value**
+
+```{r}
+model_summary <- summary(model_log)
+
+# Extract z-values and convert to data frame
+z_df <- data.frame(
+  Variable = rownames(model_summary$coefficients),
+  Z_value = model_summary$coefficients[, "z value"]
+)
+
+# Remove intercept
+z_df <- subset(z_df, Variable != "(Intercept)")
+
+z_df
+```
+
+```{r  fig.width=10, fig.height=20}
+# Plot using ggplot2
+library(ggplot2)
+
+ggplot(z_df, aes(x = reorder(Variable, abs(Z_value)), y = Z_value)) +
+  geom_col(fill = "steelblue") +
+  geom_hline(yintercept = c(-1.96, 1.96), linetype = "dashed", color = "red") + # 95% significance threshold
+  coord_flip() +
+  labs(title = "Z-values from Logistic Regression",
+       x = "Predictor Variable",
+       y = "Z-value (Wald Statistic)") +
+  theme_minimal()
+```
+
+Lorem Ipsum
+
+### Model Evaluation <a name="3.3.4"></a>
+
+```{r}
+pred.test <- predict(model_log, newdata = testing, type = "response")
+
+# Convert to class labels
+pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
+
+confusionMatrix(pred.test.result, testing$Satisfaction)
+```
+
+Accuracy 93.7% with sensitivity 95.2% and specificy 91.9%
+
+**Interpret ROC and AUC**
+
+```{r}
+library(pROC)
+
+# ROC curve and AUC
+roc_obj <- roc(testing$Satisfaction, pred.test)
+plot(roc_obj, col = "blue", main = "ROC Curve")
+auc(roc_obj)
+```
+
+Lorem Ipsum
+
+```{r}
+auc(roc_obj)
+```
+
+Lorem Ipsum
+
+```{r}
+plot(model_log)
+```
+
+Lorem Ipsum
+
+### Improving Model Performance
+
+**Using significant variables only**
+
+p-value < 0.05
+
+```{r}
+training_signif <- training %>% subset(select = -c(Departure.Delay, Arrival.Delay, Flight.Distance, 
+                                                  In.flight.Wifi.Service, Food.and.Drink, 
+                                                  In.flight.Entertainment, Age_Range, Distance_Group,
+                                                  Flight.Service, Flight.Entertainment, 
+                                                  Comfort.Service, Digital.Service, 
+                                                  Flight.Distance.log.z, Age.log.z))
+
+model_log_signif <- glm(Satisfaction ~., 
+               data = training_signif, family = "binomial")
+
+summary(model_log_signif)
+
+```
+
+AIC increase to 44749
+
+
+```{r}
+pred.test <- predict(model_log_signif, newdata = testing, type = "response")
+
+# Convert to class labels
+pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
+
+confusionMatrix(pred.test.result, testing$Satisfaction)
+```
+
+The accuracy decrease
+
+ANOVA test :
+
+```{r}
+anova(model_log, model_log_signif, test="Chisq")
+```
+
+Model full siginificantly better than model with significant only
+
+**Adjusting Threshold**
+
+```{r}
+coords(roc_obj, "best", ret = "threshold")
+```
+
+```{r}
+pred.test <- predict(model_log, newdata = testing, type = "response")
+
+# Convert to class labels
+pred.test.result <- ifelse(pred.test > 0.5012364, "Satisfied", "Neutral or Dissatisfied")
+testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
+
+confusionMatrix(pred.test.result, testing$Satisfaction)
+```
+
+
+
+
+```{r}
+print("Confusion matrix for Logistic Regression")
+CrossTable(testing$Satisfaction, pred_class,
+           prop.chisq = FALSE,
+           prop.c = FALSE,
+           prop.r = FALSE,
+           prop.t = FALSE,
+           dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+```
+
+Performance not increase significantly
+
+**Dimensionality Reduction**
+
+```{r}
+training_pca <- training %>%
+  mutate(across(everything(), ~ if (all(!is.na(as.numeric(as.character(.x))))) 
+    as.numeric(as.character(.x)) else .x)) %>%
+  select(where(is.numeric)) %>%
+  scale(center = TRUE, scale = TRUE)
+
+pca_results <- prcomp(training_pca)
+summary(pca_results)
+```
+
+12 var already achieve 91%
+
+```{r}
+pca_data <- as.data.frame(pca_results$x[, 1:12])
+pca_data$Satisfaction <- training$Satisfaction
+
+model_log_pca <- glm(Satisfaction ~., 
+               data = pca_data, family = "binomial")
+
+summary(model_log_pca)
+```
+
+AIC higher 80736
+
+```{r}
+# 1. Convert test data to numeric and scale
+test_pca_scaled <- testing %>%
+  mutate(across(everything(), ~ if (all(!is.na(as.numeric(as.character(.x))))) 
+    as.numeric(as.character(.x)) else .x)) %>%
+  select(where(is.numeric)) %>%
+  scale(center = attr(training_pca, "scaled:center"), 
+        scale = attr(training_pca, "scaled:scale"))  # Use training scale
+
+# 2. Apply PCA transformation
+test_pca <- as.data.frame(predict(pca_results, newdata = test_pca_scaled)[, 1:12])
+
+# 3. Add target variable
+test_pca$Satisfaction <- testing$Satisfaction
+
+# 4. Predict using the model trained on PCA components
+pred.test <- predict(model_log_pca, newdata = test_pca, type = "response")
+
+# Convert to class labels
+pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
+
+confusionMatrix(pred.test.result, testing$Satisfaction)
+```
+
+Accuracy decrease using PCA
+
+# Interpretation <a name="4"></a>
+
+Lorem Ipsum
+
+## Result Visualization <a name="4.1"></a>
+
+Lorem Ipsum
+
+## Recommendation <a name="4.2"></a>
+
+Lorem Ipsum
+
+## Further Improvement for Better Recommendation <a name="4.3"></a>
+
+Lorem Ipsum
+
+## Conclusion & Limitations <a name="4.4"></a>
+
+Lorem Ipsum
+
+## References <a name=""></a>
 
 Lorem Ipsum
