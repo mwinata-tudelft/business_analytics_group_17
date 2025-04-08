@@ -338,6 +338,8 @@ From the visualizations above, it is not immediately clear which variables may b
 
 ### Association Between Two Numerical Variable
 
+Now we will analyze the association between two numerical variables. We will use the `corrplot` package to visualize the correlation matrix of the numerical variables in the dataset. The correlation matrix will help us identify any strong correlations between the numerical variables.
+
 ```{r corrplot, fig.width=14, fig.height=12}
 numeric_data <- data[sapply(data, is.numeric)]
 numeric_data <- na.omit(numeric_data)
@@ -361,7 +363,7 @@ corrplot(cor_matrix,
          diag = FALSE)
 ```
 
-Lorem Ipsum
+Then we will filter the correlation matrix to find strong correlations (greater than 0.5 or less than -0.5) between numerical variables.
 
 ```{r}
 # Discover strong correlation
@@ -375,7 +377,7 @@ print(filtered)
 From the graph, we can see that there are some variables that have a strong correlation with each other, which is Seat Comfort, Leg Room Service, Cleanliness, Food & Drink, and In-flight Service exhibit strong positive correlations with each other. This suggests that customers who rate one aspect of the service highly tend to rate others positively as well. Furthermore, A high correlation between Departure Delay and Arrival Delay indicates that flights that depart late are also likely to arrive late. Other numerical factors such as Flight Distance may have weaker correlations with customer satisfaction, indicating that distance alone is not a major factor in satisfaction levels.
 
 **In-flight Service vs On-board Service (in %)**
-
+After we have analyzed the correlation between numerical variables, we will now analyze the association between categorical variables. We will use a heatmap to visualize the association between two categorical variables. The heatmap will show the percentage of each combination of ratings for the two variables.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Service, data$On.board.Service))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -396,6 +398,7 @@ The heatmap above shows a strong positive correlation between In-flight Service 
 
 **In-flight Service vs Food and Drink (in %)**
 
+Now we will analyze the association between In-flight Service and Food and Drink with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Food.and.Drink))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -416,6 +419,7 @@ From the heatmap above, we can see that there is a strong positive correlation b
 
 **In-flight Entertainment vs Cleanliness (in %)**
 
+Then, we will analyze the association between In-flight Entertainment and Cleanliness with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Cleanliness))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -436,6 +440,7 @@ We can see from the heatmap above that there is a positive correlation between I
 
 **In-flight Entertainment vs Seat Comfort (in %)**
 
+Next,we analyze the In-flight Entertainment and Seat Comfort with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Seat.Comfort))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -472,6 +477,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
 
 **Food and Drink vs Seat Comfront (in %)**
 
+Now we will analyze the association between Food and Drink and Seat Comfort with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$Food.and.Drink, data$Seat.Comfort))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -492,6 +498,7 @@ This heatmap illustrates a positive correlation between Food and Drink and Seat 
 
 **Cleanliness vs Seat Comfort (in %)**
 
+Afterwards, we will analyze the association between Cleanliness and Seat Comfort.
 ```{r}
 count_data <- as.data.frame(table(data$Cleanliness, data$Seat.Comfort))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -512,6 +519,7 @@ This heatmap shows a positive correlation between Cleanliness and Seat Comfort. 
 
 **In-Flight Wifi Service vs Ease of Online Booking (in %)**
 
+Next, we will analyze the association between In-flight Wifi Service and Ease of Online Booking.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Wifi.Service, data$Ease.of.Online.Booking))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -531,6 +539,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
 This heatmap shows a positive correlation between In-flight Wifi Service and Ease of Online Booking. The most common rating pair is (2,3) at 18.1%, closely followed by (1,2) at 18% and (1,1) at 12.5%, suggesting that many passengers who rated WiFi service poorly also found online booking less convenient. Interestingly, higher ratings for online booking (4-5) are associated with mixed ratings for WiFi, with 8.1% rating both as (5,5). This pattern implies that while passengers may find booking easy, WiFi service still receives moderate to low ratings.
 
 **Flight Distance vs Departure Delay**
+Next, we will analyze the association between Flight Distance and Departure Delay using scatter plot.
 
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Departure.Delay)) +
@@ -546,6 +555,7 @@ From the scatter plot above, we can see that there is a slight positive correlat
 
 **Flight Distance vs Arrival Delay**
 
+Subsequently, we will analyze the association between Flight Distance and Arrival Delay using scater plot.
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
   geom_point(alpha = 0.2, color = "steelblue", size = 1.5) +
@@ -560,7 +570,7 @@ The scatter plot above shows a slight positive correlation between Flight Distan
 
 ### Association Between Numerical and Categorical Variable
 
-Lorem ipsum
+Now, we will analyze the association between numerical and categorical variables. We will use boxplots to visualize the distribution of numerical variables across different categories.
 
 ```{r}
 data_subset <- data %>%
@@ -1276,7 +1286,7 @@ The graph above is satisfaction data from Economy class customers. The biggest c
 
 ## Reflections <a name="2.6"></a>
 
-Lorem Ipsum
+After performing the univariate and bivariate analysis, we can conclude that the airline service is not satisfying enough for the customers. The majority of passengers are not satisfied with the airline service, especially those who are first-time flyers and economy class passengers. The airline should focus on improving the services for these two segments to increase customer satisfaction. The analysis also shows that the airline has a strong returning customer base, which is a positive sign. However, the airline should not take this for granted and should continue to improve its services to retain these customers and attract new ones.
 
 # Data Modeling <a name="3"></a>
 
