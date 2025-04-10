@@ -1538,7 +1538,7 @@ gmodels::CrossTable(testing$Satisfaction, pred.test,
 
 The result is almost identical since the algorithm determine the transformed data is not have significant importance. Therefore the improvement will focus on tuning the parameter of the model.
 
-### Model Improvement <a name="3.3.3"></a>
+### Model Improvement <a name="3.2.3"></a>
 
 **Boosting**
 
@@ -1703,7 +1703,7 @@ print(accuracy)
 
 Accuracy didnt increase significant
 
-### Variable Importance <a name="3.4"></a>
+### Variable Importance <a name="3.2.4"></a>
 
 ```{r}
 library(randomForest)
@@ -1946,7 +1946,13 @@ Lorem Ipsum
 
 Why Logistic Regression?
 
+Since this project aims to predict between binary class values (satisfied and dissatisfied), logistic regression will be used for this classification task. This method also allows us to identify the impact of each variable to the likelihood of passenger satisfaction, as well as see the probability values associated. In this subchapter, we will discuss step-by-step our process of preparing the regression model as well as interpret our findings.
+
+
 ### Model Preparation <a name="3.3.1"></a>
+
+Firstly, we will prepare the dataset by applying a train-test split of 70:30. We will use seed value to get replicable results.
+
 
 ```{r}
 # Split training and testing data
@@ -1955,64 +1961,110 @@ set.seed(46748756)
 
 library (rsample)
 
-# Create copy of dataset for the purpose of classification only, convert to factor
-data_logreg <- data %>%
-  mutate(across(-c(ID, Age, Flight.Distance, Departure.Delay, Arrival.Delay, 
-                   Departure.Delay.Duration,
-                   Arrival.Delay.Duration, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
-                   Departure.Delay.Duration.log, Departure.Delay.Duration.log.z, Flight.Distance.log,
-                   Flight.Distance.log.z, Age.log, Age.log.z), as.factor)) %>% subset(
-                     select = -c(ID, Departure.Delay.Duration,
-                   Arrival.Delay.Duration, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
-                   Departure.Delay.Duration.log, Departure.Delay.Duration.log.z)
-                     )
+# Treat ordinal variables as numeric and exclude specified variables
+data_numeric <- data %>%
+  mutate(across(where(is.numeric), ~ scale(.) %>% as.numeric())) %>% # Normalize all numeric columns
+  mutate(across(c(Ease.of.Online.Booking, Check.in.Service, Online.Boarding, 
+                  Gate.Location, On.board.Service, Seat.Comfort, Leg.Room.Service, 
+                  Cleanliness, Food.and.Drink, In.flight.Service, In.flight.Wifi.Service, 
+                  In.flight.Entertainment, Departure.and.Arrival.Time.Convenience), 
+                as.numeric)) %>% # Treat ordinal variables as numeric
+  subset(select = -c(ID, Gender, Age, Customer.Type, Type.of.Travel, Flight.Distance, 
+                     Age_Range, Distance_Group, Age.log, Flight.Distance.log.z, Age.log.z, 
+                     Departure.Delay.Duration, Arrival.Delay.Duration, 
+                     Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z, 
+                     Departure.Delay.Duration.log, Departure.Delay.Duration.log.z)) # Exclude unnecessary columns
 
-# Cleaning column from zero score that only exist in small quantity (most of them only have 1 data, cant be splitted to training and testing)
+# Cleaning columns with zero scores that exist in small quantities
 cols_to_clean <- c("On.board.Service", "Check.in.Service", "Seat.Comfort",
                    "In.flight.Service", "Gate.Location", "Cleanliness", 
                    "In.flight.Entertainment")
 
-for (col in cols_to_clean) {
-  data_logreg <- subset(data_logreg, data_logreg[[col]] != "0")
-  data_logreg[[col]] <- droplevels(data_logreg[[col]])
+if (is.factor(data_numeric[[col]])) { # Check if the column is a factor
+  data_numeric[[col]] <- droplevels(data_numeric[[col]])
 }
 
-proportion <-  0.7
-split <- initial_split(data_logreg, prop = proportion)
-training <- training(split)
-testing <- testing(split)
+# Split the dataset into training and testing sets
+proportion <- 0.7
+split <- initial_split(data_numeric, prop = proportion)
+
+# Encode Satisfaction as binary (0 = Neutral or Dissatisfied, 1 = Satisfied)
+training$Satisfaction <- ifelse(training$Satisfaction == "Satisfied", 1, 0)
+training$Satisfaction <- factor(training$Satisfaction, levels = c(0, 1))
+testing$Satisfaction <- ifelse(testing$Satisfaction == "Satisfied", 1, 0)
+testing$Satisfaction <- factor(testing$Satisfaction, levels = c(0, 1))
+
+# Split the dataset by class
+business_class_data <- training %>% filter(Class == "Business") %>% select(-Class)
+economy_class_data <- training %>% filter(Class %in% c("Economy", "Economy Plus")) %>% select(-Class)
+
 ```
 
-Lorem Ipsum
+The code chunk above first converts all specified columns into factors, as logistic regression requires categorical predictors to be factors. Next we remove one row which contains zero column values, as this cannot be split into the training and testing datasets. Finally, the dataset is split and we extract the training and testing set.
 
 ### Training Logistic Regression Model <a name="3.3.2"></a>
 
-```{r}
-# Using all data
-model_log <- glm(Satisfaction ~., 
-               data = training, family = "binomial")
+Once we have determined the training and testing set, we will train the model in the code chunk below.
 
-summary(model_log)
+-   **`glm()`**: Fits a generalized linear model.
+
+-   **`Satisfaction ~ .`**: Specifies the formula, where `Satisfaction` is the dependent variable, and all other variables in the `training` dataset are independent variables.
+
+-   **`data = training`**: Uses the `training` dataset to train the model.
+
+-   **`family = "binomial"`**: Specifies that the model is a logistic regression, as the dependent variable (`Satisfaction`) is binary.
+
+
+```{r training_logreg_business}
+
+# Using all data
+model_log_business <- glm(Satisfaction ~., 
+               data = business_class_data, family = "binomial")
+summary(model_log_business)
 ```
 
-Lorem Ipsum
+```{r training_logreg_economy}
+# Using all data
+model_log_economy <- glm(Satisfaction ~., 
+               data = economy_class_data, family = "binomial")
+summary(model_log_economy)
+```
+
+The results above show the relationship between the predictor variables and the target variables. We are interested in determining the significant predictors of the model. In the next subchapter, we will delve deeper into the interpretation of these results.
 
 ### Interpretation of the Model <a name="3.3.3"></a>
 
-Lorem Ipsum
-
 **Interpret the coefficient**
 
+The code chunk below is used to calculate the exponentiated coefficients (also known as odds ratios) from the logistic regression model `model_log`.
+
+
 ```{r}
-exp(coef(model_log))
+exp(coef(model_log_business))
 ```
 
-Lorem Ipsum
+```{r}
+exp(coef(model_log_economy))
+```
+
+The odds ratio indicates how the odds of the target variable (e.g., `Satisfaction` being "Satisfied") change with a one-unit increase in the predictor variable, holding all other variables constant.
+
+-   **Odds Ratio \> 1**: The predictor increases the odds of satisfaction.
+
+-   **Odds Ratio \< 1**: The predictor decreases the odds of satisfaction.
+
+-   **Odds Ratio = 1**: The predictor has no effect on satisfaction.
+
+We find that strong positive predictors include returning customers, business travelers, ease of online booking, and older passengers. Meanwhile, negative predictors include economy class travelers, low rating of online boarding and delays.
 
 **Visualize the coefficient**
 
+Below we will visualize the magnitude of each predictor's effect on the target variable, along with their 95% confidence intervals. The X axis represents the coefficient estimates in log-odds, horizontal lines around each point represent the confidence intervals (at 95% level).
+
 ```{r fig.width=10, fig.height=20}
-coefs <- summary(model_log)$coefficients
+
+coefs <- summary(model_log_business)$coefficients
+
 coef_df <- data.frame(
   Variable = rownames(coefs),
   Estimate = coefs[, "Estimate"],
@@ -2031,48 +2083,95 @@ ggplot(coef_df, aes(x = reorder(Variable, Estimate), y = Estimate)) +
   geom_errorbar(aes(ymin = Estimate - 1.96 * StdError,
                     ymax = Estimate + 1.96 * StdError), width = 0.2) +
   coord_flip() +
-  labs(title = "Logistic Regression Coefficients",
+  labs(title = "Logistic Regression Coefficients (Business Class)",
        x = "Predictor",
        y = "Coefficient Estimate (log-odds)") +
   theme_minimal()
 ```
 
-Lorem Ipsum
+```{r fig.width=10, fig.height=20}
+coefs <- summary(model_log_economy)$coefficients
+coef_df <- data.frame(
+  Variable = rownames(coefs),
+  Estimate = coefs[, "Estimate"],
+  StdError = coefs[, "Std. Error"],
+  p_value = coefs[, "Pr(>|z|)"]
+)
+# Remove intercept for clarity
+coef_df <- coef_df[coef_df$Variable != "(Intercept)", ]
+# Plot using ggplot2
+library(ggplot2)
+ggplot(coef_df, aes(x = reorder(Variable, Estimate), y = Estimate)) +
+  geom_point(color = "darkblue") +
+  geom_errorbar(aes(ymin = Estimate - 1.96 * StdError,
+                    ymax = Estimate + 1.96 * StdError), width = 0.2) +
+  coord_flip() +
+  labs(title = "Logistic Regression Coefficients (Economy Class)",
+       x = "Predictor",
+       y = "Coefficient Estimate (log-odds)") +
+  theme_minimal()
+```
 
 **Interpreting Z Value**
 
 ```{r}
-model_summary <- summary(model_log)
+model_summary_business <- summary(model_log_business)
+model_summary_economy <- summary(model_log_economy)
 
 # Extract z-values and convert to data frame
-z_df <- data.frame(
-  Variable = rownames(model_summary$coefficients),
-  Z_value = model_summary$coefficients[, "z value"]
+z_df_business <- data.frame(
+  Variable_business = rownames(model_summary_business$coefficients),
+  Z_value_business = model_summary_business$coefficients[, "z value"]
 )
 
 # Remove intercept
-z_df <- subset(z_df, Variable != "(Intercept)")
+z_df_economy <- data.frame(
+  Variable_economy = rownames(model_summary_economy$coefficients),
+  Z_value_economy = model_summary_economy$coefficients[, "z value"]
+)
 
-z_df
+# Remove intercept
+z_df_business <- subset(z_df_business, Variable_business != "(Intercept)")
+z_df_economy <- subset(z_df_economy, Variable_economy != "(Intercept)")
 ```
 
 ```{r  fig.width=10, fig.height=20}
+# Combine the two dataframes into one for plotting
+z_df_business$Group <- "Business Class"
+z_df_economy$Group <- "Economy + Economy Plus"
+
+# Rename columns for consistency
+z_df_business <- z_df_business %>% rename(Variable = Variable_business, Z_value = Z_value_business)
+z_df_economy <- z_df_economy %>% rename(Variable = Variable_economy, Z_value = Z_value_economy)
+
+# Combine the dataframes
+z_df_combined <- rbind(z_df_business, z_df_economy)
+
+
 # Plot using ggplot2
 library(ggplot2)
 
-ggplot(z_df, aes(x = reorder(Variable, abs(Z_value)), y = Z_value)) +
-  geom_col(fill = "steelblue") +
+ggplot(z_df_combined, aes(x = reorder(Variable, abs(Z_value)), y = Z_value, fill = Group)) +
+  geom_col(position = "dodge") + # Side-by-side bars for each group
   geom_hline(yintercept = c(-1.96, 1.96), linetype = "dashed", color = "red") + # 95% significance threshold
   coord_flip() +
-  labs(title = "Z-values from Logistic Regression",
+  labs(title = "Z-values from Logistic Regression by Class",
        x = "Predictor Variable",
-       y = "Z-value (Wald Statistic)") +
-  theme_minimal()
+       y = "Z-value (Wald Statistic)",
+       fill = "Passenger Class") + # Add legend for the groups
+  theme_minimal() +
+  scale_fill_manual(values = c("Business Class" = "steelblue", "Economy + Economy Plus" = "green"))
 ```
 
-Lorem Ipsum
+The Z**-**values represent the Wald statistics for each predictor in the logistic regression model. These values are used to test the null hypothesis that the coefficient for a predictor is equal to zero.
 
-### Model Evaluation <a name="3.3.4"></a>
+-   Positive Z-values indicate a **positive** relationship to the likelihood of satisfaction.
+
+-   Negative Z-values indicate a **negative** relationship to the likelihood of satisfaction.
+
+For a 95% confidence level, the threshold of a statistically significant Z-value is **\|Z\| \> 1.96** which is indicated by the dotted red line in the plot. We can see from the visualization above that the strongest negative predictor for business class is departure time and arrival convenience, while for economy class is ease of online booking. The strongest positive predictor for business class is online boarding, and for economy class it is in-flight WiFi. Next, we will evaluate the model.
+
+**Model Evaluation** <a name="3.3.4"></a>
 
 ```{r}
 pred.test <- predict(model_log, newdata = testing, type = "response")
@@ -2116,7 +2215,7 @@ Lorem Ipsum
 
 **Using significant variables only**
 
-p-value < 0.05
+p-value \< 0.05
 
 ```{r}
 training_signif <- training %>% subset(select = -c(Departure.Delay, Arrival.Delay, Flight.Distance, 
@@ -2238,7 +2337,47 @@ Lorem Ipsum
 
 ## Result Visualization <a name="4.1"></a>
 
-Lorem Ipsum
+What are the aspects of service that are important towards customer satisfaction?
+
+```{r important_aspects_of_service}
+# Extract coefficients from the logistic regression models
+coefs_business <- summary(model_log_business)$coefficients
+coefs_economy <- summary(model_log_economy)$coefficients
+# Create data frames for plotting
+coef_df_business <- data.frame(
+  Variable = rownames(coefs_business),
+  Estimate = coefs_business[, "Estimate"],
+  Abs_Estimate = abs(coefs_business[, "Estimate"])
+)
+coef_df_economy <- data.frame(
+  Variable = rownames(coefs_economy),
+  Estimate = coefs_economy[, "Estimate"],
+  Abs_Estimate = abs(coefs_economy[, "Estimate"])
+)
+# Remove the intercept for clarity
+coef_df_business <- coef_df_business[coef_df_business$Variable != "(Intercept)", ]
+coef_df_economy <- coef_df_economy[coef_df_economy$Variable != "(Intercept)", ]
+# Select the top 5 most important predictors for each class
+top_5_business <- coef_df_business[order(-coef_df_business$Abs_Estimate), ][1:5, ]
+top_5_economy <- coef_df_economy[order(-coef_df_economy$Abs_Estimate), ][1:5, ]
+# Plot the top 5 predictors for Business Class
+library(ggplot2)
+ggplot(top_5_business, aes(x = reorder(Variable, Abs_Estimate), y = Estimate)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Top 5 Most Important Predictors (Business Class)",
+       x = "Predictor",
+       y = "Coefficient Estimate (log-odds)") +
+  theme_minimal()
+# Plot the top 5 predictors for Economy Class
+ggplot(top_5_economy, aes(x = reorder(Variable, Abs_Estimate), y = Estimate)) +
+  geom_bar(stat = "identity", fill = "tomato") +
+  coord_flip() +
+  labs(title = "Top 5 Most Important Predictors (Economy Class)",
+       x = "Predictor",
+       y = "Coefficient Estimate (log-odds)") +
+  theme_minimal()
+```
 
 ## Recommendation <a name="4.2"></a>
 
