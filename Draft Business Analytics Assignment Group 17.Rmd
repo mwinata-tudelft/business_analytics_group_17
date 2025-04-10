@@ -1511,6 +1511,22 @@ print(accuracy)
 
 Accuracy already high with 95.4%
 
+Plotting top 5 model :
+
+```{r fig.width = 10, fig.height = 10}
+# Visualization-only version, targeting ~5 levels
+model_top5 <- C5.0(Satisfaction ~ ., data = training,
+                   control = C5.0Control(minCases = 3500, CF = 0.25))
+
+plot(model_top5)
+```
+
+```{r fig.width = 10, fig.height = 10}
+plot(model_top5)
+```
+
+Lorem Ipsum
+
 **Try with dataset that already log transformed**
 
 ```{r}
@@ -2280,6 +2296,10 @@ Accuracy 84.58% with sensitivity 84.5% and specifity 71.1%
 ```{r}
 library(pROC)
 
+# Running the model for all data
+all_testing <- testing
+pred.test <- predict(model_log, newdata = testing, type = "response")
+
 # ROC curve and AUC
 roc_obj <- roc(testing$Satisfaction, pred.test)
 plot(roc_obj, col = "blue", main = "ROC Curve")
@@ -2307,12 +2327,12 @@ Lorem Ipsum
 p-value \< 0.05
 
 ```{r}
-training_signif <- training %>% subset(select = -c(Departure.Delay, Arrival.Delay, Flight.Distance, 
+training_signif <- training %>% subset(select = -c(Departure.Delay, Arrival.Delay,
                                                   In.flight.Wifi.Service, Food.and.Drink, 
-                                                  In.flight.Entertainment, Age_Range, Distance_Group,
+                                                  In.flight.Entertainment,
                                                   In.flight.service, Flight.Entertainment, 
-                                                  Comfortability, Pre.flight.service, 
-                                                  Flight.Distance.log.z, Age.log.z))
+                                                  Comfortability, Pre.flight.service 
+                                                  ))
 
 model_log_signif <- glm(Satisfaction ~., 
                data = training_signif, family = "binomial")
@@ -2329,10 +2349,11 @@ pred.test <- predict(model_log_signif, newdata = testing, type = "response")
 
 # Convert to class labels
 pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
-testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
+all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
 
-confusionMatrix(pred.test.result, testing$Satisfaction)
+confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
 The accuracy decrease
@@ -2352,14 +2373,16 @@ coords(roc_obj, "best", ret = "threshold")
 ```
 
 ```{r}
+all_testing <- testing
 pred.test <- predict(model_log, newdata = testing, type = "response")
 
 # Convert to class labels
-pred.test.result <- ifelse(pred.test > 0.4430813, "Satisfied", "Neutral or Dissatisfied")
-testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
+all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
 
-confusionMatrix(pred.test.result, testing$Satisfaction)
+confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
 
