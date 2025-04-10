@@ -1482,7 +1482,8 @@ Lorem Ipsum
 
 ```{r}
 model <- C50::C5.0(Satisfaction ~., 
-                   data = training)
+                   data = training,
+                   )
 summary(model)
 ```
 
@@ -1717,6 +1718,7 @@ Plot the importance
 ```{r varimp-plot, fig.width=10, fig.height=8}
 varImpPlot(model.forest)
 ```
+
 
 Lorem Ipsum
 
@@ -1980,13 +1982,17 @@ cols_to_clean <- c("On.board.Service", "Check.in.Service", "Seat.Comfort",
                    "In.flight.Service", "Gate.Location", "Cleanliness", 
                    "In.flight.Entertainment")
 
-if (is.factor(data_numeric[[col]])) { # Check if the column is a factor
-  data_numeric[[col]] <- droplevels(data_numeric[[col]])
+for (col in colnames(data_numeric)) {
+  if (is.factor(data_numeric[[col]])) {
+    data_numeric[[col]] <- droplevels(data_numeric[[col]])
+  }
 }
 
 # Split the dataset into training and testing sets
 proportion <- 0.7
 split <- initial_split(data_numeric, prop = proportion)
+training <- training(split)
+testing <- testing(split)
 
 # Encode Satisfaction as binary (0 = Neutral or Dissatisfied, 1 = Satisfied)
 training$Satisfaction <- ifelse(training$Satisfaction == "Satisfied", 1, 0)
@@ -2014,6 +2020,14 @@ Once we have determined the training and testing set, we will train the model in
 
 -   **`family = "binomial"`**: Specifies that the model is a logistic regression, as the dependent variable (`Satisfaction`) is binary.
 
+```{r training_logreg}
+
+# Using all data
+model_log <- glm(Satisfaction ~., 
+               data = training, family = "binomial")
+summary(model_log)
+```
+
 
 ```{r training_logreg_business}
 
@@ -2038,6 +2052,9 @@ The results above show the relationship between the predictor variables and the 
 
 The code chunk below is used to calculate the exponentiated coefficients (also known as odds ratios) from the logistic regression model `model_log`.
 
+```{r}
+exp(coef(model_log))
+```
 
 ```{r}
 exp(coef(model_log_business))
@@ -2060,6 +2077,35 @@ We find that strong positive predictors include returning customers, business tr
 **Visualize the coefficient**
 
 Below we will visualize the magnitude of each predictor's effect on the target variable, along with their 95% confidence intervals. The X axis represents the coefficient estimates in log-odds, horizontal lines around each point represent the confidence intervals (at 95% level).
+
+```{r fig.width=10, fig.height=20}
+
+coefs <- summary(model_log)$coefficients
+
+coef_df <- data.frame(
+  Variable = rownames(coefs),
+  Estimate = coefs[, "Estimate"],
+  StdError = coefs[, "Std. Error"],
+  p_value = coefs[, "Pr(>|z|)"]
+)
+
+# Remove intercept for clarity
+coef_df <- coef_df[coef_df$Variable != "(Intercept)", ]
+
+# Plot using ggplot2
+library(ggplot2)
+
+ggplot(coef_df, aes(x = reorder(Variable, Estimate), y = Estimate)) +
+  geom_point(color = "darkblue") +
+  geom_errorbar(aes(ymin = Estimate - 1.96 * StdError,
+                    ymax = Estimate + 1.96 * StdError), width = 0.2) +
+  coord_flip() +
+  labs(title = "Logistic Regression Coefficients (All Class)",
+       x = "Predictor",
+       y = "Coefficient Estimate (log-odds)") +
+  theme_minimal()
+```
+
 
 ```{r fig.width=10, fig.height=20}
 
@@ -2099,6 +2145,7 @@ coef_df <- data.frame(
 )
 # Remove intercept for clarity
 coef_df <- coef_df[coef_df$Variable != "(Intercept)", ]
+
 # Plot using ggplot2
 library(ggplot2)
 ggplot(coef_df, aes(x = reorder(Variable, Estimate), y = Estimate)) +
@@ -2173,20 +2220,62 @@ For a 95% confidence level, the threshold of a statistically significant Z-value
 
 **Model Evaluation** <a name="3.3.4"></a>
 
+All Class :
 ```{r}
+all_testing <- testing
 pred.test <- predict(model_log, newdata = testing, type = "response")
 
 # Convert to class labels
 pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
-testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
+all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
 
-confusionMatrix(pred.test.result, testing$Satisfaction)
+confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-Accuracy 93.7% with sensitivity 95.2% and specificy 91.9%
+Accuracy 84.61% with sensitivity 84.5% and specifity 87.73%
+
+
+Economy Class : 
+```{r}
+economy_class_test <- testing %>% filter(Class %in% c("Economy", "Economy Plus")) %>% select(-Class)
+
+pred.test <- predict(model_log_economy, newdata = economy_class_test, type = "response")
+
+# Convert to class labels
+pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+economy_class_test$Satisfaction <- ifelse(economy_class_test$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
+economy_class_test$Satisfaction <- factor(economy_class_test$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
+
+confusionMatrix(pred.test.result, economy_class_test$Satisfaction)
+
+```
+
+Accuracy 89.02% with sensitivity 95.2% and specificy 91.9%
+
+Business Class :
+
+```{r}
+business_class_test <- testing %>% filter(Class %in% c("Business")) %>% select(-Class)
+
+pred.test <- predict(model_log_business, newdata = business_class_test, type = "response")
+
+# Convert to class labels
+pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+business_class_test$Satisfaction <- ifelse(business_class_test$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
+business_class_test$Satisfaction <- factor(business_class_test$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
+
+confusionMatrix(pred.test.result, business_class_test$Satisfaction)
+
+```
+
+Accuracy 84.58% with sensitivity 84.5% and specifity 71.1%
 
 **Interpret ROC and AUC**
+
 
 ```{r}
 library(pROC)
