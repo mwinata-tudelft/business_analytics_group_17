@@ -77,29 +77,29 @@ Competitive Advantage: by addressing the service issue, the airline can stand ou
 
 Lorem IpsumBesides the Basic R Functions, this project uses multiple packages to enhance the R functionalities and improve the data analytics and visualization quality. This section explains all the packages and functions beyond the Basic R functionalities that we are using in this project in each step of the business analytics process from data cleaning to modeling.
 
--   Data Cleaning and Preparation
+* Data Cleaning and Preparation
 
 **dplyr** : used to filter rows, select columns, sort data, create new columns, and summarize data.
 
 **tidyr** : imported to be used to clean and tidy the data, such as reshaping the data from wide to long format.
 
--   Data Exploration
+* Data Exploration
 
 **skimr** : designed to provide summary of statistical measures for each variables in data frames.
 
 **DataExplorer** : used to display comprehensive and convenient interface for data exploration and data visualization.
 
--   Data Transformation
+* Data Transformation
 
--   Data Visualization
+* Data Visualization
 
 **ggplot2** : a package that is useful to visualize data in a more complex and customizable way compared to the basic R plotting functions.
 
 **corrplot** : used to visualize correlation matrix between two variables in a more visually appealing and informative way.
 
--   Data Modeling
+* Data Modeling
 
--   Data Analysis
+* Data Analysis
 
 Below we will find the commands to install the required libraries so that the code can run properly.The libraries only need to be imported only once, later we only need to call the necessary libraries when needed on the specific sections.
 
@@ -338,6 +338,8 @@ From the visualizations above, it is not immediately clear which variables may b
 
 ### Association Between Two Numerical Variable
 
+Now we will analyze the association between two numerical variables. We will use the `corrplot` package to visualize the correlation matrix of the numerical variables in the dataset. The correlation matrix will help us identify any strong correlations between the numerical variables.
+
 ```{r corrplot, fig.width=14, fig.height=12}
 numeric_data <- data[sapply(data, is.numeric)]
 numeric_data <- na.omit(numeric_data)
@@ -361,7 +363,7 @@ corrplot(cor_matrix,
          diag = FALSE)
 ```
 
-Lorem Ipsum
+Then we will filter the correlation matrix to find strong correlations (greater than 0.5 or less than -0.5) between numerical variables.
 
 ```{r}
 # Discover strong correlation
@@ -375,7 +377,7 @@ print(filtered)
 From the graph, we can see that there are some variables that have a strong correlation with each other, which is Seat Comfort, Leg Room Service, Cleanliness, Food & Drink, and In-flight Service exhibit strong positive correlations with each other. This suggests that customers who rate one aspect of the service highly tend to rate others positively as well. Furthermore, A high correlation between Departure Delay and Arrival Delay indicates that flights that depart late are also likely to arrive late. Other numerical factors such as Flight Distance may have weaker correlations with customer satisfaction, indicating that distance alone is not a major factor in satisfaction levels.
 
 **In-flight Service vs On-board Service (in %)**
-
+After we have analyzed the correlation between numerical variables, we will now analyze the association between categorical variables. We will use a heatmap to visualize the association between two categorical variables. The heatmap will show the percentage of each combination of ratings for the two variables.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Service, data$On.board.Service))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -396,6 +398,7 @@ The heatmap above shows a strong positive correlation between In-flight Service 
 
 **In-flight Service vs Food and Drink (in %)**
 
+Now we will analyze the association between In-flight Service and Food and Drink with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Food.and.Drink))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -416,6 +419,7 @@ From the heatmap above, we can see that there is a strong positive correlation b
 
 **In-flight Entertainment vs Cleanliness (in %)**
 
+Then, we will analyze the association between In-flight Entertainment and Cleanliness with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Cleanliness))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -436,6 +440,7 @@ We can see from the heatmap above that there is a positive correlation between I
 
 **In-flight Entertainment vs Seat Comfort (in %)**
 
+Next,we analyze the In-flight Entertainment and Seat Comfort with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Entertainment, data$Seat.Comfort))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -472,6 +477,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
 
 **Food and Drink vs Seat Comfront (in %)**
 
+Now we will analyze the association between Food and Drink and Seat Comfort with the same method.
 ```{r}
 count_data <- as.data.frame(table(data$Food.and.Drink, data$Seat.Comfort))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -492,6 +498,7 @@ This heatmap illustrates a positive correlation between Food and Drink and Seat 
 
 **Cleanliness vs Seat Comfort (in %)**
 
+Afterwards, we will analyze the association between Cleanliness and Seat Comfort.
 ```{r}
 count_data <- as.data.frame(table(data$Cleanliness, data$Seat.Comfort))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -512,6 +519,7 @@ This heatmap shows a positive correlation between Cleanliness and Seat Comfort. 
 
 **In-Flight Wifi Service vs Ease of Online Booking (in %)**
 
+Next, we will analyze the association between In-flight Wifi Service and Ease of Online Booking.
 ```{r}
 count_data <- as.data.frame(table(data$In.flight.Wifi.Service, data$Ease.of.Online.Booking))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -531,6 +539,7 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
 This heatmap shows a positive correlation between In-flight Wifi Service and Ease of Online Booking. The most common rating pair is (2,3) at 18.1%, closely followed by (1,2) at 18% and (1,1) at 12.5%, suggesting that many passengers who rated WiFi service poorly also found online booking less convenient. Interestingly, higher ratings for online booking (4-5) are associated with mixed ratings for WiFi, with 8.1% rating both as (5,5). This pattern implies that while passengers may find booking easy, WiFi service still receives moderate to low ratings.
 
 **Flight Distance vs Departure Delay**
+Next, we will analyze the association between Flight Distance and Departure Delay using scatter plot.
 
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Departure.Delay)) +
@@ -546,6 +555,7 @@ From the scatter plot above, we can see that there is a slight positive correlat
 
 **Flight Distance vs Arrival Delay**
 
+Subsequently, we will analyze the association between Flight Distance and Arrival Delay using scater plot.
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
   geom_point(alpha = 0.2, color = "steelblue", size = 1.5) +
@@ -560,7 +570,7 @@ The scatter plot above shows a slight positive correlation between Flight Distan
 
 ### Association Between Numerical and Categorical Variable
 
-Lorem ipsum
+Now, we will analyze the association between numerical and categorical variables. We will use boxplots to visualize the distribution of numerical variables across different categories.
 
 ```{r}
 data_subset <- data %>%
@@ -904,7 +914,6 @@ Recalling the Univariate Data Analysis, we will use five categories or variables
 ```{r}
 plot_bar(data,ncol=2)
 ```
-
 We will use the plot_bar function to visualize the association between these variables. For each of the following five sections, we take out one of the category and plot the association between each of the remaining four categories with the missing category. We start with creating the association between customer's satisfaction with the other four variables.
 
 ```{r}
@@ -931,7 +940,7 @@ From the customer type distribution and association graphs, it can be noticed th
 plot_bar(data,by='Type.of.Travel',ncol=2)
 ```
 
-As we can see above, the majority of business travelers fly on the business class as well, and they are also more likely to be satisfied with their flying experience. This is consistent with our observation and discussion on the previous section. On the oppositem, travelers with personal reason, such as leisure, are more likely to fly on both of the economy classes and also less likely to be satisfied with their flying experience.
+As we can see above, the majority of business travelers fly on the business class as well, and they are also more likely to be satisfied with their flying experience. This is consistent with our observation and discussion on the previous section. On the oppositem, travelers with personal reason, such as leisure, are more likely to fly on both of the economy classes and also less likely to be satisfied with their flying experience. 
 
 ```{r}
 plot_bar(data,by='Class',ncol=2)
@@ -1015,9 +1024,9 @@ Combining several category of services into one variable is useful to see the ov
 
 **DARI FEATURE ENGINEERING KE SECTION SELANJUTNYA HARUS CROSSCHECK, BEBERAPA VARIABEL BARU BERUBAH RANGE DAN PENAMAANNYA**
 
-## Data Tranformation <a name="2.4"></a>
 
-Data transformation plays a key role to make sure all data is in the same scale and distribution. we will start to take a look on our data distribution.
+## Data Tranformation <a name="2.4"></a>
+Data transformation plays a key role to make sure all data is in the same scale and distribution. we will start  to take a look on our data distribution.
 
 ```{r}
 
@@ -1035,20 +1044,15 @@ plot_histogram(data,
 
 
 ```
-
-This part is to undertand the distribution of data before it is used. As we can see in the histogram, the data is not normally distributed. Therefore, we need to normalize the data. There are several concerning variables in the dataset that are part of main focus in the data transformation process.
-
+This part is to undertand the distribution of data before it is used. As we can see in the histogram, the data is not normally distributed. Therefore, we need to normalize the data.
+There are several concerning variables in the dataset that are part of main focus in the data transformation process.
 <ul>
-
 <li>**arrival.delays** and **departure.delays** have highly-right skewed distribution where most values are concentrated to zero.</li>
-
 <li>**flight.distance** has a right-skewed distribution concentrated between 500 and 1500, with a long tail up to 4000.</li>
-
 <li>**age** has a right-skewed distribution concentrated between 20 and 50, with a long tail up to 80.But this variable is less concerning compared to the previous ones.</li>
-
 </ul>
-
 In the following step we will normalize the data by applying log transformation to the concerning variables.
+
 
 ```{r}
 data$Departure.Delay.Duration = ifelse(data$Departure.Delay > 0, data$Departure.Delay, NA)
@@ -1061,17 +1065,11 @@ data$Arrival.Delay.Duration.log = log(1 + data$Arrival.Delay.Duration)
 
 plot_histogram(data[, c("Flight.Distance.log", "Age.log", "Departure.Delay.Duration.log", "Arrival.Delay.Duration.log")], ncol=2,ggtheme = theme_minimal())
 ```
-
 Data transformation is performed with visualization task to see the distribution of the data after the transformation. This aims to normalize skewed distribution.
-
 <ul>
-
-<li>**arrival.delays** and **departure.delays** are transformed into log scale to address the skewed issues.</li>
-
-<li>**flight.distance** and **age** are also transformed into log scale to address the skewed issues.</li>
-
+  <li>**arrival.delays** and **departure.delays** are transformed into log scale to address the skewed issues.</li>
+  <li>**flight.distance** and **age** are also transformed into log scale to address the skewed issues.</li>
 </ul>
-
 After log-transormation, normalize the distribution is then performed as follow.
 
 ```{r}
@@ -1086,44 +1084,37 @@ plot_histogram(data[, c("Flight.Distance.log.z", "Age.log.z", "Departure.Delay.D
 As we can see in the histogram, the data is now normalized with 0 as the center. This is important to ensure that the data is on the same scale and distribution. This helps the model learn the data better and make better predictions.
 
 Here are the reasons why performing normalization is important before using the data:
-
 <ol>
-
-<li><strong>Comparison Across Variables</strong><br> Normalization ensures the data is on the same scale. This helps in making the model comparable and supports easier further analysis.</li>
-
-<li><strong>Improved Model Performance</strong><br> Many algorithms perform better when input variables are standardized, as it prevents variables with larger ranges from dominating the analysis.</li>
-
-<li><strong>Normalization Beyond Log Transformation</strong><br> While log transformation reduces skewness and normalizes distributions, scaling ensures uniformity across variables, enabling fair use in statistical techniques.</li>
-
+  <li><strong>Comparison Across Variables</strong><br>
+      Normalization ensures the data is on the same scale. This helps in making the model comparable and supports easier further analysis.
+  </li>
+  <li><strong>Improved Model Performance</strong><br>
+      Many algorithms perform better when input variables are standardized, as it prevents variables with larger ranges from dominating the analysis.
+  </li>
+  <li><strong>Normalization Beyond Log Transformation</strong><br>
+      While log transformation reduces skewness and normalizes distributions, scaling ensures uniformity across variables, enabling fair use in statistical techniques.
+  </li>
 </ol>
 
 ## Initial Plotting <a name="2.5"></a>
 
-Our target is the satisfaction rate of the airlines services, therefore we need to identify how each variable are correlated to the satisfaction. This is important to understand how each variable's behavior toward main objective of the analysis. Following is the behavior of each variables towards satisfaction rate.
+Our target is the satisfaction rate of the airlines services, therefore we need to identify how each variable are correlated to the satisfaction. This is important to understand how each variable's behavior toward main objective of the analysis.
+Following is the behavior of each variables towards satisfaction rate.
 
 ```{r}
 plot_bar(data,by='Satisfaction',ncol=2)
 ```
-
 According to the graphic above, we can see that:
-
 <ul>
-
 <li>**Gender**: Both male and female customers have a higher proportion of "Neutral or Dissatisfied" responses compared to "Satisfied" ones. This indicates there is a room of improvement to increase satisfied number</li>
-
 <li>**Customer Type**: Returning customers exhibit a higher proportion of "Satisfied" responses than first-time customers, who seem mostly "Neutral or Dissatisfied". This might indicate that familiarity with the company positively influences satisfaction.</li>
-
-<li>**Type of Travel**: Business travelers show a higher proportion of "Satisfied" responses compared to personal travelers.</li>
-
-<li>**Class**: Business class has the highest proportion of "Satisfied" responses, whereas Economy and Economy Plus lean more towards "Neutral or Dissatisfied." This indicates higher satisfaction among premium customers.</li>
-
-<li>**Age Range**: Older and middle-aged customers show higher satisfaction levels compared to youth and children, who lean towards dissatisfaction.</li>
-
-<li>**Distance Group**:Longer trips seem to lead to higher satisfaction levels, which could indicate that services during these trips meet or exceed customer expectations.</li>
-
-<li>**Delay Status**: the behavior of satisfaction between on-time and delayed status is not significantly different</li>
-
+<li> **Type of Travel**: Business travelers show a higher proportion of "Satisfied" responses compared to personal travelers.</li>
+<li> **Class**: Business class has the highest proportion of "Satisfied" responses, whereas Economy and Economy Plus lean more towards "Neutral or Dissatisfied." This indicates higher satisfaction among premium customers. </li>
+<li> **Age Range**: Older and middle-aged customers show higher satisfaction levels compared to youth and children, who lean towards dissatisfaction.</li>
+<li> **Distance Group**:Longer trips seem to lead to higher satisfaction levels, which could indicate that services during these trips meet or exceed customer expectations. </li>
+<li> **Delay Status**: the behavior of satisfaction between on-time and delayed status is not significantly different </li>
 </ul>
+
 
 ```{r}
 data_subset <- data %>%
@@ -1151,8 +1142,8 @@ Graphic above is telling the satisfaction distribution based on services categor
 ```{r}
 data %>% group_by(Class, Satisfaction) %>% summarize(num=n()) %>% mutate(percentage=round(num*100/sum(num),2))
 ```
-
 Based on the data above, **69.44%** of Business passengers showing satisfaction, while only *18.77%* of Economy passengers showing satisfaction and only **24.64%** of Economy Plus passengers are satisfied. This indicates that the airline services are more satisfying for business class passengers compared to economy class passengers. This data highlights the need for airlines to focus on enhancing the customer experience, particularly in Economy and Economy Plus, to achieve better satisfaction rates.
+
 
 ```{r}
 data %>% group_by(Type.of.Travel, Satisfaction) %>%
@@ -1169,7 +1160,10 @@ mutate(percentage=round(num*100/sum(num),2))
 
 ```
 
-**First-time Customers**: A majority, 76.03%, are neutral or dissatisfied, while only 23.97% report being satisfied.This could be a concern since it is indicating a risk from airline for not retaining first-time customers.<br> <br> **Returning Customers**: A majority, 58.37%, are satisfied, while 41.63% are neutral or dissatisfied. This indicates that returning customers are more satisfied with the airline services compared to first-time customers. This data highlights the need for airlines to focus on enhancing the customer experience, particularly for first-time customers, to achieve better satisfaction rates.
+**First-time Customers**: A majority, 76.03%, are neutral or dissatisfied, while only 23.97% report being satisfied.This could be a concern since it is indicating a risk from airline for not retaining first-time customers.<br>
+<br>
+**Returning Customers**: A majority, 58.37%, are satisfied, while 41.63% are neutral or dissatisfied. This indicates that returning customers are more satisfied with the airline services compared to first-time customers. This data highlights the need for airlines to focus on enhancing the customer experience, particularly for first-time customers, to achieve better satisfaction rates.
+
 
 ```{r}
 data %>% filter(Customer.Type == 'First-time') %>% group_by(Class ,Satisfaction) %>%
@@ -1177,16 +1171,19 @@ summarize(num=n()) %>%
 mutate(percentage=round(num*100/sum(num),2))
 
 ```
+The table shows significant differences in first-timer passenger satisfaction across flight classes. Business Class shows the highest satisfaction, with nearly 40% satisfied, though more than half remain neutral or dissatisfied. Economy Class fares worse, with 85% of passengers neutral or dissatisfied, and Economy Plus performs the poorest, with 92% dissatisfaction. Enhancing services for Economy and Economy Plus could greatly improve overall customer satisfaction.<br>
+<br>
+In conclusion, mostly first-timer passengers feeling dissatisfied on each classes with notably higher in economy and economy plus class. This is a concern for the airline, as it indicates a need to improve services for first-time customers, to retain them and increase satisfaction rates.
 
-The table shows significant differences in first-timer passenger satisfaction across flight classes. Business Class shows the highest satisfaction, with nearly 40% satisfied, though more than half remain neutral or dissatisfied. Economy Class fares worse, with 85% of passengers neutral or dissatisfied, and Economy Plus performs the poorest, with 92% dissatisfaction. Enhancing services for Economy and Economy Plus could greatly improve overall customer satisfaction.<br> <br> In conclusion, mostly first-timer passengers feeling dissatisfied on each classes with notably higher in economy and economy plus class. This is a concern for the airline, as it indicates a need to improve services for first-time customers, to retain them and increase satisfaction rates.
 
 ```{r}
 data %>% group_by(Distance_Group) %>%
 summarize(num=n()) %>%
 mutate(percentage=round(num*100/sum(num),2))
 ```
-
-Previously in the barplot satisfaction, we can notice that as the distance lower the rate of disatisfied customer is increasing. **Below 1000 distance is having the highest dissatisfaction rate**. From the data above, this condition could be a big concern since the majority of the airline customer is having journey below 1000 (more than 60%). This is a concern for the airline, as it indicates a need to improve services for short-distance travelers, to retain them and increase satisfaction rates. <br> Next we will try to analyze the service factors related to the customer satisfaction, starting with customer type :
+Previously in the barplot satisfaction, we can notice that  as the distance lower the rate of disatisfied customer is increasing. **Below 1000 distance is having the highest dissatisfaction rate**. From the data above, this condition could be a big concern since the majority of the airline customer is having journey below 1000 (more than 60%). This is a concern for the airline, as it indicates a need to improve services for short-distance travelers, to retain them and increase satisfaction rates.
+<br>
+Next we will try to analyze the service factors related to the customer satisfaction, starting with customer type :
 
 ```{r}
 
@@ -1214,7 +1211,8 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
 
-We can identify that from the first time customer, the services that dissapointing them most in **Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service**.While **Comfort Service** having the highest satisfaction value. <br> This data can guide strategic improvements to enhance the first-time customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.
+We can identify that from the first time customer, the services that dissapointing them most in **Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service**.While **Comfort Service** having the highest satisfaction value. <br>
+This data can guide strategic improvements to enhance the first-time customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.
 
 ```{r}
 
@@ -1242,7 +1240,8 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
 
-We can identify that from the Personal type of travel customers, the services that dissapointing them most in **Departure and Arrival Time Convenience, In flight wifi service, Ease of Online Booking**.These areas could be prioritized for enhancement to improve overall satisfaction for business travelers. The top satisfaction factors is **Comfort service**.<br> As you can see, personal type of travel customer satisfaction data is showing similar behaviour with the first-timer passengers. Thus, improving low-rated areas like WiFi availability and online booking ease may help elevate the overall customer experience for this segment.
+We can identify that from the Personal type of travel customers, the services that dissapointing them most in **Departure and Arrival Time Convenience, In flight wifi service, Ease of Online Booking**.These areas could be prioritized for enhancement to improve overall satisfaction for business travelers. The top satisfaction factors is **Comfort service**.<br>
+As you can see, personal type of travel customer satisfaction data is showing similar behaviour with the first-timer passengers. Thus, improving low-rated areas like WiFi availability and online booking ease may help elevate the overall customer experience for this segment.
 
 ```{r}
 
@@ -1273,32 +1272,21 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
 The graph above is satisfaction data from Economy class customers. The biggest contributors to low satisfaction rate are **ease of online booking, wifi service, and online boarding**. While **Comfort Service** have the highest satisfaction rate among the Economy class customers. This data can guide strategic improvements to enhance the Economy class customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.
 
 ### Summary of Initial Plotting
-
 <ol>
-
 <li>43% of total passengers have liked the airline service. The majority of customers who are satisfied are from business class</li>
-
-<li>57% of total passengers are not satisfied. The majority of them are from Economy class</li>
-
-<li>Only 18% of people have travelled for first time in our airline service. Out of those customers, nearly 76% of customers are not satisfied with our service which could create a chance in future of not returing of customers to our service again. When passengers are coming for first time, most of them have chosen the economy class</li>
-
-<li>Out of the customers who opted for business class, nearly 69% of customers are satisfied with the business class. Out of the customers who opted for economy class, nearly 81% of them are not satisfied with it. Customers who opted for economy plus class,nearly 75% of them are not satisfied with it.</li>
-
+<li>57% of total passengers are not satisfied. The majority of them are from Economy class </li>
+<li>Only 18% of people have travelled for first time in our airline service. Out of those customers, nearly 76% of customers are not satisfied with our service which could create a chance in future of not returing of customers to our service again. When passengers are coming for first time, most of them have chosen the economy class </li>
+<li>Out of the customers who opted for business class, nearly 69% of customers are satisfied with the business class. Out of the customers who opted for economy class, nearly 81% of them are not satisfied with it. Customers who opted for economy plus class,nearly 75% of them are not satisfied with it. </li>
 <li>Whether people are coming for first time or not and also irrespective of their travel type, they are mostly not satisfied with the Economy and Economy Plus classes. There is strong need for the improvement of Economy class since 45% of total passengers are from economy class. Moreover, 60% of passengers travel less than 10k km and most of them prefer economy class.</li>
-
 <li>Passengers are not so satisfied with online booking, Online Boarding and the Wifi service mostly especially those who take economy class.</li>
-
-<li>82% of total passengers are returning to the airline service. Out of those 105773 passengers,50% of passengers are from busines class and 42% of passengers are from economy class. Customer who are returning to our service are aged above 30 and make business travel and travel less than 1000 km mostly</li>
-
-<li>Departure and arrival time covenience is considered big contributors to the customers dissatisfaction especially for first-timer passengers and personal travel type customers</li>
-
-<li>Passengers mostly take short distance travel (below 1000 km) and it contributes to the high number of dissatisfaction.</li>
-
+<li>82% of total passengers are returning to the airline service. Out of those 105773 passengers,50% of passengers are from busines class and 42% of passengers are from economy class. Customer who are returning to our service are aged above 30 and make business travel and travel less than 1000 km mostly </li>
+<li> Departure and arrival time covenience is considered big contributors to the customers dissatisfaction especially for first-timer passengers and personal travel type customers</li>
+<li> Passengers mostly take short distance travel (below 1000 km) and it contributes to the high number of dissatisfaction. </li>
 </ol>
 
 ## Reflections <a name="2.6"></a>
 
-Lorem Ipsum
+After performing the univariate and bivariate analysis, we can conclude that the airline service is not satisfying enough for the customers. The majority of passengers are not satisfied with the airline service, especially those who are first-time flyers and economy class passengers. The airline should focus on improving the services for these two segments to increase customer satisfaction. The analysis also shows that the airline has a strong returning customer base, which is a positive sign. However, the airline should not take this for granted and should continue to improve its services to retain these customers and attract new ones.
 
 # Data Modeling <a name="3"></a>
 
@@ -1329,7 +1317,6 @@ Cummulative value already achieved 90% using 12 Principal Components as below
 ```{r}
 results$rotation[ , c(1:2) ]
 ```
-
 To focus on variable with high loadings, we set the threshold of 0.2 and only select the first principal component.
 
 ```{r}
@@ -1369,30 +1356,41 @@ loadings$Variable <- rownames(loadings)
 top_vars <- apply(abs(loadings[, 1:12]), 2, function(x) names(sort(x, decreasing = TRUE)[1:5]))
 print(top_vars)
 ```
+PC1 – In-Flight Amenities & Comfort
+Driven by Flight.Entertainment, Comfortability, In.flight.Entertainment, In.flight.service, and Cleanliness. This component captures the overall in-flight experience focused on comfort and entertainment.
 
-PC1 – In-Flight Amenities & Comfort Driven by Flight.Entertainment, Comfortability, In.flight.Entertainment, In.flight.service, and Cleanliness. This component captures the overall in-flight experience focused on comfort and entertainment.
+PC2 – Digital & Booking Experience
+Influenced by Ease.of.Online.Booking, Pre.flight.service, and In.flight.Wifi.Service. It represents passengers’ interaction with digital services before and during the flight.
 
-PC2 – Digital & Booking Experience Influenced by Ease.of.Online.Booking, Pre.flight.service, and In.flight.Wifi.Service. It represents passengers’ interaction with digital services before and during the flight.
+PC3 – Operational Onboard Service
+Dominated by In.flight.Service, Baggage.Handling, and Seat.Comfort, this component reflects service reliability and seat-related comfort during the flight.
 
-PC3 – Operational Onboard Service Dominated by In.flight.Service, Baggage.Handling, and Seat.Comfort, this component reflects service reliability and seat-related comfort during the flight.
+PC4 – Flight Timing & Boarding
+Characterized by Arrival.Delay, Departure.Delay, and Online.Boarding. It relates to punctuality and boarding process efficiency.
 
-PC4 – Flight Timing & Boarding Characterized by Arrival.Delay, Departure.Delay, and Online.Boarding. It relates to punctuality and boarding process efficiency.
+PC5 – Passenger Profile & Journey
+Shaped by Online.Boarding, Flight.Distance, Age, and Gate.Location, this component reflects demographic and journey-specific traits.
 
-PC5 – Passenger Profile & Journey Shaped by Online.Boarding, Flight.Distance, Age, and Gate.Location, this component reflects demographic and journey-specific traits.
+PC6 – Schedule & Gate Convenience
+Led by Departure.and.Arrival.Time.Convenience, Gate.Location, and Age, this component captures how convenient flight times and gate accessibility are for passengers.
 
-PC6 – Schedule & Gate Convenience Led by Departure.and.Arrival.Time.Convenience, Gate.Location, and Age, this component captures how convenient flight times and gate accessibility are for passengers.
+PC7 – Pre-Flight & Cabin Space
+Defined by Check.in.Service, Leg.Room.Service, and Flight.Distance, combining service before boarding with cabin comfort.
 
-PC7 – Pre-Flight & Cabin Space Defined by Check.in.Service, Leg.Room.Service, and Flight.Distance, combining service before boarding with cabin comfort.
+PC8 – Age-Based Travel Patterns
+Mainly driven by Age, Flight.Distance, and Check.in.Service, this component shows how age may influence travel experience and expectations.
 
-PC8 – Age-Based Travel Patterns Mainly driven by Age, Flight.Distance, and Check.in.Service, this component shows how age may influence travel experience and expectations.
+PC9 – Comfort in Long Trips
+Includes Leg.Room.Service, Flight.Distance, and Comfortability, highlighting comfort needs for longer or more frequent flights.
 
-PC9 – Comfort in Long Trips Includes Leg.Room.Service, Flight.Distance, and Comfortability, highlighting comfort needs for longer or more frequent flights.
+PC10 – In-Flight Consumables
+Composed of On.board.Service, In.flight.service, and Food.and.Drink, focusing on passengers’ satisfaction with in-flight consumables.
 
-PC10 – In-Flight Consumables Composed of On.board.Service, In.flight.service, and Food.and.Drink, focusing on passengers’ satisfaction with in-flight consumables.
+PC11 – Delays & Terminal Logistics
+Influenced by Arrival.Delay, Departure.Delay, and Gate.Location, this component represents disruptions tied to flight and gate logistics.
 
-PC11 – Delays & Terminal Logistics Influenced by Arrival.Delay, Departure.Delay, and Gate.Location, this component represents disruptions tied to flight and gate logistics.
-
-PC12 – Check-In & Time Coordination Driven by Departure.and.Arrival.Time.Convenience and Check.in.Service, highlighting the efficiency of early-stage travel processes.
+PC12 – Check-In & Time Coordination
+Driven by Departure.and.Arrival.Time.Convenience and Check.in.Service, highlighting the efficiency of early-stage travel processes.
 
 ```{r}
 screeplot(results, type = "lines")
@@ -1421,7 +1419,8 @@ results <- prcomp(data_encoded_standardized)
 summary(results)
 ```
 
-When PCA was applied to numeric-only variables, the first 12 components explained over 90% of the variance, indicating strong inter-variable correlation and compact data structure. However, after including one-hot encoded categorical variables, the number of components required to achieve the same level of variance increased to 20. This suggests that categorical variables contribute additional but more dispersed variance, requiring more dimensions to capture the overall structure.
+When PCA was applied to numeric-only variables, the first 12 components explained over 90% of the variance, indicating strong inter-variable correlation and compact data structure.
+However, after including one-hot encoded categorical variables, the number of components required to achieve the same level of variance increased to 20. This suggests that categorical variables contribute additional but more dispersed variance, requiring more dimensions to capture the overall structure.
 
 ## Classification Method <a name="3.2"></a>
 
@@ -1500,6 +1499,8 @@ gmodels::CrossTable(testing$Satisfaction, pred.test,
                     dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
 ```
 
+
+
 ```{r}
 # Calculating Accuracy
 
@@ -1537,11 +1538,12 @@ gmodels::CrossTable(testing$Satisfaction, pred.test,
 
 The result is almost identical since the algorithm determine the transformed data is not have significant importance. Therefore the improvement will focus on tuning the parameter of the model.
 
-### Model Improvement <a name="3.2.3"></a>
+### Model Improvement <a name="3.3.3"></a>
 
 **Boosting**
 
 Lorem Ipsum
+
 
 ```{r}
 library(C50)
@@ -1568,6 +1570,7 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
 ```
+
 
 ```{r}
 # Calculating Accuracy with Booster
@@ -1700,7 +1703,7 @@ print(accuracy)
 
 Accuracy didnt increase significant
 
-### Variable Importance <a name="3.2.4"></a>
+### Variable Importance <a name="3.4"></a>
 
 ```{r}
 library(randomForest)
@@ -1717,7 +1720,10 @@ varImpPlot(model.forest)
 
 Lorem Ipsum
 
-High satisfaction on : - Type of travel : Business - Class : Business - Customer Type : Returning
+High satisfaction on :
+- Type of travel : Business
+- Class : Business
+- Customer Type : Returning
 
 Type of Travel : Business
 
@@ -1825,7 +1831,10 @@ varImpPlot(model.forest)
 
 Lorem Ipsum
 
-Low Satisfaction on : - Type of Travel Personal - Class Economy and Economy Plus - Customer Type First Time
+Low Satisfaction on :
+- Type of Travel Personal
+- Class Economy and Economy Plus
+- Customer Type First Time
 
 Type of travel personal
 
@@ -1897,6 +1906,7 @@ varImpPlot(model.forest)
 
 Lorem Ipsum
 
+
 Customer Type First Time
 
 ```{r}
@@ -1934,125 +1944,75 @@ Lorem Ipsum
 
 ## Logistic Regression <a name="3.3"></a>
 
-Since this project aims to predict between binary class values (satisfied and dissatisfied), logistic regression will be used for this classification task. This method also allows us to identify the impact of each variable to the likelihood of passenger satisfaction, as well as see the probability values associated. In this subchapter, we will discuss step-by-step our process of preparing the regression model as well as interpret our findings.
+Why Logistic Regression?
 
 ### Model Preparation <a name="3.3.1"></a>
 
-Firstly, we will prepare the dataset by applying a train-test split of 70:30. We will use seed value to get replicable results.
-
 ```{r}
+# Split training and testing data
+
 set.seed(46748756)
 
-library(rsample)
-library(dplyr)
+library (rsample)
 
-# Treat ordinal variables as numeric and exclude specified variables
-data_numeric <- data %>%
-  mutate(across(where(is.numeric), ~ scale(.) %>% as.numeric())) %>% # Normalize all numeric columns
-  mutate(across(c(Ease.of.Online.Booking, Check.in.Service, Online.Boarding, 
-                  Gate.Location, On.board.Service, Seat.Comfort, Leg.Room.Service, 
-                  Cleanliness, Food.and.Drink, In.flight.Service, In.flight.Wifi.Service, 
-                  In.flight.Entertainment, Departure.and.Arrival.Time.Convenience), 
-                as.numeric)) %>% # Treat ordinal variables as numeric
-  subset(select = -c(ID, Gender, Age, Customer.Type, Type.of.Travel, Flight.Distance, 
-                     Age_Range, Distance_Group, Age.log, Flight.Distance.log.z, Age.log.z, 
-                     Departure.Delay.Duration, Arrival.Delay.Duration, 
-                     Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z, 
-                     Departure.Delay.Duration.log, Departure.Delay.Duration.log.z)) # Exclude unnecessary columns
+# Create copy of dataset for the purpose of classification only, convert to factor
+data_logreg <- data %>%
+  mutate(across(-c(ID, Age, Flight.Distance, Departure.Delay, Arrival.Delay, 
+                   Departure.Delay.Duration,
+                   Arrival.Delay.Duration, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+                   Departure.Delay.Duration.log, Departure.Delay.Duration.log.z, Flight.Distance.log,
+                   Flight.Distance.log.z, Age.log, Age.log.z), as.factor)) %>% subset(
+                     select = -c(ID, Departure.Delay.Duration,
+                   Arrival.Delay.Duration, Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z,
+                   Departure.Delay.Duration.log, Departure.Delay.Duration.log.z)
+                     )
 
-# Cleaning columns with zero scores that exist in small quantities
+# Cleaning column from zero score that only exist in small quantity (most of them only have 1 data, cant be splitted to training and testing)
 cols_to_clean <- c("On.board.Service", "Check.in.Service", "Seat.Comfort",
                    "In.flight.Service", "Gate.Location", "Cleanliness", 
                    "In.flight.Entertainment")
 
 for (col in cols_to_clean) {
-  if (is.factor(data_numeric[[col]])) { # Check if the column is a factor
-    data_numeric[[col]] <- droplevels(data_numeric[[col]])
-  }
+  data_logreg <- subset(data_logreg, data_logreg[[col]] != "0")
+  data_logreg[[col]] <- droplevels(data_logreg[[col]])
 }
 
-# Split the dataset into training and testing sets
-proportion <- 0.7
-split <- initial_split(data_numeric, prop = proportion)
+proportion <-  0.7
+split <- initial_split(data_logreg, prop = proportion)
 training <- training(split)
 testing <- testing(split)
-
-# Encode Satisfaction as binary (0 = Neutral or Dissatisfied, 1 = Satisfied)
-training$Satisfaction <- ifelse(training$Satisfaction == "Satisfied", 1, 0)
-training$Satisfaction <- factor(training$Satisfaction, levels = c(0, 1))
-
-testing$Satisfaction <- ifelse(testing$Satisfaction == "Satisfied", 1, 0)
-testing$Satisfaction <- factor(testing$Satisfaction, levels = c(0, 1))
-
-# Split the dataset by class
-business_class_data <- training %>% filter(Class == "Business") %>% select(-Class)
-economy_class_data <- training %>% filter(Class %in% c("Economy", "Economy Plus")) %>% select(-Class)
 ```
 
-The code chunk above first converts all specified columns into factors, as logistic regression requires categorical predictors to be factors. Next we remove one row which contains zero column values, as this cannot be split into the training and testing datasets. Finally, the dataset is split and we extract the training and testing set.
+Lorem Ipsum
 
 ### Training Logistic Regression Model <a name="3.3.2"></a>
 
-Once we have determined the training and testing set, we will train the model in the code chunk below.
-
--   **`glm()`**: Fits a generalized linear model.
-
--   **`Satisfaction ~ .`**: Specifies the formula, where `Satisfaction` is the dependent variable, and all other variables in the `training` dataset are independent variables.
-
--   **`data = training`**: Uses the `training` dataset to train the model.
-
--   **`family = "binomial"`**: Specifies that the model is a logistic regression, as the dependent variable (`Satisfaction`) is binary.
-
-```{r training_logreg_business}
+```{r}
 # Using all data
+model_log <- glm(Satisfaction ~., 
+               data = training, family = "binomial")
 
-model_log_business <- glm(Satisfaction ~., 
-               data = business_class_data, family = "binomial")
-
-summary(model_log_business)
+summary(model_log)
 ```
 
-```{r training_logreg_economy}
-# Using all data
-
-model_log_economy <- glm(Satisfaction ~., 
-               data = economy_class_data, family = "binomial")
-
-summary(model_log_economy)
-```
-
-The results above show the relationship between the predictor variables and the target variables. We are interested in determining the significant predictors of the model. In the next subchapter, we will delve deeper into the interpretation of these results.
+Lorem Ipsum
 
 ### Interpretation of the Model <a name="3.3.3"></a>
 
-**Interpreting the coefficients**
+Lorem Ipsum
 
-The code chunk below is used to calculate the exponentiated coefficients (also known as odds ratios) from the logistic regression model `model_log`.
-
-```{r}
-exp(coef(model_log_business))
-```
+**Interpret the coefficient**
 
 ```{r}
-exp(coef(model_log_economy))
+exp(coef(model_log))
 ```
 
-The odds ratio indicates how the odds of the target variable (e.g., `Satisfaction` being "Satisfied") change with a one-unit increase in the predictor variable, holding all other variables constant.
-
--   **Odds Ratio \> 1**: The predictor increases the odds of satisfaction.
-
--   **Odds Ratio \< 1**: The predictor decreases the odds of satisfaction.
-
--   **Odds Ratio = 1**: The predictor has no effect on satisfaction.
-
-We find that strong positive predictors include returning customers, business travelers, ease of online booking, and older passengers. Meanwhile, negative predictors include economy class travelers, low rating of online boarding and delays.
+Lorem Ipsum
 
 **Visualize the coefficient**
 
-Below we will visualize the magnitude of each predictor's effect on the target variable, along with their 95% confidence intervals. The X axis represents the coefficient estimates in log-odds, horizontal lines around each point represent the confidence intervals (at 95% level).
-
 ```{r fig.width=10, fig.height=20}
-coefs <- summary(model_log_business)$coefficients
+coefs <- summary(model_log)$coefficients
 coef_df <- data.frame(
   Variable = rownames(coefs),
   Estimate = coefs[, "Estimate"],
@@ -2071,96 +2031,48 @@ ggplot(coef_df, aes(x = reorder(Variable, Estimate), y = Estimate)) +
   geom_errorbar(aes(ymin = Estimate - 1.96 * StdError,
                     ymax = Estimate + 1.96 * StdError), width = 0.2) +
   coord_flip() +
-  labs(title = "Logistic Regression Coefficients (Business Class)",
+  labs(title = "Logistic Regression Coefficients",
        x = "Predictor",
        y = "Coefficient Estimate (log-odds)") +
   theme_minimal()
 ```
 
-```{r fig.width=10, fig.height=20}
-coefs <- summary(model_log_economy)$coefficients
-coef_df <- data.frame(
-  Variable = rownames(coefs),
-  Estimate = coefs[, "Estimate"],
-  StdError = coefs[, "Std. Error"],
-  p_value = coefs[, "Pr(>|z|)"]
-)
-
-# Remove intercept for clarity
-coef_df <- coef_df[coef_df$Variable != "(Intercept)", ]
-
-# Plot using ggplot2
-library(ggplot2)
-
-ggplot(coef_df, aes(x = reorder(Variable, Estimate), y = Estimate)) +
-  geom_point(color = "darkblue") +
-  geom_errorbar(aes(ymin = Estimate - 1.96 * StdError,
-                    ymax = Estimate + 1.96 * StdError), width = 0.2) +
-  coord_flip() +
-  labs(title = "Logistic Regression Coefficients (Economy Class)",
-       x = "Predictor",
-       y = "Coefficient Estimate (log-odds)") +
-  theme_minimal()
-```
+Lorem Ipsum
 
 **Interpreting Z Value**
 
 ```{r}
-model_summary_business <- summary(model_log_business)
-model_summary_economy <- summary(model_log_economy)
+model_summary <- summary(model_log)
 
 # Extract z-values and convert to data frame
-z_df_business <- data.frame(
-  Variable_business = rownames(model_summary_business$coefficients),
-  Z_value_business = model_summary_business$coefficients[, "z value"]
-)
-
-z_df_economy <- data.frame(
-  Variable_economy = rownames(model_summary_economy$coefficients),
-  Z_value_economy = model_summary_economy$coefficients[, "z value"]
+z_df <- data.frame(
+  Variable = rownames(model_summary$coefficients),
+  Z_value = model_summary$coefficients[, "z value"]
 )
 
 # Remove intercept
-z_df_business <- subset(z_df_business, Variable_business != "(Intercept)")
-z_df_economy <- subset(z_df_economy, Variable_economy != "(Intercept)")
+z_df <- subset(z_df, Variable != "(Intercept)")
+
+z_df
 ```
 
 ```{r  fig.width=10, fig.height=20}
-# Combine the two dataframes into one for plotting
-z_df_business$Group <- "Business Class"
-z_df_economy$Group <- "Economy + Economy Plus"
-
-# Rename columns for consistency
-z_df_business <- z_df_business %>% rename(Variable = Variable_business, Z_value = Z_value_business)
-z_df_economy <- z_df_economy %>% rename(Variable = Variable_economy, Z_value = Z_value_economy)
-
-# Combine the dataframes
-z_df_combined <- rbind(z_df_business, z_df_economy)
-
 # Plot using ggplot2
 library(ggplot2)
 
-ggplot(z_df_combined, aes(x = reorder(Variable, abs(Z_value)), y = Z_value, fill = Group)) +
-  geom_col(position = "dodge") + # Side-by-side bars for each group
+ggplot(z_df, aes(x = reorder(Variable, abs(Z_value)), y = Z_value)) +
+  geom_col(fill = "steelblue") +
   geom_hline(yintercept = c(-1.96, 1.96), linetype = "dashed", color = "red") + # 95% significance threshold
   coord_flip() +
-  labs(title = "Z-values from Logistic Regression by Class",
+  labs(title = "Z-values from Logistic Regression",
        x = "Predictor Variable",
-       y = "Z-value (Wald Statistic)",
-       fill = "Passenger Class") + # Add legend for the groups
-  theme_minimal() +
-  scale_fill_manual(values = c("Business Class" = "steelblue", "Economy + Economy Plus" = "green"))
+       y = "Z-value (Wald Statistic)") +
+  theme_minimal()
 ```
 
-The Z**-**values represent the Wald statistics for each predictor in the logistic regression model. These values are used to test the null hypothesis that the coefficient for a predictor is equal to zero.
+Lorem Ipsum
 
--   Positive Z-values indicate a **positive** relationship to the likelihood of satisfaction.
-
--   Negative Z-values indicate a **negative** relationship to the likelihood of satisfaction.
-
-For a 95% confidence level, the threshold of a statistically significant Z-value is **\|Z\| \> 1.96** which is indicated by the dotted red line in the plot. We can see from the visualization above that the strongest negative predictor for business class is departure time and arrival convenience, while for economy class is ease of online booking. The strongest positive predictor for business class is online boarding, and for economy class it is in-flight WiFi. Next, we will evaluate the model.
-
-**Model Evaluation** <a name="3.3.4"></a>
+### Model Evaluation <a name="3.3.4"></a>
 
 ```{r}
 pred.test <- predict(model_log, newdata = testing, type = "response")
@@ -2204,7 +2116,7 @@ Lorem Ipsum
 
 **Using significant variables only**
 
-p-value \< 0.05
+p-value < 0.05
 
 ```{r}
 training_signif <- training %>% subset(select = -c(Departure.Delay, Arrival.Delay, Flight.Distance, 
@@ -2222,6 +2134,7 @@ summary(model_log_signif)
 ```
 
 AIC increase to 44749
+
 
 ```{r}
 pred.test <- predict(model_log_signif, newdata = testing, type = "response")
@@ -2260,6 +2173,7 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 
 confusionMatrix(pred.test.result, testing$Satisfaction)
 ```
+
 
 Performance not increase significantly
 
@@ -2320,57 +2234,11 @@ Accuracy decrease using PCA
 
 # Interpretation <a name="4"></a>
 
+Lorem Ipsum
+
 ## Result Visualization <a name="4.1"></a>
 
-What are the aspects of service that are important towards customer satisfaction?
-
-```{r important_aspects_of_service}
-
-# Extract coefficients from the logistic regression models
-coefs_business <- summary(model_log_business)$coefficients
-coefs_economy <- summary(model_log_economy)$coefficients
-
-# Create data frames for plotting
-coef_df_business <- data.frame(
-  Variable = rownames(coefs_business),
-  Estimate = coefs_business[, "Estimate"],
-  Abs_Estimate = abs(coefs_business[, "Estimate"])
-)
-
-coef_df_economy <- data.frame(
-  Variable = rownames(coefs_economy),
-  Estimate = coefs_economy[, "Estimate"],
-  Abs_Estimate = abs(coefs_economy[, "Estimate"])
-)
-
-# Remove the intercept for clarity
-coef_df_business <- coef_df_business[coef_df_business$Variable != "(Intercept)", ]
-coef_df_economy <- coef_df_economy[coef_df_economy$Variable != "(Intercept)", ]
-
-# Select the top 5 most important predictors for each class
-top_5_business <- coef_df_business[order(-coef_df_business$Abs_Estimate), ][1:5, ]
-top_5_economy <- coef_df_economy[order(-coef_df_economy$Abs_Estimate), ][1:5, ]
-
-# Plot the top 5 predictors for Business Class
-library(ggplot2)
-
-ggplot(top_5_business, aes(x = reorder(Variable, Abs_Estimate), y = Estimate)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  coord_flip() +
-  labs(title = "Top 5 Most Important Predictors (Business Class)",
-       x = "Predictor",
-       y = "Coefficient Estimate (log-odds)") +
-  theme_minimal()
-
-# Plot the top 5 predictors for Economy Class
-ggplot(top_5_economy, aes(x = reorder(Variable, Abs_Estimate), y = Estimate)) +
-  geom_bar(stat = "identity", fill = "tomato") +
-  coord_flip() +
-  labs(title = "Top 5 Most Important Predictors (Economy Class)",
-       x = "Predictor",
-       y = "Coefficient Estimate (log-odds)") +
-  theme_minimal()
-```
+Lorem Ipsum
 
 ## Recommendation <a name="4.2"></a>
 
