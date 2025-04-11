@@ -1492,7 +1492,7 @@ data_clsf_norm <- data_clsf %>%
             Departure.Delay.Duration, Flight.Distance, Age)) 
 ```
 
-Lorem Ipsum
+Afterwards, we will split the dataset into training and testing data.In this case we use 0.7 as the proportion of training data.  
 
 **Start with Untransformed Dataset**
 
@@ -1509,23 +1509,26 @@ training <- training(split)
 testing <- testing(split)
 ```
 
-Lorem Ipsum
+Classification is an example of supervised learning where the model is trained to predict label variables based on the features of the dataset. In this case, we will use decision tree as the classification method,as the most popluar and widely used classification method. Decision tree is a flowchart-like structure where each internal node represents a test on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label. It works by splitting the data into subsets based on the value of the input features. The splitting process continues until a stopping criterion is met, such as reaching a maximum depth or minimum number of samples in a leaf node. 
+
+We use c50 as the package to implement decision tree. C5.0 is an improved version of C4.5, which is a popular algorithm for generating decision trees. It is known for its speed and accuracy, and it can handle large datasets with many features. C5.0 also includes features such as boosting, which can improve the performance of the model by combining multiple weak classifiers into a strong classifier.
 
 ### Training a decision tree model on the data <a name="3.2.2"></a>
 
 ```{r}
+library(C50)
+
 model <- C50::C5.0(Satisfaction ~., 
                    data = training)
 summary(model)
 ```
 
-Lorem Ipsum
+Next, we visualize the model to better understand how the decision tree makes predictions.
 
 Plotting top 5 model :
 
 ```{r fig.width = 10, fig.height = 10}
 
-library(C50)
 
 # Visualization-only version, targeting ~5 levels
 model_top5 <- C5.0(Satisfaction ~ ., data = training,
@@ -1533,7 +1536,10 @@ model_top5 <- C5.0(Satisfaction ~ ., data = training,
 plot(model_top5)
 ```
 
-Lorem Ipsum
+From the graph above,nodes are the ovals (decisions) and rectangles (final outcomes), branches are the lines connecting them with condition labels, and levels represent the depth from top (root) to bottom (leaves), where predictions are made.We can see that the most important factor influencing customer satisfaction is In-flight Wifi Service, as it is the first and most frequent split in the tree, indicating strong predictive power. Customers who rated Wifi poorly (values 0 or 5) are more likely to be dissatisfied (Node 2), while those who gave moderate to high ratings proceed through other factors. Among these, Online Boarding and Type of Travel play key roles, especially for business travelers, whose satisfaction is further influenced by In-flight Wifi Service again. Additionally, Class (e.g., Economy vs. Business) and Gate Location appear in deeper splits, showing they contribute but are less critical. Overall, Wi-Fi satisfaction, especially for business travelers, is the top predictor of overall satisfaction.
+
+
+*In-flight service* , *Online boarding*, *Type of travel*, *Flight distance*, and *Departure and arrival time convenience*. 
 
 ```{r}
 print("Confusion matrix based on testing data")
