@@ -107,6 +107,20 @@ Lorem IpsumBesides the Basic R Functions, this project uses multiple packages to
 
 * Data Modeling
 
+**caret** : used for the process of creating predictive models, including data splitting, pre-processing, feature selection, and model tuning.
+
+**rsample** : a package to create resampling objects for both training and testing datasets.
+
+**c50** : used to create decision trees and rule-based models.
+
+**gmodel** : designed as a tool for fitting linear models.
+
+**ranger** : package for fast implementation of random forests.
+
+**randomForest** : used to create a random forest model for the optimization of classification and decision tree.
+
+**pROC** : used to visualize the performance of classification models by plotting the ROC curve and further utilized to calculate the AUC (Area Under the Curve) score.
+
 * Data Analysis
 
 Below we will find the commands to install the required libraries so that the code can run properly.The libraries only need to be imported only once, later we only need to call the necessary libraries when needed on the specific sections.
@@ -1511,6 +1525,8 @@ Plotting top 5 model :
 
 ```{r fig.width = 10, fig.height = 10}
 
+library(C50)
+
 # Visualization-only version, targeting ~5 levels
 model_top5 <- C5.0(Satisfaction ~ ., data = training,
                    control = C5.0Control(minCases = 3500, CF = 0.25))
@@ -2632,6 +2648,10 @@ For a 95% confidence level, the threshold of a statistically significant Z-value
 
 **Model Evaluation** <a name="3.3.4"></a>
 
+The first calculation method that we will use to evaluate the logistic regression model is the confusion matrix. It is is a table that describes the performance of a classification model by comparing the predicted values with the actual values. It provides insight into how well the model is performing and helps identify any misclassifications. The result will display how many variables are correctly predicted as true positive and true negative as well as wrongly classified as false positive and false negative. The confusion matrix also calculate the accuracy, sensitivity, and specificity of the model. The accuracy is the proportion of true results (both true positives and true negatives) among the total number of cases examined. Sensitivity is the proportion of true positives that are correctly identified, while specificity is the proportion of true negatives that are correctly classified.
+
+We will use the confusion matrix to evaluate all three models: All Class, Economy Class, and Business Class. The code chunks below will show the confusion matrix for each model.
+
 All Class :
 ```{r}
 all_testing <- testing
@@ -2646,8 +2666,7 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-Accuracy 84.61% with sensitivity 84.5% and specifity 87.73%
-
+The confusion matrix for combined class showed a relatively good result in all three aspects, with accuracy, sensitivity, and specificity are all well above 80%. We will now look at the confusion matrix for economy class and business class separately.
 
 Economy Class : 
 ```{r}
@@ -2665,9 +2684,9 @@ confusionMatrix(pred.test.result, economy_class_test$Satisfaction)
 
 ```
 
-Accuracy 89.02% with sensitivity 95.2% and specificy 91.9%
+Although the economy class predictor has a very high accuracy and specificity number, it suffers from questionable sensitivity performance with only slightly above 50% value. This means that the model struggles to correctly identify satisfied customers in the economy class, which resulted in a high number of false negatives. This can be a potential issue, because the model is currently not accurately capturing the satisfaction levels for a lot of economy class travelers.
 
-Business Class :
+For Business Class :
 
 ```{r}
 business_class_test <- testing %>% filter(Class %in% c("Business")) %>% select(-Class)
@@ -2684,9 +2703,13 @@ confusionMatrix(pred.test.result, business_class_test$Satisfaction)
 
 ```
 
-Accuracy 84.58% with sensitivity 84.5% and specifity 71.1%
+We can see that this model performs noticeably better than the economy class predictor, with accuracy number of 84.6% and sensitivity of 90.5%. However it still suffers from relatively low specificity (71.1%). This means that almost 30% rate of false positives, which is not an ideal situation.
 
 **Interpret ROC and AUC**
+
+Another quantified way to evaluate the model is to use the ROC curve and Area Under the Curve (AUC) value. The ROC curve is a graphical representation of the true positive rate (sensitivity) against the false positive rate (1 - specificity) at various threshold settings. AUC provides a single measure of overall model performance, with values ranging from 0 to 1. If the AUC value is closer to 1, the more accurate the model's prediction is. AUC value of 0.5 indicates that the model has no identified pattern of guessing, which is essentially the same as random guessing. Meanwhile, AUC value of 0 means that the model is completely wrong in its predictions.
+
+We will now look at the ROC curve and AUC value for each of the three models: All Class, Economy Class, and Business Class.
 
 
 ```{r}
@@ -2702,23 +2725,53 @@ plot(roc_obj, col = "blue", main = "ROC Curve")
 auc(roc_obj)
 ```
 
-Lorem Ipsum
+The ROC curve of All Class aboves shows that the model quickly reaches the value close to 1 in its initial phase, which indicates that the model has a good accuracy number. This is confirmed by the AUC value of 0.91, a value that is close to 1 and considered a good model.
 
 ```{r}
-auc(roc_obj)
+library(pROC)
+
+# Running the model for economy data
+economy_testing <- testing
+pred.test <- predict(model_log_economy, newdata = economy_class_test, type = "response")
+
+# ROC curve and AUC
+roc_obj_economy <- roc(economy_class_test$Satisfaction, pred.test)
+plot(roc_obj_economy, col = "blue", main = "ROC Curve")
+auc(roc_obj_economy)
 ```
 
-Lorem Ipsum
+For Economy Class model, the ROC curve takes a slightly longer path before it reach the value close to 1. From the AUC value of 0.8448, we can see that this model is still a good model, but not as good as the All Class model. This is consistent by the confusion matrix result above, where the economy class model has a lower accuracy and specificity number than the All Class model.
 
 ```{r}
-plot(model_log)
+
+# Running the model for all data
+business_testing <- testing
+pred.test <- predict(model_log_business, newdata = business_class_test, type = "response")
+
+# ROC curve and AUC
+roc_obj_business <- roc(business_class_test$Satisfaction, pred.test)
+plot(roc_obj_business, col = "blue", main = "ROC Curve")
+auc(roc_obj_business)
+
 ```
 
-Lorem Ipsum
+The Business Class model ROC curve shows a very good performance, similar with the All Class model. With AUC value of 0.9182, it can be considered a very good model.
 
 ### Improving Model Performance
 
 **Using significant variables only**
+
+Before we try several methods to improve the performance, we will display the summary of All Class model to see the AIC value. AIC (Akaike Information Criterion) is a measure of the relative quality of a statistical model for a given dataset. It is used to compare different models and select the best one. The lower the AIC value, the better the model fits the data. In this case, we will use AIC to compare the performance of different models.
+
+```{r}
+
+summary(model_log)
+
+```
+
+Above we see that the AIC value is 70412. We will use this value as a baseline to compare base model performance to the improved model.
+
+The first method that we use to try improving the model performance is by filtering out the non-significant variables. We will use the p-value to determine the significance of each variable. The p-value is a statistical measure that helps to determine the significance of results. In this case, we will use a threshold of 0.05, which means that we will only keep the variables with a p-value less than 0.05. This is a common threshold used in statistical analysis to determine whether a result is statistically significant.
 
 p-value \< 0.05
 
@@ -2737,8 +2790,9 @@ summary(model_log_signif)
 
 ```
 
-AIC increase to 44749
+We saw a slight increase in AIC value to 73568. Because the value is higher, it indicates that the model with filtered variables is actually not better than the base model for All Class model.
 
+Next, we will evaluate the new model through the Confusion Matrix:
 
 ```{r}
 pred.test <- predict(model_log_signif, newdata = testing, type = "response")
@@ -2752,7 +2806,9 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-The accuracy decrease
+From the result above, the accuracy and sensitivity of the model with filtered variables experience a noticeable drop in accuracy and sensitivity value, while the specificity value is essentially the same. Again, this shows that the new model is not better than the base model.
+
+The last method we want to use is using the ANOVA test to compare the two models. The ANOVA test is a statistical method used to compare the means of two or more groups. In this case, we will use the ANOVA test to compare the performance of the base model and the model with filtered variables. The ANOVA test will help us determine whether there is a significant difference between the two models. This is to ensure that the base model is indeed better than the model with filtered variables as indicated from the summary function and confusion matrix.
 
 ANOVA test :
 
@@ -2760,20 +2816,25 @@ ANOVA test :
 anova(model_log, model_log_signif, test="Chisq")
 ```
 
-Model full siginificantly better than model with significant only
+The ANOVA test result above shows that the p-value is very close to 0, which indicates that there is a significant difference between the two models. This means that the base model is indeed better than the model with filtered variables, confirming the result from summary function and the confusion matrix.
 
 **Adjusting Threshold**
+
+The second method that we will use to improve the model performance is by adjusting the threshold value. The default threshold value is 0.5, which means that if the predicted probability is greater than 0.5, the model will classify it as "Satisfied". However, we can adjust this threshold value to see if it improves the model performance. Based on the ROC curve, we can see that the optimal threshold value is actually around 0.475, not 0.5. 
+
 
 ```{r}
 coords(roc_obj, "best", ret = "threshold")
 ```
+
+Now, we will run the confusion matrix again of the base model using the new threshold value of 0.475.
 
 ```{r}
 all_testing <- testing
 pred.test <- predict(model_log, newdata = testing, type = "response")
 
 # Convert to class labels
-pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+pred.test.result <- ifelse(pred.test > 0.475096, "Satisfied", "Neutral or Dissatisfied")
 all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
 all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
@@ -2781,10 +2842,11 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-
-Performance not increase significantly
+The new threshold value indicates a slight increase in sensitivity value, while the specificity value decrease for about 1% than the previous model. Meanwhile, the accuracy score essentially stays the same. This shows that the new threshold value is not significantly better than the previous model.
 
 **Dimensionality Reduction**
+
+The last method that we will use to try improving the predictor model is by using PCA (Principal Component Analysis). PCA is a statistical technique used to reduce the dimensionality of a dataset while preserving as much variance as possible. It transforms the original variables into a new set of uncorrelated variables called principal components. The first few principal components capture most of the variance in the data, allowing us to reduce the number of variables while retaining important information. 
 
 ```{r}
 training_pca <- training %>%
@@ -2797,7 +2859,7 @@ pca_results <- prcomp(training_pca)
 summary(pca_results)
 ```
 
-12 var already achieve 91%
+In this case, the PCA reached more than 90% of the variance with only 12 components. Now we can reduce the dimensionality of dataset and see if it improves the model performance.
 
 ```{r}
 pca_data <- as.data.frame(pca_results$x[, 1:12])
@@ -2809,7 +2871,7 @@ model_log_pca <- glm(Satisfaction ~.,
 summary(model_log_pca)
 ```
 
-AIC higher 80736
+The summary of the PCA model shows that the AIC value is 9913.8, which is significantly lower than the base model AIC value of 70412. This indicates that the PCA model is better than the base model. 
 
 ```{r}
 # 1. Convert test data to numeric and scale
@@ -2920,6 +2982,8 @@ Biau, G. (2010). Analysis of a Random Forests Model. J. Mach. Learn. Res., 13, 1
 Ren, Z., Zhu, Y., Kang, W., Fu, H., Niu, Q., Gao, D., Yan, K., & Hong, J. (2022). Adaptive cost-sensitive learning: Improving the convergence of intelligent diagnosis models under imbalanced data. Knowl. Based Syst., 241, 108296. https://doi.org/10.1016/j.knosys.2022.108296.<br>
 <br>
 Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. https://doi.org/10.1162/089976600300015178.<br>
+<br>
+Wragg, David W., 1973. A Dictionary of Aviation. Reading, UK: Osprey Publishing.
 <br>
 Wright, M., & Ziegler, A. (2015). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software, 077, 1-17. https://doi.org/10.18637/jss.v077.i01.<br>
 <br>
