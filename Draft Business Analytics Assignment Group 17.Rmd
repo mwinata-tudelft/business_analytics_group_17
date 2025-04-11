@@ -13,10 +13,18 @@ date: "2025-03-27"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Analyst
+
+| Name                        | Student Number  |
+|-----------------------------|-----------------|
+| Andra Miftah Ar Rahman      | 5728827         |
+| Vicky Wijaya                | 5795427         |
+| Maulvi Azmi Winata          | 6146015         |
+| Dewi Farra Prasasya         | 6171486         |
+| Agassi Fathurisma           | 6211542         |
 
 # Project Background <a name="1"></a>
 
-Lorem Ipsum
 
 ## Abstract <a name="1.1"></a>
 
@@ -98,6 +106,20 @@ Lorem IpsumBesides the Basic R Functions, this project uses multiple packages to
 **corrplot** : used to visualize correlation matrix between two variables in a more visually appealing and informative way.
 
 * Data Modeling
+
+**caret** : used for the process of creating predictive models, including data splitting, pre-processing, feature selection, and model tuning.
+
+**rsample** : a package to create resampling objects for both training and testing datasets.
+
+**c50** : used to create decision trees and rule-based models.
+
+**gmodel** : designed as a tool for fitting linear models.
+
+**ranger** : package for fast implementation of random forests.
+
+**randomForest** : used to create a random forest model for the optimization of classification and decision tree.
+
+**pROC** : used to visualize the performance of classification models by plotting the ROC curve and further utilized to calculate the AUC (Area Under the Curve) score.
 
 * Data Analysis
 
@@ -1065,6 +1087,7 @@ data$Arrival.Delay.Duration.log = log(1 + data$Arrival.Delay.Duration)
 
 plot_histogram(data[, c("Flight.Distance.log", "Age.log", "Departure.Delay.Duration.log", "Arrival.Delay.Duration.log")], ncol=2,ggtheme = theme_minimal())
 ```
+
 Data transformation is performed with visualization task to see the distribution of the data after the transformation. This aims to normalize skewed distribution.
 <ul>
   <li>**arrival.delays** and **departure.delays** are transformed into log scale to address the skewed issues.</li>
@@ -1104,14 +1127,15 @@ Following is the behavior of each variables towards satisfaction rate.
 ```{r}
 plot_bar(data,by='Satisfaction',ncol=2)
 ```
+
 According to the graphic above, we can see that:
 <ul>
 <li>**Gender**: Both male and female customers have a higher proportion of "Neutral or Dissatisfied" responses compared to "Satisfied" ones. This indicates there is a room of improvement to increase satisfied number</li>
 <li>**Customer Type**: Returning customers exhibit a higher proportion of "Satisfied" responses than first-time customers, who seem mostly "Neutral or Dissatisfied". This might indicate that familiarity with the company positively influences satisfaction.</li>
 <li> **Type of Travel**: Business travelers show a higher proportion of "Satisfied" responses compared to personal travelers.</li>
 <li> **Class**: Business class has the highest proportion of "Satisfied" responses, whereas Economy and Economy Plus lean more towards "Neutral or Dissatisfied." This indicates higher satisfaction among premium customers. </li>
-<li> **Age Range**: Older and middle-aged customers show higher satisfaction levels compared to youth and children, who lean towards dissatisfaction.</li>
-<li> **Distance Group**:Longer trips seem to lead to higher satisfaction levels, which could indicate that services during these trips meet or exceed customer expectations. </li>
+<li> **Age Range**: adult and youth customers show higher satisfaction levels compared to senior and children, who lean towards dissatisfaction.</li>
+<li> **Distance Group**:Long Haul seem to lead to higher satisfaction levels compared to short haul and medium haul, which could indicate that services during these trips meet or exceed customer expectations. </li>
 <li> **Delay Status**: the behavior of satisfaction between on-time and delayed status is not significantly different </li>
 </ul>
 
@@ -1137,12 +1161,13 @@ ggplot(data_long, aes(x = Value, fill = Satisfaction)) +
   )
 ```
 
-Graphic above is telling the satisfaction distribution based on services category such as comfort, digital, entertainment, and flight services. We can see that the distribution of satisfaction is not significantly different between each category.
+Graphic above is telling the satisfaction distribution based on services category such as comfortability, flight entertainment, in flight service, and pre flight service. We can see that the distribution of satisfaction is not significantly different between each category.
+
 
 ```{r}
 data %>% group_by(Class, Satisfaction) %>% summarize(num=n()) %>% mutate(percentage=round(num*100/sum(num),2))
 ```
-Based on the data above, **69.44%** of Business passengers showing satisfaction, while only *18.77%* of Economy passengers showing satisfaction and only **24.64%** of Economy Plus passengers are satisfied. This indicates that the airline services are more satisfying for business class passengers compared to economy class passengers. This data highlights the need for airlines to focus on enhancing the customer experience, particularly in Economy and Economy Plus, to achieve better satisfaction rates.
+Based on the data above, **69.4%** of Business passengers showing satisfaction, while only **18.8%** of Economy passengers showing satisfaction and only **24.6%** of Economy Plus passengers are satisfied. This indicates that the airline services are more satisfying for business class passengers compared to economy class passengers. This data highlights the need for airlines to focus on enhancing the customer experience, particularly in Economy and Economy Plus, to achieve better satisfaction rates.
 
 
 ```{r}
@@ -1151,7 +1176,7 @@ summarize(num=n()) %>%
 mutate(percentage=round(num*100/sum(num),2))
 ```
 
-Personal type of travel passenger is having a third of airline total customer with the number of satisfied customer is only **10%** from it. This is much lower compared to the business type customers with **58.37%** satisfaction rate. Personal travel satisfaction levels indicate areas for improvement in service offerings or customer experience. Therefore it is also important customer segment to be improved trying to understand more satisfaction triggers from personal type of travelers.
+Personal type of travel passenger is having a third of airline total customer with the number of satisfied customer is only **10%** from it. This is much lower compared to the business type customers with **58.4%** satisfaction rate. Personal travel satisfaction levels indicate areas for improvement in service offerings or customer experience. To enhance customer satisfaction among various traveler types, it is crucial to refine customer segmentation strategies. This involves identifying and analyzing distinct traveler segments to understand their unique satisfaction triggers. By doing so, strategies to improve satisfaction rate on each segments can be effectively implemented.
 
 ```{r}
 data %>% group_by(Customer.Type, Satisfaction) %>%
@@ -1160,9 +1185,10 @@ mutate(percentage=round(num*100/sum(num),2))
 
 ```
 
-**First-time Customers**: A majority, 76.03%, are neutral or dissatisfied, while only 23.97% report being satisfied.This could be a concern since it is indicating a risk from airline for not retaining first-time customers.<br>
+**First-time Customers**: In this customer segment, ration between dissatisfaction customers compared to satisfied customers is 5:1, indicating a significant gap in satisfaction. The data shows around 24% of first-time customers are satisfied, while around 76% are neutral or dissatisfied. This indicates that first-time customers are not satisfied with the airline services, which is a concern for the airline as it indicates a risk of losing first-time customers.<br>
+
 <br>
-**Returning Customers**: A majority, 58.37%, are satisfied, while 41.63% are neutral or dissatisfied. This indicates that returning customers are more satisfied with the airline services compared to first-time customers. This data highlights the need for airlines to focus on enhancing the customer experience, particularly for first-time customers, to achieve better satisfaction rates.
+**Returning Customers**: A majority, around 52%, are satisfied, while around 48% are neutral or dissatisfied. This indicates that returning customers are more satisfied with the airline services compared to first-time customers. This data highlights the need for airlines to focus on enhancing the customer experience, particularly for first-time customers, to achieve better satisfaction rates.
 
 
 ```{r}
@@ -1171,9 +1197,10 @@ summarize(num=n()) %>%
 mutate(percentage=round(num*100/sum(num),2))
 
 ```
-The table shows significant differences in first-timer passenger satisfaction across flight classes. Business Class shows the highest satisfaction, with nearly 40% satisfied, though more than half remain neutral or dissatisfied. Economy Class fares worse, with 85% of passengers neutral or dissatisfied, and Economy Plus performs the poorest, with 92% dissatisfaction. Enhancing services for Economy and Economy Plus could greatly improve overall customer satisfaction.<br>
+
+The table shows significant differences in first-timer passenger satisfaction across flight classes. Business Class shows the highest satisfaction, with nearly 40% satisfied, though more than half remain neutral or dissatisfied. Economy Class fares worse, with 85% of passengers are not satisfied, and Economy Plus performs the poorest, with 92% dissatisfaction. Enhancing services for Economy and Economy Plus could greatly improve overall customer satisfaction.<br>
 <br>
-In conclusion, mostly first-timer passengers feeling dissatisfied on each classes with notably higher in economy and economy plus class. This is a concern for the airline, as it indicates a need to improve services for first-time customers, to retain them and increase satisfaction rates.
+In conclusion, mostly first-timer passengers feeling dissatisfied on each classes with notably higher in economy and economy plus class. This is a concern for the airline, as it indicates a need to improve services for first-time customers, to retain them and increase satisfaction rates. Leaving a good impression for first timer consumers is important to ensure they will come back and use the airline services again in the future. This is also important to ensure that the airline can maintain its market share and profitability in the long run.
 
 
 ```{r}
@@ -1181,9 +1208,10 @@ data %>% group_by(Distance_Group) %>%
 summarize(num=n()) %>%
 mutate(percentage=round(num*100/sum(num),2))
 ```
-Previously in the barplot satisfaction, we can notice that  as the distance lower the rate of disatisfied customer is increasing. **Below 1000 distance is having the highest dissatisfaction rate**. From the data above, this condition could be a big concern since the majority of the airline customer is having journey below 1000 (more than 60%). This is a concern for the airline, as it indicates a need to improve services for short-distance travelers, to retain them and increase satisfaction rates.
+Previously in the barplot satisfaction, we can notice that  as the distance lower the rate of disatisfied customer is increasing. **short-haul trip is having the highest dissatisfaction rate**. From the data above, this condition could be a big concern since the majority of the airline customer is taking short-haul trip (more than 60%). This is a concern for the airline, as it indicates a need to improve services for short-distance travelers, to retain them and increase satisfaction rates. Failing to retain loyalty from the majority of customers (short-haul customers) could lead to a significant loss in market share and profitability. <br>
 <br>
 Next we will try to analyze the service factors related to the customer satisfaction, starting with customer type :
+
 
 ```{r}
 
@@ -1211,13 +1239,15 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
 
-We can identify that from the first time customer, the services that dissapointing them most in **Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service**.While **Comfort Service** having the highest satisfaction value. <br>
+As discussed above, first-timer group showed a significat dissatsifaction rate, thus through this graph, we can analyze which triggers the dissatisfaction. The graph above shows the mean of each service category for first-timer customers. The mean values are sorted in descending order, with the highest mean value on top. The mean values are calculated from the satisfaction rating of each service category. <br>
+We can identify that from the first time customer, the services that dissapointing them most in **Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service**.While **In fligth service and comfortability** having the highest satisfaction value. <br>
 This data can guide strategic improvements to enhance the first-time customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.
+
 
 ```{r}
 
 # Compute mean for each continuous column
-filtered_data <- data %>% filter(Type.of.Travel == 'Business') 
+filtered_data <- data %>% filter(Type.of.Travel == 'Personal') 
 filtered_data <- subset(filtered_data, select = -c(ID, Flight.Distance, Age, Arrival.Delay, Departure.Delay, Arrival.Delay.Duration, Arrival.Delay.Duration.log,
                                                    Arrival.Delay.Duration.log.z, Departure.Delay.Duration, Departure.Delay.Duration.log, Departure.Delay.Duration.log.z,
                                                    Flight.Distance.log, Flight.Distance.log.z, Age.log, Age.log.z))
@@ -1240,8 +1270,10 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
 
-We can identify that from the Personal type of travel customers, the services that dissapointing them most in **Departure and Arrival Time Convenience, In flight wifi service, Ease of Online Booking**.These areas could be prioritized for enhancement to improve overall satisfaction for business travelers. The top satisfaction factors is **Comfort service**.<br>
+In the previous section, we can see that personal type of travel passenger is having a third of airline total customer with the number of satisfied customer is only **10%** from it. Thus, the graph above becomes important to understand which factors are contributing to the low satisfaction rate. The graph above shows the mean of each service category for personal type of travel customers. The mean values are sorted in descending order, with the highest mean value on top. The mean values are calculated from the satisfaction rating of each service category. <br>
+We can identify that from the Business Travel type of travel customers, the services that dissapointing them most in **Ease of online booking, In flight wifi service, online boarding**.These areas could be prioritized for enhancement to improve overall satisfaction for business travelers. The top satisfaction factors are **in flight service and Comfortability**.<br>
 As you can see, personal type of travel customer satisfaction data is showing similar behaviour with the first-timer passengers. Thus, improving low-rated areas like WiFi availability and online booking ease may help elevate the overall customer experience for this segment.
+
 
 ```{r}
 
@@ -1269,7 +1301,8 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
 
-The graph above is satisfaction data from Economy class customers. The biggest contributors to low satisfaction rate are **ease of online booking, wifi service, and online boarding**. While **Comfort Service** have the highest satisfaction rate among the Economy class customers. This data can guide strategic improvements to enhance the Economy class customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.
+From the previous discussion, we identify that customers in economy class having high number of dissatisfaction. The graph above is helping to identify which parameters should have more attention to be improved for higher customers satisfaction rate. <br>
+The graph above is satisfaction data from Economy class customers. The biggest contributors to low satisfaction rate are **ease of online booking, wifi service, and online boarding**. While **In flight service and Comfortability** have the highest satisfaction rate among the Economy class customers. This data can guide strategic improvements to enhance the Economy class customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.
 
 ### Summary of Initial Plotting
 <ol>
@@ -1424,7 +1457,7 @@ However, after including one-hot encoded categorical variables, the number of co
 
 ## Classification Method <a name="3.2"></a>
 
-Lorem Ipsum
+
 
 ### Model Preparation <a name="3.2.1"></a>
 
@@ -1482,9 +1515,22 @@ Lorem Ipsum
 
 ```{r}
 model <- C50::C5.0(Satisfaction ~., 
-                   data = training,
-                   )
+                   data = training)
 summary(model)
+```
+
+Lorem Ipsum
+
+Plotting top 5 model :
+
+```{r fig.width = 10, fig.height = 10}
+
+library(C50)
+
+# Visualization-only version, targeting ~5 levels
+model_top5 <- C5.0(Satisfaction ~ ., data = training,
+                   control = C5.0Control(minCases = 3500, CF = 0.25))
+plot(model_top5)
 ```
 
 Lorem Ipsum
@@ -1498,10 +1544,37 @@ gmodels::CrossTable(testing$Satisfaction, pred.test,
                     prop.r = FALSE,
                     prop.t = FALSE,
                     dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics for Model with data testing:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
+
 ```
 
+As we can see at the metrics for the model, it shows high accuracy at 96%. The model is able to predict the satisfaction level of the customers with high accuracy. The precision and recall are also high at 95% and 98% respectively, indicating that the model is able to correctly identify the satisfied customers and dissatisfied customers. The F1-score is also high, indicating that the model is able to balance precision and recall well.
 
 
+<<<<<<< HEAD
 ```{r}
 # Calculating Accuracy
 
@@ -1527,6 +1600,8 @@ plot(model_top5)
 
 Lorem Ipsum
 
+=======
+>>>>>>> f23ae0c91ca340c8b9117652e9ca8e8f77d13f79
 **Try with dataset that already log transformed**
 
 ```{r}
@@ -1551,15 +1626,40 @@ gmodels::CrossTable(testing$Satisfaction, pred.test,
                     prop.r = FALSE,
                     prop.t = FALSE,
                     dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics for Model with data training:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
+
 ```
 
 The result is almost identical since the algorithm determine the transformed data is not have significant importance. Therefore the improvement will focus on tuning the parameter of the model.
 
-### Model Improvement <a name="3.2.3"></a>
+### Model Improvement <a name="3.3.3"></a>
+In this section, we tried to explore whether there is a room to improve the model performance. Note that the model performance is considered good with accuracy of 96%, but we will try to improve it by tuning the parameters of the model. The model performance is measured by accuracy, precision, recall, and F1-score. The model performance is evaluated using the testing data.
 
-**Boosting**
+**1. Boosting**
 
-Lorem Ipsum
+**Boosting** is one of methods to improve the performance of the model. The idea is to combine multiple weak classifiers to create a strong classifier. In this section, we will use boosting to improve the performance of the decision tree model.Key concept of boosting includes sequential learning where each new model is trained to correct the errors of the previous model (Schwenk,2000). The final model then is a weighted sum of all the models, where the weights are determined by the performance of each model. Finally, loss minimization is used to minimize the error of the final model.
 
 
 ```{r}
@@ -1568,41 +1668,69 @@ library(gmodels)
 
 set.seed(46748717)
 
-proportion <-  0.7
+# Split the data
+proportion <- 0.7
 split <- initial_split(data_clsf_ori, prop = proportion)
 training <- training(split)
 testing <- testing(split)
 
-model_boost <- C5.0(Satisfaction ~.,
-                    data = training,
+# Train the boosting model
+model_boost <- C5.0(Satisfaction ~ ., 
+                    data = training, 
                     trials = 10)
 
-# Predicting on the testing data
+# Predict on the testing data
 print("Confusion matrix based on testing data (boosting)")
 pred.test <- predict(model_boost, testing)
+
+# Generate the confusion matrix
 CrossTable(testing$Satisfaction, pred.test,
            prop.chisq = FALSE,
            prop.c = FALSE,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics for Boosting Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
+
 ```
+Let's compare with the previous model performance
 
+| Metric    | Previous Model | Boosting Model |
+|-----------|----------------|---------------|
+| Accuracy  | 0.96           | 0.96          |
+| Precision | 0.95           | 0.96          |
+| Recall    | 0.98           | 0.97          |
+| F1-Score  | 0.97           | 0.96          |
 
-```{r}
-# Calculating Accuracy with Booster
+Based on the result above, there is no significant improvement in terms of model performance. This strengthen the idea that the model performance is already good. However, we can see that the precision is slightly improved from 0.95 to 0.96, while the recall is slightly decreased from 0.98 to 0.97. The F1-score is also slightly decreased from 0.97 to 0.96. In conclusion, our model performance is already good and there is no significant improvement after boosting.
 
-accuracy = (21229 + 15816) / 38964
-print(accuracy)
-```
+**2. Assigning Cost to Mistake**
 
-Accuracy didnt increase significant
+Now let's try another method to improve the model which is **Assigning cost to mistake**. this method is used to assign different costs to different types of mistakes. This involves setting optimal costs for different classes to suppress the dominance of majority classes during training, thereby enhancing the model's diagnostic capabilities (Ren,2022). In this case, we will assign a higher cost to predicting a satisfied customer as dissatisfied and a lower cost to predicting a dissatisfied customer as satisfied. This is because the cost of losing a satisfied customer is higher than the cost of losing a dissatisfied customer. The cost matrix is defined as follows:
 
-Lorem Ipsum
-
-**Assigning Cost to Mistake**
-
-More costly to predict dissatisfied customer satisfied, cost higher in False Positive
 
 ```{r}
 # Specifying the cost matrix
@@ -1626,27 +1754,50 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics for Cost sensitive learning  Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
+Let's compare with the previous model performance
 
-```{r}
-# Calculating Accuracy with Booster
+| Metric    | Previous Model | Cost Sensitive Model |
+|-----------|----------------|----------------------|
+| Accuracy  | 0.96           | 0.96                 |
+| Precision | 0.95           | 0.94                 |
+| Recall    | 0.98           | 0.99                 |
+| F1-Score  | 0.97           | 0.96                 |
 
-accuracy = (21755  + 15087 ) / 38964
-print(accuracy)
-```
+Based on the performance comparison, cost mistake assignment result is not significanty different with the model. This indicates that our model performance is having a good performance already. However, we can see that the recall is slightly increased from 0.98 to 0.99, while the precision is slightly decreased from 0.95 to 0.94. The F1-score is also slightly decreased from 0.97 to 0.96. In conclusion, our model performance is already good and there is no significant improvement after assigning cost to mistake.
 
-Accuracy decrease slightly
 
-```{r}
-# Calculating Decrease in False Positive
-
-decrease_fp = (495   - 238  ) / 495
-print(decrease_fp)
-```
-
-False positive decrease by 51.9%, from 495 to 238
-
-**Random Forest**
+**3. Random Forest**
+Another method for model improvement is **Random Forest**. This method is an ensemble learning method that combines multiple decision trees to create a more robust model. The idea is to create multiple decision trees using different subsets of the data and then combine the predictions of each tree to make the final prediction. This method is less prone to overfitting and can handle high-dimensional data better than a single decision tree (Biau, 2010). Key features of random forest include:<br>
+<ol>
+<li>Diversity: each tree is trained on a random subset of data and features, ensuring diversity </li>
+<li>Robustness: It reduces the risk of overfitting (common in single decision trees) by averaging the results from many trees. </li>
+<li>Feature Importance: Random Forest ranks the importance of features, helping you understand which variables contribute most to predictions.</li>
+</ol>
 
 ```{r random forest}
 data_randfor <- data_clsf_ori %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age)) 
@@ -1671,18 +1822,48 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics for Random Forest  Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
 
-```{r}
-# Calculating Accuracy with Random Forest
+Let's compare with the previous model performance
 
-accuracy = (21457    + 15692   ) / 38964
-print(accuracy)
-```
+| Metric    | Previous Model | Random Forest Model  |
+|-----------|----------------|----------------------|
+| Accuracy  | 0.96           | 0.95                 |
+| Precision | 0.95           | 0.95                 |
+| Recall    | 0.98           | 0.97                 |
+| F1-Score  | 0.97           | 0.96                 |
 
-Accuracy increase 95.4%
+Based on the performance comparison, random forest result provides not significant differences with the current model. This is because our model performance is already showing a good performance thus the room to improve is small. However, we can see that the accuracy is slightly decreased from 0.96 to 0.95, while the precision is unchanged at 0.95. The recall is slightly decreased from 0.98 to 0.97. The F1-score is also slightly decreased from 0.97 to 0.96. In conclusion, our model performance is already good and there is no significant differences after using random forest.
 
 **Using Ranger to implement random forest to the database with high cardinality**
+
+Last method to improve is using random forest with the consideration of **high cardinality** data using ranger. The data used in this case can be considered having high cardinality since the data is categorical and has many levels. The ranger package is a fast implementation of random forests that can handle high-dimensional data efficiently (Wright, 2015). It is particularly useful for large datasets with many features, as it can quickly build and evaluate random forest models.<br>
+Why high cardinality matters? <br>
+High cardinality categorical variables can lead to **overfitting** in traditional decision tree algorithms.This is because the model may create many splits based on rare categories, which can reduce the model's generalization ability. Ranger uses a different approach to handle high cardinality data by using a technique called "feature selection" to reduce the number of features used in the model. This helps to prevent overfitting and improve the model's performance.
+
 
 ```{r}
 # install.packages("ranger")
@@ -1709,18 +1890,47 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics for Random Forest with Ranger  Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
+Let's compare with the previous model performance
 
-```{r}
-# Calculating Accuracy with Ranger
+| Metric    | Previous Model | Random Forest with Ranger Model  |
+|-----------|----------------|----------------------------------|
+| Accuracy  | 0.96           | 0.95                             |
+| Precision | 0.95           | 0.95                             |
+| Recall    | 0.98           | 0.97                             |
+| F1-Score  | 0.97           | 0.96                             |
 
-accuracy = (21412   + 15739  ) / 38964
-print(accuracy)
-```
+The result of this method is similar with the previous random forest method. There is no significant changes in the model performance. This is mainly because the model is already showing a good performance leaving a small room to improve. However, accuracy slightly decreased from 0.96 to 0.95, while the precision is unchanged at 0.95. The recall is slightly decreased from 0.98 to 0.97. The F1-score is also slightly decreased from 0.97 to 0.96. In conclusion, our model performance is already good and there is no significant differences after using random forest with ranger.<br>
+<br>
+<br>
+**To conclude, we can say that the model performance is already good and there is no significant improvement after using boosting, assigning cost to mistake, random forest, and ranger.**
 
-Accuracy didnt increase significant
-
-### Variable Importance <a name="3.2.4"></a>
+### Model Evaluation <a name="3.4"></a>
+We have developed the model using classification method. In this section, we will try to evaluate the model using variable importance.<br>
+Evaluation of variable importance is crucial in business analytics as it helps to identify the most significant factors influencing customer satisfaction. By understanding which variables have the greatest impact, businesses can prioritize their efforts and resources to improve those areas, ultimately enhancing customer satisfaction. In this case we will analyze the variable importance using the random forest model. Random forests provide a built-in mechanism to assess the importance of each feature in making predictions. This is done by measuring how much each feature contributes to reducing the overall prediction error.
 
 ```{r}
 library(randomForest)
@@ -1729,26 +1939,69 @@ importance <- importance(model.forest)
 print(importance)
 ```
 
-Plot the importance
+Above is the importance of each variable in the model. The higher the value, the more important the variable is in predicting customer satisfaction. There are two main parameters observed in the importance evaluation, they are:<br>
+<ol>
+<li>**Mean Decrease Accuracy (MDA)**: This measures the decrease in model accuracy when the variable is permuted. A higher value indicates that the variable is important for making accurate predictions.<br>
+How to interpret MDA: <br>
+<ul>
+<li> High MDA: The variable is crucial for the model's predictive power. If you remove or permute this variable, the model's accuracy drops significantly.</li>
+<li> Low MDA: The variable has little impact on the model's predictions. Removing it won't significantly affect the model's performance.</li>
+</ul>
+</li>
+<li>**Mean Decrease Gini (MDG)**: This measures the total decrease in node impurity (Gini impurity) brought by the variable across all trees in the forest. A higher value indicates that the variable is important for splitting nodes and reducing uncertainty.<br>
+How to interpret MDG: <br>
+<ul>
+<li> High MDG: The variable is effective in splitting the data into homogeneous groups. It plays a significant role in the decision-making process of the model.</li>
+<li> Low MDG: The variable is less effective in splitting the data. It may not provide much information for the model's predictions.</li>
+</ul>
+</li>
+</ol>
+Let's visualize the variable importance using a bar plot. The plot will show the MDA and MDG values for each variable, allowing us to easily identify the most important features in the model.
 
 ```{r varimp-plot, fig.width=10, fig.height=8}
-varImpPlot(model.forest)
+varImpPlot(
+  model.forest,
+  main = "Variable Importance for Random Forest Model",
+   pch = 16 # Use filled circles for data points
+)
+
 ```
 
-
-Lorem Ipsum
-
-High satisfaction on :
-- Type of travel : Business
-- Class : Business
-- Customer Type : Returning
-
-Type of Travel : Business
+Based on the graph, we can see that the most important features are: <br>
+**MDA:**<br>
+<ol>
+<li> Type of travel</li>
+<li> Inflight wifi service</li>
+<li> Customers type</li>
+</ol>
+these features have the highest importance. This suggests that these features significantly impact the classification performance.<br>
+Features with low or near-zero values (e.g., arrival delay status, departure delay status, delay status) contribute less and might be candidates for exclusion during model optimization.<br>
+**MDG:**<br>
+<ol>
+<li> Online boarding</li>
+<li> Inflight wifi service</li>
+<li> type of travel</li>
+</ol>
+These features show the greatest contributions to reducing impurity.<br>
+The features with low or near-zero values (e.g., departure delay status, arrival delay status, delay status) contribute less and considered not significant.<br>
+<br>
+<br>
+**Importance Evaluation on high satisfaction VS Low satisfaction** <br>
+Next, we will try to take a look on importance in high satisfaction and low satisfaction. We will use the same method as above to evaluate the importance of each variable in high satisfaction and low satisfaction. This phase is to evaluate the importance profile on both high satisfaction and low satisfaction. The goal is to identify the most important features that contribute to high satisfaction and low satisfaction. This will help us to understand the factors that influence customer satisfaction and dissatisfaction.<br><br>
+**Step 1: high satisfaction variable importance evaluation**<br>
+High satisfaction category based on data:<br>
+<ol>
+<li> Type of travel : Business</li>
+<li> Class : Business</li>
+<li> Customer Type : Returning</li>
+</ol>
+**Notice** that in the fist plot we see non-satisfaction contributors being plotted. In the following step we will focus on possible contributors to the satisfaction by evaluating variable importance.<br>
+<br>
+<b><span style="color: #1E90FF;">Type of Travel : Business</span></b>
 
 ```{r fig.width=10, fig.height=8}
 data_randfor <- data_clsf_ori[ which(data_clsf_ori$Type.of.Travel == "Business"), ]
-data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
-                                           Flight.Distance, Age, Type.of.Travel)) 
+data_randfor <- data_randfor %>% select(-c(Type.of.Travel, Gender, Customer.Type, Age_Range, Distance_Group, Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age, Class))
 
 proportion <-  0.7
 split <- initial_split(data_randfor, prop = proportion)
@@ -1770,21 +2023,45 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics of Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 
 ```
 
 ```{r fig.width=10, fig.height=8}
-varImpPlot(model.forest)
+varImpPlot(
+  model.forest,
+  main = "Variable Importance for Type of Travel: Business",
+   pch = 16 # Use filled circles for data points
+)
 ```
 
-Lorem Ipsum
-
-Class : Business
+<b><span style="color: #1E90FF;">Class : Business</span></b>
 
 ```{r}
-data_randfor <- data_clsf_ori[ which(data_clsf_ori$Class == "Business"), ]
-data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
-                                           Flight.Distance, Age, Class)) 
+data_randfor <- data_clsf_ori[which(data_clsf_ori$Class == "Business"),]
+data_randfor <- data_randfor %>% select(-c(Type.of.Travel, Gender, Customer.Type, Age_Range, Distance_Group, Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age, Class))
 
 proportion <-  0.7
 split <- initial_split(data_randfor, prop = proportion)
@@ -1806,20 +2083,45 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics of Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
 
 ```{r fig.width=10, fig.height=8}
-varImpPlot(model.forest)
+varImpPlot(
+  model.forest,
+  main = "Variable Importance for Class: Business",
+   pch = 16 # Use filled circles for data points
+)
 ```
 
-Lorem Ipsum
-
-Customer Type : Returning
+<b><span style="color: #1E90FF;">Customer Type : Returning</span></b>
 
 ```{r fig.width=10, fig.height=8}
 data_randfor <- data_clsf_ori[ which(data_clsf_ori$Customer.Type == "Returning"), ]
-data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
-                                           Flight.Distance, Age, Customer.Type)) 
+data_randfor <- data_randfor %>% select(-c(Type.of.Travel, Gender, Customer.Type, Age_Range, Distance_Group, Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age, Class))
 
 proportion <-  0.7
 split <- initial_split(data_randfor, prop = proportion)
@@ -1841,25 +2143,54 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics of Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
 
 ```{r fig.width=10, fig.height=8}
-varImpPlot(model.forest)
+varImpPlot(
+  model.forest,
+  main = "Variable Importance for Customers Type: Returning",
+   pch = 16 # Use filled circles for data points
+  )
 ```
 
-Lorem Ipsum
+**Step 2: Low satisfaction variable importance evaluation**<br>
+Low satisfaction category based on data:<br>
+<ol>
+<li> Type of travel : Personal</li>
+<li> Class : Economy and Economy Plus</li>
+<li> Customer Type : First Time</li>
+</ol>
 
-Low Satisfaction on :
-- Type of Travel Personal
-- Class Economy and Economy Plus
-- Customer Type First Time
+<b><span style="color: #1E90FF;">Type of Travel : Personal</span></b>
 
-Type of travel personal
 
 ```{r}
 data_randfor <- data_clsf_ori[ which(data_clsf_ori$Type.of.Travel == "Personal"), ]
-data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
-                                           Flight.Distance, Age, Type.of.Travel)) 
+data_randfor <- data_randfor %>% select(-c(Type.of.Travel, Gender, Customer.Type, Age_Range, Distance_Group, Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age, Class))
 
 proportion <-  0.7
 split <- initial_split(data_randfor, prop = proportion)
@@ -1881,20 +2212,44 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics of Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
 
 ```{r fig.width=10, fig.height=8}
-varImpPlot(model.forest)
+varImpPlot(
+  model.forest,
+  main = "Variable Importance for Type of Travel: Personal",
+   pch = 16 # Use filled circles for data points
+  )
 ```
 
-Lorem Ipsum
-
-Class Economy and Economy Plus
+<b><span style="color: #1E90FF;">Class : Economy and Economy Plus</span></b>
 
 ```{r}
 data_randfor <- data_clsf_ori[ which(data_clsf_ori$Class %in% c("Economy", "Economy Plus")), ]
-data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
-                                           Flight.Distance, Age, Class)) 
+data_randfor <- data_randfor %>% select(-c(Type.of.Travel, Gender, Customer.Type, Age_Range, Distance_Group, Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age, Class))
 
 proportion <-  0.7
 split <- initial_split(data_randfor, prop = proportion)
@@ -1916,21 +2271,45 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics of Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
 
 ```{r fig.width=10, fig.height=8}
-varImpPlot(model.forest)
+varImpPlot(
+  model.forest,
+  main = "Variable Importance for Class: Economy and Economy Plus",
+   pch = 16 # Use filled circles for data points
+  )
 ```
 
-Lorem Ipsum
-
-
-Customer Type First Time
+<b><span style="color: #1E90FF;">Customers Type : First time</span></b>
 
 ```{r}
 data_randfor <- data_clsf_ori[ which(data_clsf_ori$Customer.Type %in% "First-time"), ]
-data_randfor <- data_randfor %>% select(-c(Arrival.Delay.Duration, Departure.Delay.Duration,
-                                           Flight.Distance, Age, Customer.Type)) 
+data_randfor <- data_randfor %>% select(-c(Type.of.Travel, Gender, Customer.Type, Age_Range, Distance_Group, Arrival.Delay.Duration, Departure.Delay.Duration, Flight.Distance, Age, Class))
 
 proportion <-  0.7
 split <- initial_split(data_randfor, prop = proportion)
@@ -1952,13 +2331,74 @@ CrossTable(testing$Satisfaction, pred.test,
            prop.r = FALSE,
            prop.t = FALSE,
            dnn = c("Actual Satisfaction", "Predicted Satisfaction"))
+# --- Calculate Metrics ---
+
+# Create the confusion matrix table
+conf_matrix <- table(Actual = testing$Satisfaction, Predicted = pred.test)
+
+# Extract True Positives, True Negatives, False Positives, and False Negatives. 0 representing dissatisfaction, 1 represent satisfaction.
+tp <- conf_matrix["0", "0"]
+tn <- conf_matrix["1", "1"]
+fp <- conf_matrix["1", "0"]
+fn <- conf_matrix["0", "1"]
+
+# Calculate metrics
+accuracy <- (tp + tn) / sum(conf_matrix)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+# Print metrics
+cat("\nMetrics of Model:\n")
+cat("Accuracy: ", round(accuracy, 2), "\n")
+cat("Precision: ", round(precision, 2), "\n")
+cat("Recall: ", round(recall, 2), "\n")
+cat("F1-Score: ", round(f1_score, 2), "\n")
 ```
 
 ```{r fig.width=10, fig.height=8}
-varImpPlot(model.forest)
+varImpPlot(
+  model.forest,
+  main = "Variable Importance for Customers Type: First time",
+   pch = 16 # Use filled circles for data points
+  )
 ```
 
-Lorem Ipsum
+Let's evaluate the variable importance result. The comparison between Top MDA on high satisfaction and low satisfaction customers will help to understand what parameters matter to define their satisfaction level. Below is the comparison between high satisfaction and low satisfaction customers based on the top MDA value. The table below shows the top 3 parameters that matter to high satisfaction and low satisfaction customers. The table is divided into 3 categories, which are: Type of Travel, Class, and Customers Type.<br>
+<br>
+
+| **Parameters Top MDA**| **High Satisfaction** | **Low Satisfaction**       |
+|-----------------------|-----------------------|----------------------------|
+| **Type of Travel**    | **Business**          | **Personal**               |
+| Top 1                 | Online Boarding       | In-flight WiFi Service     |
+| Top 2                 | Check-in Service      | Ease of Online Booking     |
+| Top 3                 | Baggage Handling      | Flight Entertainment       |
+| **Class**             | **Business**          | **Economy and Economy Plus** |
+| Top 1                 | Online Boarding       | In-flight WiFi Service     |
+| Top 2                 | Departure and Arrival Time Convenience    | Baggage Handling    |
+| Top 3                 | Check in Service      | Ease of online booking     |
+| **Customers Type**    | **Returning**             | **First time**                   |
+| Top 1                 | Departure and Arrival Time Convenience| In flight wifi service     |
+| Top 2                 | Online Boarding       | Baggage Handling           |
+| Top 3                 | In flight wifi service | In flight service         |
+
+<br>
+The table above shows that the top 3 parameters that matter to high satisfaction customers are different from the low satisfaction customers.
+<br>
+**Overall Insight**
+For high satisfaction, the recurring themes are efficiency, convenience, and timeliness. Business travel and returning customers emphasize this the most.
+For low satisfaction, comfort, accessibility, and entertainment take precedence, especially for personal travel and first-time customers.<br>
+
+**Let's take a look on each group**
+For **Type of Travel**, high satisfaction is driven by business travelers who value efficiency and convenience, particularly through services like online boarding, check-in service, and baggage handling. In contrast, low satisfaction among personal travelers stems from a focus on comfort and accessibility, with preferences for in-flight WiFi service, ease of online booking, and flight entertainment.<br><br>
+
+For **Class**, high satisfaction is prominent among Business Class customers who emphasize seamless travel experiences, prioritizing online boarding, departure and arrival time convenience, and check-in service. On the other hand, low satisfaction in Economy and Economy Plus passengers highlights their need for enjoyable and accessible features, such as in-flight WiFi service, baggage handling, and ease of online booking.<br><br>
+
+For **Customer Type**, returning customers experience high satisfaction when services like departure and arrival time convenience, online boarding, and in-flight WiFi service cater to their need for smooth and timely travel. Meanwhile, low satisfaction among first-time customers arises from their focus on pleasant first-time experiences, valuing in-flight WiFi service, baggage handling, and in-flight service.<br><br>
+
+
+
+
 
 ## Logistic Regression <a name="3.3"></a>
 
@@ -2236,6 +2676,10 @@ For a 95% confidence level, the threshold of a statistically significant Z-value
 
 **Model Evaluation** <a name="3.3.4"></a>
 
+The first calculation method that we will use to evaluate the logistic regression model is the confusion matrix. It is is a table that describes the performance of a classification model by comparing the predicted values with the actual values. It provides insight into how well the model is performing and helps identify any misclassifications. The result will display how many variables are correctly predicted as true positive and true negative as well as wrongly classified as false positive and false negative. The confusion matrix also calculate the accuracy, sensitivity, and specificity of the model. The accuracy is the proportion of true results (both true positives and true negatives) among the total number of cases examined. Sensitivity is the proportion of true positives that are correctly identified, while specificity is the proportion of true negatives that are correctly classified.
+
+We will use the confusion matrix to evaluate all three models: All Class, Economy Class, and Business Class. The code chunks below will show the confusion matrix for each model.
+
 All Class :
 ```{r}
 all_testing <- testing
@@ -2250,8 +2694,7 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-Accuracy 84.61% with sensitivity 84.5% and specifity 87.73%
-
+The confusion matrix for combined class showed a relatively good result in all three aspects, with accuracy, sensitivity, and specificity are all well above 80%. We will now look at the confusion matrix for economy class and business class separately.
 
 Economy Class : 
 ```{r}
@@ -2269,9 +2712,9 @@ confusionMatrix(pred.test.result, economy_class_test$Satisfaction)
 
 ```
 
-Accuracy 89.02% with sensitivity 95.2% and specificy 91.9%
+Although the economy class predictor has a very high accuracy and specificity number, it suffers from questionable sensitivity performance with only slightly above 50% value. This means that the model struggles to correctly identify satisfied customers in the economy class, which resulted in a high number of false negatives. This can be a potential issue, because the model is currently not accurately capturing the satisfaction levels for a lot of economy class travelers.
 
-Business Class :
+For Business Class :
 
 ```{r}
 business_class_test <- testing %>% filter(Class %in% c("Business")) %>% select(-Class)
@@ -2288,9 +2731,13 @@ confusionMatrix(pred.test.result, business_class_test$Satisfaction)
 
 ```
 
-Accuracy 84.58% with sensitivity 84.5% and specifity 71.1%
+We can see that this model performs noticeably better than the economy class predictor, with accuracy number of 84.6% and sensitivity of 90.5%. However it still suffers from relatively low specificity (71.1%). This means that almost 30% rate of false positives, which is not an ideal situation.
 
 **Interpret ROC and AUC**
+
+Another quantified way to evaluate the model is to use the ROC curve and Area Under the Curve (AUC) value. The ROC curve is a graphical representation of the true positive rate (sensitivity) against the false positive rate (1 - specificity) at various threshold settings. AUC provides a single measure of overall model performance, with values ranging from 0 to 1. If the AUC value is closer to 1, the more accurate the model's prediction is. AUC value of 0.5 indicates that the model has no identified pattern of guessing, which is essentially the same as random guessing. Meanwhile, AUC value of 0 means that the model is completely wrong in its predictions.
+
+We will now look at the ROC curve and AUC value for each of the three models: All Class, Economy Class, and Business Class.
 
 
 ```{r}
@@ -2306,23 +2753,53 @@ plot(roc_obj, col = "blue", main = "ROC Curve")
 auc(roc_obj)
 ```
 
-Lorem Ipsum
+The ROC curve of All Class aboves shows that the model quickly reaches the value close to 1 in its initial phase, which indicates that the model has a good accuracy number. This is confirmed by the AUC value of 0.91, a value that is close to 1 and considered a good model.
 
 ```{r}
-auc(roc_obj)
+library(pROC)
+
+# Running the model for economy data
+economy_testing <- testing
+pred.test <- predict(model_log_economy, newdata = economy_class_test, type = "response")
+
+# ROC curve and AUC
+roc_obj_economy <- roc(economy_class_test$Satisfaction, pred.test)
+plot(roc_obj_economy, col = "blue", main = "ROC Curve")
+auc(roc_obj_economy)
 ```
 
-Lorem Ipsum
+For Economy Class model, the ROC curve takes a slightly longer path before it reach the value close to 1. From the AUC value of 0.8448, we can see that this model is still a good model, but not as good as the All Class model. This is consistent by the confusion matrix result above, where the economy class model has a lower accuracy and specificity number than the All Class model.
 
 ```{r}
-plot(model_log)
+
+# Running the model for all data
+business_testing <- testing
+pred.test <- predict(model_log_business, newdata = business_class_test, type = "response")
+
+# ROC curve and AUC
+roc_obj_business <- roc(business_class_test$Satisfaction, pred.test)
+plot(roc_obj_business, col = "blue", main = "ROC Curve")
+auc(roc_obj_business)
+
 ```
 
-Lorem Ipsum
+The Business Class model ROC curve shows a very good performance, similar with the All Class model. With AUC value of 0.9182, it can be considered a very good model.
 
 ### Improving Model Performance
 
 **Using significant variables only**
+
+Before we try several methods to improve the performance, we will display the summary of All Class model to see the AIC value. AIC (Akaike Information Criterion) is a measure of the relative quality of a statistical model for a given dataset. It is used to compare different models and select the best one. The lower the AIC value, the better the model fits the data. In this case, we will use AIC to compare the performance of different models.
+
+```{r}
+
+summary(model_log)
+
+```
+
+Above we see that the AIC value is 70412. We will use this value as a baseline to compare base model performance to the improved model.
+
+The first method that we use to try improving the model performance is by filtering out the non-significant variables. We will use the p-value to determine the significance of each variable. The p-value is a statistical measure that helps to determine the significance of results. In this case, we will use a threshold of 0.05, which means that we will only keep the variables with a p-value less than 0.05. This is a common threshold used in statistical analysis to determine whether a result is statistically significant.
 
 p-value \< 0.05
 
@@ -2341,8 +2818,9 @@ summary(model_log_signif)
 
 ```
 
-AIC increase to 44749
+We saw a slight increase in AIC value to 73568. Because the value is higher, it indicates that the model with filtered variables is actually not better than the base model for All Class model.
 
+Next, we will evaluate the new model through the Confusion Matrix:
 
 ```{r}
 pred.test <- predict(model_log_signif, newdata = testing, type = "response")
@@ -2356,7 +2834,9 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-The accuracy decrease
+From the result above, the accuracy and sensitivity of the model with filtered variables experience a noticeable drop in accuracy and sensitivity value, while the specificity value is essentially the same. Again, this shows that the new model is not better than the base model.
+
+The last method we want to use is using the ANOVA test to compare the two models. The ANOVA test is a statistical method used to compare the means of two or more groups. In this case, we will use the ANOVA test to compare the performance of the base model and the model with filtered variables. The ANOVA test will help us determine whether there is a significant difference between the two models. This is to ensure that the base model is indeed better than the model with filtered variables as indicated from the summary function and confusion matrix.
 
 ANOVA test :
 
@@ -2364,20 +2844,29 @@ ANOVA test :
 anova(model_log, model_log_signif, test="Chisq")
 ```
 
-Model full siginificantly better than model with significant only
+The ANOVA test result above shows that the p-value is very close to 0, which indicates that there is a significant difference between the two models. This means that the base model is indeed better than the model with filtered variables, confirming the result from summary function and the confusion matrix.
 
 **Adjusting Threshold**
+
+The second method that we will use to improve the model performance is by adjusting the threshold value. The default threshold value is 0.5, which means that if the predicted probability is greater than 0.5, the model will classify it as "Satisfied". However, we can adjust this threshold value to see if it improves the model performance. Based on the ROC curve, we can see that the optimal threshold value is actually around 0.475, not 0.5. 
+
 
 ```{r}
 coords(roc_obj, "best", ret = "threshold")
 ```
+
+Now, we will run the confusion matrix again of the base model using the new threshold value of 0.475.
 
 ```{r}
 all_testing <- testing
 pred.test <- predict(model_log, newdata = testing, type = "response")
 
 # Convert to class labels
+<<<<<<< HEAD
 pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+=======
+pred.test.result <- ifelse(pred.test > 0.475096, "Satisfied", "Neutral or Dissatisfied")
+>>>>>>> f23ae0c91ca340c8b9117652e9ca8e8f77d13f79
 all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
 all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
@@ -2385,10 +2874,11 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-
-Performance not increase significantly
+The new threshold value indicates a slight increase in sensitivity value, while the specificity value decrease for about 1% than the previous model. Meanwhile, the accuracy score essentially stays the same. This shows that the new threshold value is not significantly better than the previous model.
 
 **Dimensionality Reduction**
+
+The last method that we will use to try improving the predictor model is by using PCA (Principal Component Analysis). PCA is a statistical technique used to reduce the dimensionality of a dataset while preserving as much variance as possible. It transforms the original variables into a new set of uncorrelated variables called principal components. The first few principal components capture most of the variance in the data, allowing us to reduce the number of variables while retaining important information. 
 
 ```{r}
 training_pca <- training %>%
@@ -2401,7 +2891,7 @@ pca_results <- prcomp(training_pca)
 summary(pca_results)
 ```
 
-12 var already achieve 91%
+In this case, the PCA reached more than 90% of the variance with only 12 components. Now we can reduce the dimensionality of dataset and see if it improves the model performance.
 
 ```{r}
 pca_data <- as.data.frame(pca_results$x[, 1:12])
@@ -2413,7 +2903,7 @@ model_log_pca <- glm(Satisfaction ~.,
 summary(model_log_pca)
 ```
 
-AIC higher 80736
+The summary of the PCA model shows that the AIC value is 9913.8, which is significantly lower than the base model AIC value of 70412. This indicates that the PCA model is better than the base model. 
 
 ```{r}
 # 1. Convert test data to numeric and scale
@@ -2445,11 +2935,7 @@ Accuracy decrease using PCA
 
 # Interpretation <a name="4"></a>
 
-```{r}
-
-```
-
-
+Lorem Ipsum
 
 ## Result Visualization <a name="4.1"></a>
 
@@ -2497,7 +2983,21 @@ ggplot(top_5_economy, aes(x = reorder(Variable, Abs_Estimate), y = Estimate)) +
 
 ## Recommendation <a name="4.2"></a>
 
-Lorem Ipsum
+Based on the *classification model, the variable importance analysis, and log regression model**, we can derive several recommendations to enhance customer satisfaction. The insights gained from the analysis can be tailored to different customer segments, ensuring that the improvements align with their specific needs and preferences.<br>
+
+1. **Type of Travel**:<br>
+   - For business travelers, focus on optimizing efficiency and convenience. Improve online boarding processes, enhance check-in services, and ensure smooth baggage handling to meet their expectations.<br>
+   - For personal travelers, prioritize comfort and user-friendly experiences. Invest in better in-flight WiFi, simplify online booking platforms, and enhance in-flight entertainment to increase satisfaction.<br>
+
+2. **Class**:<br>
+   - In Business Class, emphasize seamless and time-sensitive services. Strengthen online boarding systems, ensure timely departures and arrivals, and offer superior check-in experiences.<br>
+   - For Economy and Economy Plus passengers, focus on accessible and enjoyable features. Improve in-flight WiFi reliability, streamline baggage handling processes, and simplify online booking procedures.<br>
+
+3. **Customer Type**:<br>
+   - For returning customers, continue focusing on convenience and timeliness. Enhance departure and arrival time management, refine online boarding, and maintain quality in-flight connectivity.<br>
+   - For first-time customers, create a welcoming and hassle-free experience. Highlight in-flight WiFi, ensure effective baggage handling, and offer exceptional in-flight service to leave a positive impression.<br>
+
+
 
 ## Further Improvement for Better Recommendation <a name="4.3"></a>
 
@@ -2509,4 +3009,13 @@ Lorem Ipsum
 
 ## References <a name=""></a>
 
-Lorem Ipsum
+Biau, G. (2010). Analysis of a Random Forests Model. J. Mach. Learn. Res., 13, 1063-1095. https://doi.org/10.5555/2503308.2343682.<br>
+<br>
+Ren, Z., Zhu, Y., Kang, W., Fu, H., Niu, Q., Gao, D., Yan, K., & Hong, J. (2022). Adaptive cost-sensitive learning: Improving the convergence of intelligent diagnosis models under imbalanced data. Knowl. Based Syst., 241, 108296. https://doi.org/10.1016/j.knosys.2022.108296.<br>
+<br>
+Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. https://doi.org/10.1162/089976600300015178.<br>
+<br>
+Wragg, David W., 1973. A Dictionary of Aviation. Reading, UK: Osprey Publishing.
+<br>
+Wright, M., & Ziegler, A. (2015). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software, 077, 1-17. https://doi.org/10.18637/jss.v077.i01.<br>
+<br>
