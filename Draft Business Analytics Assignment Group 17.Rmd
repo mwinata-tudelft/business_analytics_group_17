@@ -2868,11 +2868,9 @@ all_testing <- testing
 pred.test <- predict(model_log, newdata = testing, type = "response")
 
 # Convert to class labels
-<<<<<<< HEAD
+
 pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
-=======
 pred.test.result <- ifelse(pred.test > 0.475096, "Satisfied", "Neutral or Dissatisfied")
->>>>>>> f23ae0c91ca340c8b9117652e9ca8e8f77d13f79
 all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
 all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
@@ -2888,6 +2886,7 @@ The last method that we will use to try improving the predictor model is by usin
 
 ```{r}
 training_pca <- training %>%
+  select(-Satisfaction) %>%
   mutate(across(everything(), ~ if (all(!is.na(as.numeric(as.character(.x))))) 
     as.numeric(as.character(.x)) else .x)) %>%
   select(where(is.numeric)) %>%
@@ -2912,13 +2911,17 @@ summary(model_log_pca)
 The summary of the PCA model shows that the AIC value is 9913.8, which is significantly lower than the base model AIC value of 70412. This indicates that the PCA model is better than the base model. 
 
 ```{r}
+
+train_center <- attr(training_pca, "scaled:center")
+train_scale  <- attr(training_pca, "scaled:scale")
+
 # 1. Convert test data to numeric and scale
 test_pca_scaled <- testing %>%
   mutate(across(everything(), ~ if (all(!is.na(as.numeric(as.character(.x))))) 
-    as.numeric(as.character(.x)) else .x)) %>%
-  select(where(is.numeric)) %>%
-  scale(center = attr(training_pca, "scaled:center"), 
-        scale = attr(training_pca, "scaled:scale"))  # Use training scale
+    as.numeric(as.character(.x)) else NA_real_)) %>%  # forces fallback to numeric NA
+  select(all_of(names(train_center))) %>%
+  mutate(across(everything(), as.numeric)) %>%  # ensures everything is numeric
+  scale(center = train_center, scale = train_scale)
 
 # 2. Apply PCA transformation
 test_pca <- as.data.frame(predict(pca_results, newdata = test_pca_scaled)[, 1:12])
@@ -2931,10 +2934,11 @@ pred.test <- predict(model_log_pca, newdata = test_pca, type = "response")
 
 # Convert to class labels
 pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
-testing$Satisfaction <- factor(testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+test_pca$Satisfaction <- ifelse(test_pca$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
+test_pca$Satisfaction <- factor(test_pca$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
 
-confusionMatrix(pred.test.result, testing$Satisfaction)
+confusionMatrix(pred.test.result, test_pca$Satisfaction)
 ```
 
 Accuracy decrease using PCA
