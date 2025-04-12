@@ -405,7 +405,7 @@ Now we will analyze the association between two numerical variables. We will use
 
 <div class="scroll-box">
 
-```{r corrplot, fig.width=14, fig.height=12}
+```{r corrplot}
 numeric_data <- data[sapply(data, is.numeric)]
 numeric_data <- na.omit(numeric_data)
 
@@ -418,7 +418,7 @@ print(cor_matrix)
 
 </div>
 
-```{r}
+```{r, fig.width=14, fig.height=12}
 # Visualize the correlation matrix
 options(repr.plot.width=14, repr.plot.height=12)
 corrplot(cor_matrix,
@@ -2820,7 +2820,7 @@ We will use the confusion matrix to evaluate all three models: All Class, Econom
 All Class :
 ```{r}
 all_testing <- testing
-pred.test <- predict(model_log, newdata = testing, type = "response")
+pred.test <- predict(model_log, newdata = all_testing, type = "response")
 
 # Convert to class labels
 pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
@@ -2828,6 +2828,7 @@ all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neut
 all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
 
+# Confusion matrix
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
@@ -2904,7 +2905,6 @@ auc(roc_obj_economy)
 For Economy Class model, the ROC curve takes a slightly longer path before it reach the value close to 1. From the AUC value of 0.8448, we can see that this model is still a good model, but not as good as the All Class model. This is consistent by the confusion matrix result above, where the economy class model has a lower accuracy and specificity number than the All Class model.
 
 ```{r}
-
 # Running the model for all data
 business_testing <- testing
 pred.test <- predict(model_log_business, newdata = business_class_test, type = "response")
@@ -2925,9 +2925,7 @@ The Business Class model ROC curve shows a very good performance, similar with t
 Before we try several methods to improve the performance, we will display the summary of All Class model to see the AIC value. AIC (Akaike Information Criterion) is a measure of the relative quality of a statistical model for a given dataset. It is used to compare different models and select the best one. The lower the AIC value, the better the model fits the data. In this case, we will use AIC to compare the performance of different models.
 
 ```{r}
-
 summary(model_log)
-
 ```
 
 Above we see that the AIC value is 70412. We will use this value as a baseline to compare base model performance to the improved model.
@@ -2937,10 +2935,10 @@ The first method that we use to try improving the model performance is by filter
 p-value \< 0.05
 
 ```{r}
-training_signif <- training %>% subset(select = -c(Departure.Delay, Arrival.Delay,
-                                                  In.flight.Wifi.Service, Food.and.Drink, 
-                                                  In.flight.Entertainment,
-                                                  In.flight.service, Flight.Entertainment, 
+training_signif <- training %>% subset(select = -c(Departure.Delay, Baggage.Handling, 
+                                                   departure.delay.status,
+                                                  In.flight.service, In.flight.Service, 
+                                                  Flight.Entertainment, 
                                                   Comfortability, Pre.flight.service 
                                                   ))
 
@@ -2978,6 +2976,110 @@ anova(model_log, model_log_signif, test="Chisq")
 ```
 
 The ANOVA test result above shows that the p-value is very close to 0, which indicates that there is a significant difference between the two models. This means that the base model is indeed better than the model with filtered variables, confirming the result from summary function and the confusion matrix.
+
+**Using High Information Value Variables**
+
+```{r}
+library(Information)
+library(dplyr)
+
+# Step 1: Drop columns that contain "Date" or have more than one class
+filtered_data <- data %>%
+  select(-Satisfaction) %>%
+  select(where(~ all(!grepl("Date|POSIX", class(.))) & length(class(.)) == 1))
+
+# Step 2: Convert to numeric where possible
+clean_data <- filtered_data %>%
+  mutate(across(everything(), ~ if (all(!is.na(as.numeric(as.character(.x))))) {
+    as.numeric(as.character(.x))
+  } else {
+    .x
+  }))
+
+# Step 3: Add binary target
+clean_data$Satisfaction <- ifelse(data$Satisfaction == "Satisfied", 1, 0)
+
+# Step 4: Run IV analysis
+iv_results <- create_infotables(data = clean_data, y = "Satisfaction", bins = 10)
+
+# View summary
+iv_results$Summary
+
+```
+```{r}
+# View summary
+iv_results$Summary
+```
+
+Class and type of travel have strong predictive power, while age and flight distance have moderate predictive power. The other variables have weak predictive power. We will use this information to filter the variables and create a new model. 
+
+```{r}
+iv_data <- data %>%
+  mutate(across(where(is.numeric), ~ scale(.) %>% as.numeric())) %>% # Normalize all numeric columns
+  mutate(across(c(Ease.of.Online.Booking, Check.in.Service, Online.Boarding, 
+                  Gate.Location, On.board.Service, Seat.Comfort, Leg.Room.Service, 
+                  Cleanliness, Food.and.Drink, In.flight.Service, In.flight.Wifi.Service, 
+                  In.flight.Entertainment, Departure.and.Arrival.Time.Convenience), 
+                as.numeric)) %>% # Treat ordinal variables as numeric
+  subset(select = -c(ID, Gender, Gate.Location, Arrival.Delay, Departure.and.Arrival.Time.Convenience,
+                     delay.status, arrival.delay.status, Departure.Delay, departure.delay.status,
+                     Age_Range, Distance_Group, Age.log, Flight.Distance.log.z, Age.log.z, 
+                     Departure.Delay.Duration, Arrival.Delay.Duration, 
+                     Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z, 
+                     Departure.Delay.Duration.log, Departure.Delay.Duration.log.z)) # Exclude unnecessary columns
+
+# Cleaning columns with zero scores that exist in small quantities
+cols_to_clean <- c("On.board.Service", "Check.in.Service", "Seat.Comfort",
+                   "In.flight.Service", "Gate.Location", "Cleanliness", 
+                   "In.flight.Entertainment")
+
+for (col in colnames(iv_data)) {
+  if (is.factor(iv_data[[col]])) {
+    iv_data[[col]] <- droplevels(iv_data[[col]])
+  }
+}
+
+# Split the dataset into training and testing sets
+proportion <- 0.7
+split <- initial_split(iv_data, prop = proportion)
+iv_training <- training(split)
+iv_testing <- testing(split)
+
+# Encode Satisfaction as binary (0 = Neutral or Dissatisfied, 1 = Satisfied)
+iv_training$Satisfaction <- ifelse(iv_training$Satisfaction == "Satisfied", 1, 0)
+iv_training$Satisfaction <- factor(iv_training$Satisfaction, levels = c(0, 1))
+iv_testing$Satisfaction <- ifelse(iv_testing$Satisfaction == "Satisfied", 1, 0)
+iv_testing$Satisfaction <- factor(iv_testing$Satisfaction, levels = c(0, 1))
+
+# Using all data
+model_log_iv <- glm(Satisfaction ~., 
+               data = iv_training, family = "binomial")
+summary(model_log_iv)
+
+# Modelling
+pred.test <- predict(model_log_iv, newdata = iv_testing, type = "response")
+
+# Convert to class labels
+pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
+iv_testing$Satisfaction <- ifelse(iv_testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
+iv_testing$Satisfaction <- factor(iv_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
+pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
+
+# Confusion matrix
+confusionMatrix(pred.test.result, iv_testing$Satisfaction)
+
+```
+
+The new model with high information value variables shows a significant decrease in AIC value to 65522 This indicates that the model with high information value variables is better than the base model. The accuracy, sensitivity, and specificity values are also higher than the base model. This shows that the new model is probably better than the base model.
+
+ANOVA test :
+
+```{r}
+anova(model_log, model_log_iv, test="Chisq")
+```
+
+Model IV with lower residual deviance and AIC value indicates that the model is better than the base model. The p-value is very close to 0, which indicates that there is a significant difference between the two models. This means that the model with high information value variables is indeed better than the base model, confirming the result from summary function and the confusion matrix.
+
 
 **Adjusting Threshold**
 
