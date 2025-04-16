@@ -61,42 +61,6 @@ In this project, Group 17 serves as business consultants, with a focus on improv
 
 Besides the Basic R Functions, this project uses multiple packages to enhance the R functionalities and improve the data analytics and visualization quality. This section explains all the packages and functions beyond the Basic R functionalities that we are using in this project in each step of the business analytics process from data cleaning to modeling.
 
--   Data Cleaning and Preparation
-
-**dplyr** : used to filter rows, select columns, sort data, create new columns, and summarize data.
-
-**tidyr** : imported to be used to clean and tidy the data, such as reshaping the data from wide to long format.
-
--   Data Exploration
-
-**skimr** : designed to provide summary of statistical measures for each variables in data frames.
-
-**DataExplorer** : used to display comprehensive and convenient interface for data exploration and data visualization.
-
--   Data Transformation
-
--   Data Visualization
-
-**ggplot2** : a package that is useful to visualize data in a more complex and customizable way compared to the basic R plotting functions.
-
-**corrplot** : used to visualize correlation matrix between two variables in a more visually appealing and informative way.
-
--   Data Modeling
-
-**caret** : used for the process of creating predictive models, including data splitting, pre-processing, feature selection, and model tuning.
-
-**rsample** : a package to create resampling objects for both training and testing datasets.
-
-**c50** : used to create decision trees and rule-based models.
-
-**gmodel** : designed as a tool for fitting linear models.
-
-**ranger** : package for fast implementation of random forests.
-
-**randomForest** : used to create a random forest model for the optimization of classification and decision tree.
-
-**pROC** : used to visualize the performance of classification models by plotting the ROC curve and further utilized to calculate the AUC (Area Under the Curve) score.
-
 ------------------------------------------------------------------------
 
 -   Data Cleaning and Preparation
@@ -134,6 +98,8 @@ Besides the Basic R Functions, this project uses multiple packages to enhance th
     -   `randomForest` : used to create a random forest model for the optimization of classification and decision tree.
 
     -   `pROC` : used to visualize the performance of classification models by plotting the ROC curve and further utilized to calculate the AUC (Area Under the Curve) score.
+    
+    -   `Information` : used to calculate the Information Value (IV) and Weight of Evidence (WOE) for each variable in the dataset.
 
 -   Data Analysis
 
@@ -152,11 +118,12 @@ library(corrplot)
 library(tidyr)
 library(caret)
 library(C50)
-library (rsample)
+library(rsample)
 library(gmodels)
 library(ranger)
 library(randomForest)
 library(pROC)
+library(Information)
 
 ```
 
@@ -973,7 +940,7 @@ plot_bar(data,by='Satisfaction',ncol=2)
 
 From the univariate data distribution, we already know the numbers of satisfied and unsatisfied passengers is not equal with noticeable difference, with the majority of passengers being unsatisfied. So it is not surprising that regardless of the association between passengers' satisfaction with other categories, most graphs are showing the skew towards the neutral or dissatisfied category.
 
-However, it could be noticed that the distribution of satisfaction level across both genders are relatively equal, while the first time flyers are more likely to be unsatisfied rather than the frequent travelers. Business travelers also tend to be more satisfied than the economy class passengers. This is also the case for the business class passengers. We will see in the other section that passengers with business intention are more likely to fly on business class, so the correlation is consistent in the satisfaction level as well. *This is understandable, since airlines with business class are more likely to have extra services and better quality of basic services, which means that it is more likely to satisfy the passengers. (belum tau info ini mending dimasukin di sini atau bagian data analysis).* Hence, the focus on improving the satisfaction rate of passengers should be on the economy class passengers with leisure intention, especially those who are first time flyers.
+However, it could be noticed that the distribution of satisfaction level across both genders are relatively equal, while the first time flyers are more likely to be unsatisfied rather than the frequent travelers. Business travelers also tend to be more satisfied than the economy class passengers. This is also the case for the business class passengers. We will see in the other section that passengers with business intention are more likely to fly on business class, so the correlation is consistent in the satisfaction level as well. This is understandable, since airlines with business class are more likely to have extra services and better quality of basic services, which means that it is more likely to satisfy the passengers. Based on this information, the focus on improving the satisfaction rate of passengers should be on the economy class passengers with leisure intention, especially those who are first time flyers.
 
 ```{r}
 plot_bar(data,by='Gender',ncol=2)
@@ -997,11 +964,11 @@ As we can see above, the majority of business travelers fly on the business clas
 plot_bar(data,by='Class',ncol=2)
 ```
 
-**Rencana hapus section ini karena dirasa ga nambah observasi apapun, TBD**
+The plot above shows the distribution of passengers divided by the class of service they fly in. Again, we can see that it the business-oriented travelers are also dominated by business class flyers, and they (business class passengers) are also more likely to be satisfied with their flying experience. This is consistent with our observation and discussion on the previous section. On the opposite, both economy and economy plus class passengers are less likely to be satisfied with their flying experience and more likely to be first time flyers.
 
 ## Feature Engineering <a name="2.3"></a>
 
-We noticed that the age distribution have high variation, therefore we try to create the age_group column to divide the age group into four categories: children, youth, adult, and senior. This categorization is based on most of the division range used in a lot of transportation services across Europe. The age group is defined and plotted in R as follows:
+We noticed that the age distribution have high variation, therefore we try to create the age_group column to divide the age group into four categories: children, youth, adult, and senior. This categorization is based on most of the division range used in a lot of transportation services across the world. The age group is defined and plotted in R as follows:
 
 ```{r}
 data = data %>% mutate(Age_Range = if_else(Age <= 15,"Children",
@@ -1017,11 +984,11 @@ Now we can interpret from the age group that the largest segment of our customer
 
 Another data we can group is the flight distance which currently right skewed. We will create new variables of flight distance by grouping them into three categories: short-haul, medium-haul, and long-haul. The division of distance is based on the limit defined by David W. Wragg in his book A Dictionary of Aviation:
 
-Short-haul Flights: 0 - 900 miles (0 - 1,450 km)
+**Short-haul Flights**: 0 - 900 miles (0 - 1,450 km)
 
-Medium-haul Flights: 900 - 2,200 miles (1,450 - 3,540 km)
+**Medium-haul Flights**: 900 - 2,200 miles (1,450 - 3,540 km)
 
-Long-haul Flights: 2,200 miles (3,540 km) and above
+**Long-haul Flights**: 2,200 miles (3,540 km) and above
 
 ```{r}
 data = data %>% mutate(Distance_Group = if_else(Flight.Distance < 900,"Short-haul",
@@ -1073,7 +1040,7 @@ plot_histogram(data[ , c("In.flight.service", "Flight.Entertainment", "Pre.fligh
 
 Combining several category of services into one variable is useful to see the overall satisfaction of the airline services in numerous area of improvement. For example, as we can see above that in general the passengers found that the flights they are taking are relatively comfortable. However, the pre-flight service and flight entertainment category received mixed reviews and can be considered as an improvement area for the airline, where further analysis could be done to see which of the element of those services are the most dissatisfying for the passengers.
 
-## Data Tranformation <a name="2.4"></a>
+## Data Transformation <a name="2.4"></a>
 
 Data transformation plays a key role to make sure all data is in the same scale and distribution. We will start to take a look on our data distribution.
 
@@ -2832,13 +2799,11 @@ The Z**-**values represent the Wald statistics for each predictor in the log
 
 For a 95% confidence level, the threshold of a statistically significant Z-value is **\|Z\| \> 1.96** which is indicated by the dotted red line in the plot. We can see from the visualization above that the strongest negative predictor for business class is departure time and arrival convenience, while for economy class is ease of online booking. The strongest positive predictor for business class is online boarding, and for economy class it is in-flight WiFi. Next, we will evaluate the model.
 
-**Model Evaluation** <a name="3.3.4"></a>
+### Model Evaluation <a name="3.3.4"></a>
 
 The first calculation method that we will use to evaluate the logistic regression model is the confusion matrix. It is is a table that describes the performance of a classification model by comparing the predicted values with the actual values. It provides insight into how well the model is performing and helps identify any misclassifications. The result will display how many variables are correctly predicted as true positive and true negative as well as wrongly classified as false positive and false negative. The confusion matrix also calculate the accuracy, sensitivity, and specificity of the model. The accuracy is the proportion of true results (both true positives and true negatives) among the total number of cases examined. Sensitivity is the proportion of true positives that are correctly identified, while specificity is the proportion of true negatives that are correctly classified.
 
-We will use the confusion matrix to evaluate all three models: All Class, Economy Class, and Business Class. The code chunks below will show the confusion matrix for each model.
-
-All Class :
+We will use the confusion matrix to evaluate the logistic regression model that includes all the data (business and economy class passengers), dubbed All Class. The logistic regression model for each economy class and business class is only used as a separator to provide the significant variables that affect the satisfaction level of each class. 
 
 ```{r}
 all_testing <- testing
@@ -2854,51 +2819,13 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-The confusion matrix for combined class showed a relatively good result in all three aspects, with accuracy, sensitivity, and specificity are all well above 80%. We will now look at the confusion matrix for economy class and business class separately.
-
-Economy Class :
-
-```{r}
-economy_class_test <- testing %>% filter(Class %in% c("Economy", "Economy Plus")) %>% select(-Class)
-
-pred.test <- predict(model_log_economy, newdata = economy_class_test, type = "response")
-
-# Convert to class labels
-pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
-economy_class_test$Satisfaction <- ifelse(economy_class_test$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
-economy_class_test$Satisfaction <- factor(economy_class_test$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
-pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
-
-confusionMatrix(pred.test.result, economy_class_test$Satisfaction)
-
-```
-
-Although the economy class predictor has a very high accuracy and specificity number, it suffers from questionable sensitivity performance with only slightly above 50% value. This means that the model struggles to correctly identify satisfied customers in the economy class, which resulted in a high number of false negatives. This can be a potential issue, because the model is currently not accurately capturing the satisfaction levels for a lot of economy class travelers.
-
-For Business Class :
-
-```{r}
-business_class_test <- testing %>% filter(Class %in% c("Business")) %>% select(-Class)
-
-pred.test <- predict(model_log_business, newdata = business_class_test, type = "response")
-
-# Convert to class labels
-pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
-business_class_test$Satisfaction <- ifelse(business_class_test$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
-business_class_test$Satisfaction <- factor(business_class_test$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
-pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
-
-confusionMatrix(pred.test.result, business_class_test$Satisfaction)
-
-```
-
-We can see that this model performs noticeably better than the economy class predictor, with accuracy number of 84.6% and sensitivity of 90.5%. However it still suffers from relatively low specificity (71.1%). This means that almost 30% rate of false positives, which is not an ideal situation.
+The confusion matrix for combined class showed a relatively good result in all three aspects, with accuracy, sensitivity, and specificity are all well above 80%. To reconfirm the accuracy of the model, we will also check the ROC and AOC of the model.
 
 **Interpret ROC and AUC**
 
 Another quantified way to evaluate the model is to use the ROC curve and Area Under the Curve (AUC) value. The ROC curve is a graphical representation of the true positive rate (sensitivity) against the false positive rate (1 - specificity) at various threshold settings. AUC provides a single measure of overall model performance, with values ranging from 0 to 1. If the AUC value is closer to 1, the more accurate the model's prediction is. AUC value of 0.5 indicates that the model has no identified pattern of guessing, which is essentially the same as random guessing. Meanwhile, AUC value of 0 means that the model is completely wrong in its predictions.
 
-We will now look at the ROC curve and AUC value for each of the three models: All Class, Economy Class, and Business Class.
+We will now look at the ROC curve for the combined model (economy and business class) and its AUC value.
 
 ```{r}
 # Running the model for all data
@@ -2912,33 +2839,6 @@ auc(roc_obj)
 ```
 
 The ROC curve of All Class aboves shows that the model quickly reaches the value close to 1 in its initial phase, which indicates that the model has a good accuracy number. This is confirmed by the AUC value of 0.91, a value that is close to 1 and considered a good model.
-
-```{r}
-# Running the model for economy data
-economy_testing <- testing
-pred.test <- predict(model_log_economy, newdata = economy_class_test, type = "response")
-
-# ROC curve and AUC
-roc_obj_economy <- roc(economy_class_test$Satisfaction, pred.test)
-plot(roc_obj_economy, col = "blue", main = "ROC Curve")
-auc(roc_obj_economy)
-```
-
-For Economy Class model, the ROC curve takes a slightly longer path before it reach the value close to 1. From the AUC value of 0.8448, we can see that this model is still a good model, but not as good as the All Class model. This is consistent by the confusion matrix result above, where the economy class model has a lower accuracy and specificity number than the All Class model.
-
-```{r}
-# Running the model for all data
-business_testing <- testing
-pred.test <- predict(model_log_business, newdata = business_class_test, type = "response")
-
-# ROC curve and AUC
-roc_obj_business <- roc(business_class_test$Satisfaction, pred.test)
-plot(roc_obj_business, col = "blue", main = "ROC Curve")
-auc(roc_obj_business)
-
-```
-
-The Business Class model ROC curve shows a very good performance, similar with the All Class model. With AUC value of 0.9182, it can be considered a very good model.
 
 ### Improving Model Performance
 
@@ -2954,6 +2854,8 @@ Above we see that the AIC value is 70515. We will use this value as a baseline t
 
 The first method that we use to try improving the model performance is by filtering out the non-significant variables. We will use the p-value to determine the significance of each variable. The p-value is a statistical measure that helps to determine the significance of results. In this case, we will use a threshold of 0.05, which means that we will only keep the variables with a p-value less than 0.05. This is a common threshold used in statistical analysis to determine whether a result is statistically significant.
 
+Below we will exclude the variables with p-value greater than 0.05, then we will also check using the `summary` function to see the AIC value.
+
 p-value \< 0.05
 
 ```{r}
@@ -2968,7 +2870,7 @@ summary(model_log_signif)
 
 ```
 
-We saw a slight increase in AIC value to 73568. Because the value is higher, it indicates that the model with filtered variables is actually not better than the base model for All Class model.
+We saw a slight increase in AIC value to 73629. Because the value is higher, it indicates that the model with filtered variables is actually not better than the base model for All Class model.
 
 Next, we will evaluate the new model through the Confusion Matrix:
 
@@ -2986,7 +2888,7 @@ confusionMatrix(pred.test.result, all_testing$Satisfaction)
 
 From the result above, the accuracy and sensitivity of the model with filtered variables experience a noticeable drop in accuracy and sensitivity value, while the specificity value is essentially the same. Again, this shows that the new model is not better than the base model.
 
-The last method we want to use is using the ANOVA test to compare the two models. The ANOVA test is a statistical method used to compare the means of two or more groups. In this case, we will use the ANOVA test to compare the performance of the base model and the model with filtered variables. The ANOVA test will help us determine whether there is a significant difference between the two models. This is to ensure that the base model is indeed better than the model with filtered variables as indicated from the summary function and confusion matrix.
+Another method to evaluate the improvement attempt we want to use is using the ANOVA test to compare the two models. The ANOVA test is a statistical method used to compare the means of two or more groups. In this case, we will use the ANOVA test to compare the performance of the base model and the model with filtered variables. The ANOVA test will help us determine whether there is a significant difference between the two models. This is to ensure that the base model is indeed better than the model with filtered variables as indicated from the summary function and confusion matrix.
 
 ANOVA test :
 
@@ -2997,6 +2899,8 @@ anova(model_log, model_log_signif, test="Chisq")
 The ANOVA test result above shows that the p-value is very close to 0, which indicates that there is a significant difference between the two models. This means that the base model is indeed better than the model with filtered variables, confirming the result from summary function and the confusion matrix.
 
 **Using High Information Value Variables**
+
+The second way to try improving the model is using the variables with High Information Value. Using the `Information` library, we can calculate the Information Value (IV) of each variable in the dataset. The IV is a measure of how much information a variable provides about the target variable. In other words, Information Value is a measure of the predictive capability of variables. Higher IV indicates that the variable is more predictive of the target variable. We will use this information to filter the variables and create a new model.
 
 ```{r}
 library(Information)
@@ -3031,7 +2935,7 @@ iv_results$Summary
 iv_results$Summary
 ```
 
-Class and type of travel have strong predictive power, while age and flight distance have moderate predictive power. The other variables have weak predictive power. We will use this information to filter the variables and create a new model.
+We will use the IV evaluation results to filter out the variables with insignificant value, with the threshold of the IV is 0.3. Everything below that value is considered weak predictor and will be excluded in the improvement model. We will use this information to filter the variables and create a new model, then evaluates the new model using confusion matrix and ANOVA test.
 
 ```{r}
 iv_data <- data %>%
@@ -3092,25 +2996,25 @@ confusionMatrix(pred.test.result, iv_testing$Satisfaction)
 
 ```
 
-The new model with high information value variables shows a significant decrease in AIC value to 61384 This indicates that the model with high information value variables is better than the base model. The accuracy, sensitivity, and specificity values are also higher than the base model. This shows that the new model is probably better than the base model.
+The new model with high information value variables shows a noticeable decrease in AIC value to 61591. This indicates that the model with high information value variables is better than the base model. The accuracy, sensitivity, and specificity values are also experiencing significant increase from the base model. This shows that there is a strong evidence that the new model with high information value variables are better than the base model.
 
-ANOVA test :
+Using the ANOVA test :
 
 ```{r}
 anova(model_log, model_log_iv, test="Chisq")
 ```
 
-Model IV with lower residual deviance and AIC value indicates that the model is better than the base model. The p-value is very close to 0, which indicates that there is a significant difference between the two models. This means that the model with high information value variables is indeed better than the base model, confirming the result from summary function and the confusion matrix.
+Model IV with lower residual deviance and AIC value indicates that the model is better than the base model. The p-value is also very close to 0, which indicates that there is a significant difference between the two models. This means that the model with high information value variables is indeed better than the base model, confirming the result from summary function and the confusion matrix.
 
 **Adjusting Threshold**
 
-The second method that we will use to improve the model performance is by adjusting the threshold value. The default threshold value is 0.5, which means that if the predicted probability is greater than 0.5, the model will classify it as "Satisfied". However, we can adjust this threshold value to see if it improves the model performance. Based on the ROC curve, we can see that the optimal threshold value is actually around 0.475, not 0.5.
+Although the High Information Value method already shows a better result than the base model, we want to check with other methods to see whether further improvement is possible. The third method that we will use to improve the model performance is by adjusting the threshold value. The default threshold value is 0.5, which means that if the predicted probability is greater than 0.5, the model will classify it as "Satisfied". However, we can adjust this threshold value to see if it improves the model performance. Based on the ROC curve, we can see that the optimal threshold value is actually around 0.468, not 0.5.
 
 ```{r}
 coords(roc_obj, "best", ret = "threshold")
 ```
 
-Now, we will run the confusion matrix again of the base model using the new threshold value of 0.475.
+Now, we will run the confusion matrix again of the base model using the new threshold value of 0.468.
 
 ```{r}
 all_testing <- testing
@@ -3119,7 +3023,7 @@ pred.test <- predict(model_log, newdata = testing, type = "response")
 # Convert to class labels
 
 pred.test.result <- ifelse(pred.test > 0.5, "Satisfied", "Neutral or Dissatisfied")
-pred.test.result <- ifelse(pred.test > 0.475096, "Satisfied", "Neutral or Dissatisfied")
+pred.test.result <- ifelse(pred.test > 0.4684071, "Satisfied", "Neutral or Dissatisfied")
 all_testing$Satisfaction <- ifelse(testing$Satisfaction == 1, "Satisfied", "Neutral or Dissatisfied")
 all_testing$Satisfaction <- factor(all_testing$Satisfaction, levels = c("Satisfied", "Neutral or Dissatisfied"))
 pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or Dissatisfied"))
@@ -3127,7 +3031,7 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, all_testing$Satisfaction)
 ```
 
-The new threshold value indicates a slight increase in sensitivity value, while the specificity value decrease for about 1% than the previous model. Meanwhile, the accuracy score slightly decreases. This shows that the new threshold value is not significantly better than the previous model.
+The new threshold value indicates a slight increase in sensitivity value, while the specificity value decrease for about 1% than the previous model. Meanwhile, the accuracy score is relatively unchanged. This mixed result shows that the new threshold value method is not significantly better than the previous model.
 
 **Dimensionality Reduction**
 
@@ -3145,10 +3049,10 @@ pca_results <- prcomp(training_pca)
 summary(pca_results)
 ```
 
-In this case, the PCA reached more than 90% of the variance with only 12 components. Now we can reduce the dimensionality of dataset and see if it improves the model performance.
+In this case, the PCA reached more than 90% of the variance with only 11 components. Now we can reduce the dimensionality of dataset and see if it improves the model performance.
 
 ```{r}
-pca_data <- as.data.frame(pca_results$x[, 1:12])
+pca_data <- as.data.frame(pca_results$x[, 1:11])
 pca_data$Satisfaction <- training$Satisfaction
 
 model_log_pca <- glm(Satisfaction ~., 
@@ -3157,7 +3061,7 @@ model_log_pca <- glm(Satisfaction ~.,
 summary(model_log_pca)
 ```
 
-The summary of the PCA model shows that the AIC value is 9913.8, which is significantly lower than the base model AIC value of 70412. This indicates that the PCA model is better than the base model.
+The summary of the PCA model shows that the AIC value increases to 81827, which is significantly higher than the base model AIC value of 70412. This indicates that the new model with PCA aprroach is likely to be worse than the base model. We will further confirm this finding by running the confusion matrix.
 
 ```{r}
 
@@ -3173,7 +3077,7 @@ test_pca_scaled <- testing %>%
   scale(center = train_center, scale = train_scale)
 
 # 2. Apply PCA transformation
-test_pca <- as.data.frame(predict(pca_results, newdata = test_pca_scaled)[, 1:12])
+test_pca <- as.data.frame(predict(pca_results, newdata = test_pca_scaled)[, 1:11])
 
 # 3. Add target variable
 test_pca$Satisfaction <- testing$Satisfaction
@@ -3190,7 +3094,7 @@ pred.test.result <- factor(pred.test.result, levels = c("Satisfied", "Neutral or
 confusionMatrix(pred.test.result, test_pca$Satisfaction)
 ```
 
-Accuracy decrease using PCA
+As we can see that all three important metrics (accuracy, sensitivity, and specificity) are significantly lower than the base model. This indicates that the PCA model is not better than the base model as indicated also by the ANOVA test.
 
 # Interpretation <a name="4"></a>
 
@@ -3366,6 +3270,17 @@ Airline prioritize top contributor to satisfaction level of passengers.Improveme
 ## Further Improvement for Better Recommendation <a name="4.3"></a>
 
 
+Although the current prediction model and approach has shown a robust result that can be used by airlines to improve their service, the predictor model can still be improved further. The current model is based on the separation between Economy and Business class passengers, which means that the model is only considering one dimension when predicting the most important variables that affect the passengers' satisfaction level. However, based on the survey data, there are still other dimensions that can be used to predict the customer satisfaction based on the survey variables. 
+
+Among possible improvement area can be done by creating predictor model based on the combination of several dimensions that are easier to identify by the airlines, such as flight distance, which can be classified as short-haul, medium-haul, and long-haul flights, and age groups (children, youth, adult, and senior). Unlike variables like type of travel or customer type, flight distance and age groups can be quickly identified or classified by airlines without further questioning each passengers. Also, these two variables can be considered important for business decision making, such as in determining the flight route and the target market for each flight.
+
+1.  **Flight Distance**:<br>
+    -   Passengers flying in long-haul flights may have different expectations and experiences compared to those on short-haul flights, even though both type of flights can be served in both economy and business class. By segmenting the data based on flight distance, we can identify specific service aspects that are crucial for each group. Using this approach, airlines with long haul flights, such as Amsterdam to Jakarta, can capture a more detailed insights regarding the passengers' satisfaction point preference, which can be different from a shorter duration flight such as Amsterdam to London.<br>
+2.  **Age Group**:<br>
+    -   Different age groups may have varying preferences and expectations when it comes to airline services. By segmenting the data based on age, we can identify specific service aspects that are crucial for each group. For example, younger passengers may prioritize in-flight entertainment and WiFi connectivity, while older passengers may value comfort and service quality more. By understanding these differences, airlines can tailor their services to meet the needs of each age group. This is especially important for routes with popular tourist destination like the flight to Barcelona where the portion of younger passengers is likely to be higher (due to family holiday) than the flight without top tourist destinations. The airlines also can adjust the service priority during the holiday seasons to cover the increase in holiday-oriented passengers.<br>
+    
+The result of different set of most important variables based on flying class, flight distance, and age group can be used to create a more comprehensive recommendation for the airlines. This will help the airlines to improve their service quality and increase customer satisfaction by providing more data to support the decision-making process of airlines.
+
 ## Conclusion & Limitations <a name="4.4"></a>
 
 **Conclusion**
@@ -3388,6 +3303,8 @@ Biau, G. (2010). Analysis of a Random Forests Model. J. Mach. Learn. Res., 13, 1
 
 Ren, Z., Zhu, Y., Kang, W., Fu, H., Niu, Q., Gao, D.,
 
+Federal Aviation Administration. (n.d.). Types of Delay. Retrieved April 15, 2025, from <https://aspm.faa.gov/aspmhelp/index/Types_of_Delay.html>
+
 Hosmer, D. W., Lemeshow, S., & Sturdivant, R. X. (2013). *Applied logistic regression* (3rd ed.). Wiley.<br> <br>
 
 Hussain, R. (2016). The mediating role of customer satisfaction: evidence from the airline industry. Asia Pacific Journal of Marketing and Logistics, 28, 234-255. https://doi.org/10.1108/APJML-01-2015-0001. <br> <br>
@@ -3396,10 +3313,10 @@ International Air Transport Association. (2024, December). *Global outlook for a
 
 Landwehr, N., Hall, M., & Frank, E. (2003). Logistic Model Trees. Machine Learning, 59, 161-205. https://doi.org/10.1007/s10994-005-0466-3. <br>
 
-Yan, K., & Hong, J. (2022). Adaptive cost-sensitive learning: Improving the convergence of intelligent diagnosis models under imbalanced data. Knowl. Based Syst., 241, 108296. <https://doi.org/10.1016/j.knosys.2022.108296>.<br> <br> Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. <https://doi.org/10.1162/089976600300015178>.<br> <br>
+Statista. (n.d.). *Flights - Shared Mobility*. Retrieved April 3, 2025, from <https://www.statista.com/outlook/mmo/shared-mobility/flights/worldwide>
 
-Wragg, David W., 1973. A Dictionary of Aviation. Reading, UK: Osprey Publishing. <br>
+Wragg, David W., 1973. A Dictionary of Aviation. Reading, UK: Osprey Publishing. <br> <br>
 
 Wright, M., & Ziegler, A. (2015). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software, 077, 1-17. <https://doi.org/10.18637/jss.v077.i01>.<br> <br>
 
-Statista. (n.d.). *Flights - Shared Mobility*. Retrieved April 3, 2025, from <https://www.statista.com/outlook/mmo/shared-mobility/flights/worldwide>
+Yan, K., & Hong, J. (2022). Adaptive cost-sensitive learning: Improving the convergence of intelligent diagnosis models under imbalanced data. Knowl. Based Syst., 241, 108296. <https://doi.org/10.1016/j.knosys.2022.108296>.<br> <br> Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. <https://doi.org/10.1162/089976600300015178>.<br> <br> 
