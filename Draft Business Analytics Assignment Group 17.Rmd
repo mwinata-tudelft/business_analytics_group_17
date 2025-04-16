@@ -471,6 +471,8 @@ ggplot(count_data, aes(x = Var1, y = Var2, fill = Percent)) +
 
 This heatmap depicts a positive correlation between In-flight Entertainment and Seat Comfort. The most common rating combination is (4,4) at 17.9%, followed by (5,5) at 15.1%. This suggests that passengers who rate the in-flight entertainment highly also tend to rate the seat comfort positively.
 
+**Food and Drink vs Cleanliness (in %)**
+
 ```{r}
 count_data <- as.data.frame(table(data$Food.and.Drink, data$Cleanliness))
 count_data$Percent <- round(100 * count_data$Freq / sum(count_data$Freq), 1)
@@ -571,7 +573,7 @@ From the scatter plot above, we can see that there is a slight positive correlat
 
 **Flight Distance vs Arrival Delay**
 
-Subsequently, we will analyze the association between Flight Distance and Arrival Delay using scater plot.
+Subsequently, we will analyze the association between Flight Distance and Arrival Delay using scatter plot.
 
 ```{r}
 ggplot(data, aes(x = Flight.Distance, y = Arrival.Delay)) +
@@ -958,7 +960,7 @@ From the customer type distribution and association graphs, it can be noticed th
 plot_bar(data,by='Type.of.Travel',ncol=2)
 ```
 
-As we can see above, the majority of business travelers fly on the business class as well, and they are also more likely to be satisfied with their flying experience. This is consistent with our observation and discussion on the previous section. On the oppositem, travelers with personal reason, such as leisure, are more likely to fly on both of the economy classes and also less likely to be satisfied with their flying experience.
+As we can see above, the majority of business travelers fly on the business class as well, and they are also more likely to be satisfied with their flying experience. This is consistent with our observation and discussion on the previous section. On the opposite, travelers with personal reason, such as leisure, are more likely to fly on both of the economy classes and also less likely to be satisfied with their flying experience.
 
 ```{r}
 plot_bar(data,by='Class',ncol=2)
@@ -1030,12 +1032,13 @@ Next, We group the features into category of services that could be improved by 
 -   **Comfortability:** Seat Comfort, Leg Room Service, Cleanliness
 
 ```{r}
-data$In.flight.service = rowSums(data[,c('On.board.Service','Food.and.Drink','In.flight.Service')],na.rm = TRUE)
-data$Flight.Entertainment = rowSums(data[,c('In.flight.Wifi.Service','In.flight.Entertainment')],na.rm = TRUE)
-data$Pre.flight.service = rowSums(data[,c('Ease.of.Online.Booking','Check.in.Service','Online.Boarding')],na.rm = TRUE)
-data$Comfortability = rowSums(data[,c('Seat.Comfort','Leg.Room.Service','Cleanliness')],na.rm = TRUE)
+# Create features group with maximum score of 5 
+data$Flight.general.service = rowSums(data[,c('On.board.Service','Food.and.Drink','In.flight.Service')],na.rm = TRUE)/3
+data$Flight.Entertainment = rowSums(data[,c('In.flight.Wifi.Service','In.flight.Entertainment')],na.rm = TRUE)/2
+data$Pre.flight.service = rowSums(data[,c('Ease.of.Online.Booking','Check.in.Service','Online.Boarding')],na.rm = TRUE)/3
+data$Comfortability = rowSums(data[,c('Seat.Comfort','Leg.Room.Service','Cleanliness')],na.rm = TRUE)/3
 
-plot_histogram(data[ , c("In.flight.service", "Flight.Entertainment", "Pre.flight.service", "Comfortability")], ncol=2,ggtheme = theme_minimal())
+plot_histogram(data[ , c("Flight.general.service", "Flight.Entertainment", "Pre.flight.service", "Comfortability")], ncol=2,ggtheme = theme_minimal())
 ```
 
 Combining several category of services into one variable is useful to see the overall satisfaction of the airline services in numerous area of improvement. For example, as we can see above that in general the passengers found that the flights they are taking are relatively comfortable. However, the pre-flight service and flight entertainment category received mixed reviews and can be considered as an improvement area for the airline, where further analysis could be done to see which of the element of those services are the most dissatisfying for the passengers.
@@ -1153,7 +1156,7 @@ According to the graphic above, we can see that:
 ```{r}
 # Create a subset of the data with grouped airline services
 data_subset <- data %>%
-  select(Satisfaction, In.flight.service, Flight.Entertainment, Pre.flight.service, Comfortability)
+  select(Satisfaction, Flight.general.service, Flight.Entertainment, Pre.flight.service, Comfortability)
 
 # Convert to long format
 data_long <- pivot_longer(data_subset, -Satisfaction, names_to = "Variable", values_to = "Value")
@@ -1259,7 +1262,7 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
 
-As discussed above, first-timer group showed a significat dissatsifaction rate, thus through this graph, we can analyze which triggers the dissatisfaction. The graph above shows the mean of each service category for first-timer customers. The mean values are sorted in descending order, with the highest mean value on top. The mean values are calculated from the satisfaction rating of each service category. <br>
+As discussed above, first-timer group showed a significant dissatsifaction rate, thus through this graph, we can analyze which triggers the dissatisfaction. The graph above shows the mean of each service category for first-timer customers. The mean values are sorted in descending order, with the highest mean value on top. The mean values are calculated from the satisfaction rating of each service category. <br>
 
 We can identify that from the first time customer, the services that dissapointing them most are **Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service**.While **In flight service and comfortability** having the highest satisfaction value. <br>
 
@@ -1374,6 +1377,10 @@ Now, since the dataset is ready to be modeled, we can assign it a more descripti
 
 1.  Dimension Reduction
 2.  Classification Method
+    
+    2.1 Classification using Decision Tree Model
+    
+    2.2 Classification using Logistic Regression Model
 
 ## Dimension Reduction <a name="3.1"></a>
 
@@ -1450,7 +1457,7 @@ top_vars <- apply(abs(loadings[, 1:12]), 2, function(x) names(sort(x, decreasing
 print(top_vars)
 ```
 
-PC1 – In-Flight Amenities & Comfort Driven by Flight.Entertainment, Comfortability, In.flight.Entertainment, In.flight.service, and Cleanliness. This component captures the overall in-flight experience focused on comfort and entertainment.
+PC1 – In-Flight Amenities & Comfort Driven by Flight.Entertainment, Comfortability, In.flight.Entertainment, Flight.general.service, and Cleanliness. This component captures the overall in-flight experience focused on comfort and entertainment.
 
 PC2 – Digital & Booking Experience Influenced by Ease.of.Online.Booking, Pre.flight.service, and In.flight.Wifi.Service. It represents passengers’ interaction with digital services before and during the flight.
 
@@ -1468,7 +1475,7 @@ PC8 – Age-Based Travel Patterns Mainly driven by Age, Flight.Distance, and Che
 
 PC9 – Comfort in Long Trips Includes Leg.Room.Service, Flight.Distance, and Comfortability, highlighting comfort needs for longer or more frequent flights.
 
-PC10 – In-Flight Consumables Composed of On.board.Service, In.flight.service, and Food.and.Drink, focusing on passengers’ satisfaction with in-flight consumables.
+PC10 – In-Flight Consumables Composed of On.board.Service, Flight.general.service, and Food.and.Drink, focusing on passengers’ satisfaction with in-flight consumables.
 
 PC11 – Delays & Terminal Logistics Influenced by Arrival.Delay, Departure.Delay, and Gate.Location, this component represents disruptions tied to flight and gate logistics.
 
@@ -1507,9 +1514,11 @@ summary(results)
 
 When PCA was applied to numeric-only variables, the first 12 components explained over 90% of the variance, indicating strong inter-variable correlation and compact data structure. However, after including one-hot encoded categorical variables, the number of components required to achieve the same level of variance increased to 20. This suggests that categorical variables contribute additional but more dispersed variance, requiring more dimensions to capture the overall structure.
 
-## Classification Method <a name="3.2"></a>
+## Classification Method : Decision Tree Model <a name="3.2"></a>
 
-For classification, we will use the C5.0 algorithm, which is an advanced version of the C4.5 algorithm. It is a decision tree algorithm that is used for classification tasks. The C5.0 algorithm is known for its speed and accuracy, making it a popular choice for classification tasks.
+Classification is an example of supervised learning where the model is trained to predict label variables based on the features of the dataset. In this case, we will use decision tree as the classification method,as the most popular and widely used classification method. Decision tree is a flowchart-like structure where each internal node represents a test on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label. It works by splitting the data into subsets based on the value of the input features. The splitting process continues until a stopping criterion is met, such as reaching a maximum depth or minimum number of samples in a leaf node.
+
+We use c50 as the package to implement decision tree. C5.0 is an improved version of C4.5, which is a popular algorithm for generating decision trees. It is known for its speed and accuracy, and it can handle large datasets with many features. C5.0 also includes features such as boosting, which can improve the performance of the model by combining multiple weak classifiers into a strong classifier.
 
 ### Model Preparation <a name="3.2.1"></a>
 
@@ -1544,7 +1553,7 @@ data_clsf_norm <- data_clsf %>%
             Departure.Delay.Duration, Flight.Distance, Age)) 
 ```
 
-From the Model preperation, we can see that the dataset is ready to be used for classification. The target variable is **Satisfaction** which is a binary variable with 1 for satisfied and 0 for not satisfied. The other variables are the predictors which are all categorical variables. The dataset is split into three datasets: untransformed, log-transformed, and normalized.
+From the Model preparation, we can see that the dataset is ready to be used for classification. The target variable is **Satisfaction** which is a binary variable with 1 for satisfied and 0 for not satisfied. The other variables are the predictors which are all categorical variables. The dataset is split into three datasets: untransformed, log-transformed, and normalized.
 
 **Split Dataset Training Testing for Untransformed Data**
 
@@ -1557,10 +1566,6 @@ split <- initial_split(data_clsf_ori, prop = proportion)
 training <- training(split)
 testing <- testing(split)
 ```
-
-Classification is an example of supervised learning where the model is trained to predict label variables based on the features of the dataset. In this case, we will use decision tree as the classification method,as the most popluar and widely used classification method. Decision tree is a flowchart-like structure where each internal node represents a test on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label. It works by splitting the data into subsets based on the value of the input features. The splitting process continues until a stopping criterion is met, such as reaching a maximum depth or minimum number of samples in a leaf node.
-
-We use c50 as the package to implement decision tree. C5.0 is an improved version of C4.5, which is a popular algorithm for generating decision trees. It is known for its speed and accuracy, and it can handle large datasets with many features. C5.0 also includes features such as boosting, which can improve the performance of the model by combining multiple weak classifiers into a strong classifier.
 
 ### Training a decision tree model on the data <a name="3.2.2"></a>
 
@@ -1591,9 +1596,9 @@ model_top5 <- C5.0(Satisfaction ~ ., data = training,
 plot(model_top5)
 ```
 
-From the graph above,nodes are the ovals (decisions) and rectangles (final outcomes), branches are the lines connecting them with condition labels, and levels represent the depth from top (root) to bottom (leaves), where predictions are made.We can see that the most important factor influencing customer satisfaction is In-flight Wifi Service, as it is the first and most frequent split in the tree, indicating strong predictive power. Customers who rated Wifi poorly (values 0 or 5) are more likely to be dissatisfied (Node 2), while those who gave moderate to high ratings proceed through other factors. Among these, Online Boarding and Type of Travel play key roles, especially for business travelers, whose satisfaction is further influenced by In-flight Wifi Service again. Additionally, Class (e.g., Economy vs. Business) and Gate Location appear in deeper splits, showing they contribute but are less critical. Overall, Wi-Fi satisfaction, especially for business travelers, is the top predictor of overall satisfaction.
+From the graph above,nodes are the ovals (decisions) and rectangles (final outcomes), branches are the lines connecting them with condition labels, and levels represent the depth from top (root) to bottom (leaves), where predictions are made. We can see that the most important factor influencing customer satisfaction is In-flight Wifi Service, as it is the first and most frequent split in the tree, indicating strong predictive power. Customers who rated Wifi poorly (values 0 or 5) are more likely to be dissatisfied (Node 2), while those who gave moderate to high ratings proceed through other factors. Among these, Online Boarding and Type of Travel play key roles, especially for business travelers, whose satisfaction is further influenced by In-flight Wifi Service again. Additionally, Class (e.g., Economy vs. Business) and Gate Location appear in deeper splits, showing they contribute but are less critical. Overall, Wi-Fi satisfaction, especially for business travelers, is the top predictor of overall satisfaction.
 
-*In-flight service* , *Online boarding*, *Type of travel*, *Flight distance*, and *Departure and arrival time convenience*.
+*In-flight service* , *Online boarding*, *Type of travel*, *Class*, and *Gate Location*.
 
 ```{r}
 print("Confusion matrix based on testing data")
@@ -1826,7 +1831,7 @@ Let's compare with the previous model performance
 | Recall    | 0.98           | 0.99                 |
 | F1-Score  | 0.97           | 0.96                 |
 
-Based on the performance comparison, cost mistake assignment result is not significanty different with the model. This indicates that our model performance is having a good performance already. However, we can see that the recall is slightly increased from 0.98 to 0.99, while the precision is slightly decreased from 0.95 to 0.94. The F1-score is also slightly decreased from 0.97 to 0.96. In conclusion, our model performance is already good and there is no significant improvement after assigning cost to mistake.
+Based on the performance comparison, cost mistake assignment result is not significantly different with the model. This indicates that our model performance is having a good performance already. However, we can see that the recall is slightly increased from 0.98 to 0.99, while the precision is slightly decreased from 0.95 to 0.94. The F1-score is also slightly decreased from 0.97 to 0.96. In conclusion, our model performance is already good and there is no significant improvement after assigning cost to mistake.
 
 **3. Random Forest**
 
@@ -2556,13 +2561,13 @@ data_numeric <- data %>%
                      Departure.Delay.Duration, Arrival.Delay.Duration, 
                      Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z, 
                      Departure.Delay.Duration.log, Departure.Delay.Duration.log.z,
-                     Flight.Distance.log, In.flight.service, Flight.Entertainment,
+                     Flight.Distance.log, Flight.general.service, Flight.Entertainment,
                      Pre.flight.service, Comfortability)) # Exclude unnecessary columns
 
 # Cleaning columns with zero scores that exist in small quantities
 cols_to_clean <- c("On.board.Service", "Check.in.Service", "Seat.Comfort",
                    "In.flight.Service", "Gate.Location", "Cleanliness", 
-                   "In.flight.Entertainment", "In.flight.service",
+                   "In.flight.Entertainment", "Flight.general.service",
                    "Flight.Entertainment", "Pre.flight.service", "Comfortability")
 
 for (col in colnames(data_numeric)) {
@@ -2930,11 +2935,6 @@ iv_results$Summary
 
 ```
 
-```{r}
-# View summary
-iv_results$Summary
-```
-
 We will use the IV evaluation results to filter out the variables with insignificant value, with the threshold of the IV is 0.3. Everything below that value is considered weak predictor and will be excluded in the improvement model. We will use this information to filter the variables and create a new model, then evaluates the new model using confusion matrix and ANOVA test.
 
 ```{r}
@@ -2951,7 +2951,7 @@ iv_data <- data %>%
                      Departure.Delay.Duration, Arrival.Delay.Duration, 
                      Arrival.Delay.Duration.log, Arrival.Delay.Duration.log.z, 
                      Departure.Delay.Duration.log, Departure.Delay.Duration.log.z,
-                     Comfortability, In.flight.service, Flight.Entertainment,
+                     Comfortability, Flight.general.service, Flight.Entertainment,
                      Pre.flight.service)) # Exclude unnecessary columns
 
 # Cleaning columns with zero scores that exist in small quantities
@@ -3268,7 +3268,6 @@ Airline prioritize top contributor to satisfaction level of passengers.Improveme
 - For **Business Segment**, Put online boarding as top priority in business improvement, while managing improvement on other top factors such as leg room service, on board service, check in service, and in flight entertainment.Focus to address departure and arrival time convenience as well as arrival delay, to identify contributor in negative influence <br><br>
 
 ## Further Improvement for Better Recommendation <a name="4.3"></a>
-
 
 Although the current prediction model and approach has shown a robust result that can be used by airlines to improve their service, the predictor model can still be improved further. The current model is based on the separation between Economy and Business class passengers, which means that the model is only considering one dimension when predicting the most important variables that affect the passengers' satisfaction level. However, based on the survey data, there are still other dimensions that can be used to predict the customer satisfaction based on the survey variables. 
 
