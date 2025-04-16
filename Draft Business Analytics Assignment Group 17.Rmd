@@ -2218,8 +2218,10 @@ cat("F1-Score: ", round(f1_score, 2), "\n")
 ```{r fig.width=10, fig.height=8}
 
 # Plot the variable importance
+model.forest.business <- model.forest
+
 varImpPlot(
-  model.forest,
+  model.forest.business,
   main = "Variable Importance for Class: Business",
    pch = 16 # Use filled circles for data points
 )
@@ -2431,8 +2433,11 @@ cat("F1-Score: ", round(f1_score, 2), "\n")
 
 ```{r fig.width=10, fig.height=8}
 # Plot the variable importance
+
+model.forest.economy <- model.forest
+
 varImpPlot(
-  model.forest,
+  model.forest.economy,
   main = "Variable Importance for Class: Economy and Economy Plus",
    pch = 16 # Use filled circles for data points
   )
@@ -3296,26 +3301,26 @@ In conclusion, this analysis presents valuable insights for airline service prov
 
 ## References <a name=""></a>
 
-Agresti, A. (2018). *Statistical thinking: Improving business performance* (2nd ed.). Boca Raton, FL: CRC Press.
+Agresti, A. (2018). *Statistical thinking: Improving business performance* (2nd ed.). Boca Raton, FL: CRC Press.<br>
 
-Biau, G. (2010). Analysis of a Random Forests Model. J. Mach. Learn. Res., 13, 1063-1095. <https://doi.org/10.5555/2503308.2343682>.<br> <br> 
+Biau, G. (2010). Analysis of a Random Forests Model. J. Mach. Learn. Res., 13, 1063-1095. <https://doi.org/10.5555/2503308.2343682><br> 
 
-Ren, Z., Zhu, Y., Kang, W., Fu, H., Niu, Q., Gao, D.,
+Federal Aviation Administration. (n.d.). Types of Delay. Retrieved April 15, 2025, from <https://aspm.faa.gov/aspmhelp/index/Types_of_Delay.html><br>
 
-Federal Aviation Administration. (n.d.). Types of Delay. Retrieved April 15, 2025, from <https://aspm.faa.gov/aspmhelp/index/Types_of_Delay.html>
+Hosmer, D. W., Lemeshow, S., & Sturdivant, R. X. (2013). *Applied logistic regression* (3rd ed.). Wiley<br>
 
-Hosmer, D. W., Lemeshow, S., & Sturdivant, R. X. (2013). *Applied logistic regression* (3rd ed.). Wiley.<br> <br>
+Hussain, R. (2016). The mediating role of customer satisfaction: evidence from the airline industry. Asia Pacific Journal of Marketing and Logistics, 28, 234-255. https://doi.org/10.1108/APJML-01-2015-0001. <br>
 
-Hussain, R. (2016). The mediating role of customer satisfaction: evidence from the airline industry. Asia Pacific Journal of Marketing and Logistics, 28, 234-255. https://doi.org/10.1108/APJML-01-2015-0001. <br> <br>
+International Air Transport Association. (2024, December). *Global outlook for air transport: December 2024*. IATA. Retrieved April 3, 2025 from <https://www.iata.org/en/iata-repository/publications/economic-reports/global-outlook-for-air-transport-december-2024/><br>
 
-International Air Transport Association. (2024, December). *Global outlook for air transport: December 2024*. IATA. Retrieved April 3, 2025 from <https://www.iata.org/en/iata-repository/publications/economic-reports/global-outlook-for-air-transport-december-2024/> <br>
+Landwehr, N., Hall, M., & Frank, E. (2003). Logistic Model Trees. Machine Learning, 59, 161-205. https://doi.org/10.1007/s10994-005-0466-3 <br>
 
-Landwehr, N., Hall, M., & Frank, E. (2003). Logistic Model Trees. Machine Learning, 59, 161-205. https://doi.org/10.1007/s10994-005-0466-3. <br>
+Statista. (n.d.). *Flights - Shared Mobility*. Retrieved April 3, 2025, from <https://www.statista.com/outlook/mmo/shared-mobility/flights/worldwide> <br>
 
-Statista. (n.d.). *Flights - Shared Mobility*. Retrieved April 3, 2025, from <https://www.statista.com/outlook/mmo/shared-mobility/flights/worldwide>
+Wragg, David W., 1973. A Dictionary of Aviation. Reading, UK: Osprey Publishing <br>
 
-Wragg, David W., 1973. A Dictionary of Aviation. Reading, UK: Osprey Publishing. <br> <br>
+Wright, M., & Ziegler, A. (2015). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software, 077, 1-17. <https://doi.org/10.18637/jss.v077.i01> <br>
 
-Wright, M., & Ziegler, A. (2015). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software, 077, 1-17. <https://doi.org/10.18637/jss.v077.i01>.<br> <br>
+Yan, K., & Hong, J. (2022). Adaptive cost-sensitive learning: Improving the convergence of intelligent diagnosis models under imbalanced data. Knowl. Based Syst., 241, 108296. <https://doi.org/10.1016/j.knosys.2022.108296>. <br>
 
-Yan, K., & Hong, J. (2022). Adaptive cost-sensitive learning: Improving the convergence of intelligent diagnosis models under imbalanced data. Knowl. Based Syst., 241, 108296. <https://doi.org/10.1016/j.knosys.2022.108296>.<br> <br> Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. <https://doi.org/10.1162/089976600300015178>.<br> <br> 
+Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. <https://doi.org/10.1162/089976600300015178>.<br> 
