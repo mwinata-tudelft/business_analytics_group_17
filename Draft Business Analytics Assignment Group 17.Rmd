@@ -3222,8 +3222,11 @@ ggplot(top_5_economy, aes(x = reorder(Variable, Estimate), y = Estimate, fill = 
   scale_fill_manual(values = c("Positive Influence" = "yellow2", "Negative Influence" = "tomato")) +
   theme_minimal()
 ```
+
 <span style="color: #1E90FF; font-size: 16px;">**FINAL REMARKS: MODEL COMPARISON**</span><br>
+
 **Model performance comparison**<br>
+
 | Model              | Accuracy |
 |--------------------|----------|
 | Random Forest      | 96%      |
@@ -3233,10 +3236,12 @@ Based on the comparison, random forest model approach showing higher model accur
 The logistic regression model is more interpretable and easier to understand.The logistic regression model also provides a clear understanding of the relationship between the predictors and the target variable. This is important for understanding the factors that influence customer satisfaction and for making data-driven decisions to improve service quality.<br><br>
 
 Next we will evaluate the model predictor to define what top parameters that influence the customer satisfaction. From Random Forest, we will use variable importance to define variable significant level in driving satisfaction while in log regression we will use coefficient variable to define the significant level. The table below shows the top parameters that influence customer satisfaction in each class.<br><br>
+
 **Notes: RF: Random Forest, LR: Logistic Regression**<br>
+
 1: significant influencer, 0: not significant influencer<br>
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 library(knitr)
 library(kableExtra)
 library(dplyr)
@@ -3279,9 +3284,12 @@ kbl(df_colored, escape = FALSE,
 ```
 
 TOP 5 is defined through the method as below:<br>
+
 1. If the parameter shows consensus from both model (Random Forest and Logistic Regression) showing significant then it is considered as top 5 parameter<br>
 2. If no significant consensus (significant on one model but not other), further analysis is performed by looking at the significant comparison compared to other parameters in the model. The higher level significant the parameter in the model, the more likely it is to be considered as top 5 parameter<br><br>
+
 Based on the result analysis, top 5 parameters that influence customer satisfaction in both classes are:<br><br>
+
 | No      | Business Top Parameters |Economy Top Parameters |
 |---------|-------------------------|-----------------------|
 | 1       | Online Boarding          | In Flight Wifi Service |
@@ -3290,11 +3298,15 @@ Based on the result analysis, top 5 parameters that influence customer satisfact
 | 4       | Flight Entertainment     | Ease of Online Booking |
 | 5       | Leg room service         | In Flight Service      |
 <br>
+
 ## Recommendation <a name="4.2"></a>
+
 We have developed models to predict customer satisfaction based on various service aspects. Understanding satisfaction contributors is important because customers satisfaction mediates the impact of service quality on corporate braning and perceived value on brand loyalti (Hussain, 2016). The analysis revealed that the most significant predictors of satisfaction differ between Business and Economy class passengers. As we can see, the airline industry segmentation between business and economy class is quite strong, and the two classes have different preferences. Therefore, improving the satisfaction rate in business and economy segment requires different approaches.<br> <br>
 
 <span style="color: #1E90FF; font-size: 18px;">**ECONOMY SEGMENT**</span><br>
+
 Economy passengers shows high dissatisfaction level compared to business passengers at around 41.9% of total passengers. As we can see from the model, the most significant predictors of satisfaction for economy passengers are: <br> <br>
+
 <ol>
 <li>**In flight wifi service** : This shows the largest coefficient in the model indicating that satisfaction on this factor significantly contributes to overall customers' satisfaction. Enhancing WiFi services should be a top priority. Invest in high-speed, reliable internet and offer free or affordable connectivity options to economy-class passengers.
 </li>
@@ -3303,11 +3315,15 @@ Economy passengers shows high dissatisfaction level compared to business passeng
 <li>**Ease of Online Booking**: Simplify the booking interface with clear instructions, multiple payment methods, and personalized recommendations based on previous searches or preferences. Seamless experience in online booking is expected from the economy passengers, and it drives their satisfaction level</li>
 <li>**In Flight service**: Deliver a better cabin experience by improving meal options, training crew for attentive service, and ensuring cleanliness. Consider complimentary beverages to add a touch of hospitality. Managing high performance in in-flight service could retain the loyalty of economy passengers</li>
 </ol>
+
 <br>
 As we have identified through the model, concerning pain points are identified. Improving the top negative influence factors may not directly boost passenger satisfaction, but deeper analysis and mitigation strategies are essential. These efforts include aligning flight schedules with passenger preferences to improve time convenience, enhancing in-flight service by addressing specific dissatisfaction areas through surveys, and providing real-time updates with small compensations for delays. Additionally, understanding and refining features in online booking can address overlooked pain points, and adding acknowledgments for punctual flights (e.g., bonus miles) may balance unmet expectations. Together, these targeted efforts could address dissatisfaction effectively.<br>
 <br><br>
+
 <span style="color: #1E90FF; font-size: 16px;">**BUSINESS SEGMENT**</span><br>
+
 Business passengers shows higher satisfaction level compared to economy passenger. More passengers in business class are satisfied compared to those who are not satisfied. However, we need to take a look on satisfaction contributors to increse the satisfaction level. As we can see from the model, the most significant predictors of satisfaction for business passengers are: <br> <br>
+
 <ol>
 <li>**Online Boarding**: For business segment, simplify the booking process by improving website navigation and offering transparent pricing. Ensure mobile compatibility for seamless access. Allow more features on online boarding for example additional service that customers expect such as pick up, business loounge information. </li>
 <li>**Leg room service**: Ensure ample legroom and ergonomic seating. Highlight this feature in marketing campaigns to attract business travelers. For business segment, this is one of their intention to choose the service, spacious room for their seating.</li>
@@ -3315,6 +3331,7 @@ Business passengers shows higher satisfaction level compared to economy passenge
 <li>**Check in service**: Streamline check-in processes with dedicated counters or priority lanes for business-class passengers. Offer concierge services for added convenience. This is also the reason people choosing business service, putting attention to ensure seamless experience in check in service becomes matters. </li>
 <li>**in flight entertainment**: Provide high-quality entertainment options, including noise-canceling headphones and curated content for business travelers. Airline could include games, various option of entertainment on screen, and make sure it is up to date. </li>
 </ol>
+
 <br>
 As we have identified through the model, concerning pain points are identified. Negative influence factors, while correlating with reduced satisfaction, require in-depth analysis to address underlying issues. Enhancing usability in online booking platforms and ensuring transparency in pricing could alleviate dissatisfaction. Operational improvements to reduce delays, coupled with compensatory perks, may soften the impact of unavoidable disruptions. Customizing food and drink options to cater to diverse needs and optimizing flight schedules for convenience and punctuality are further steps that could help mitigate negative perceptions effectively. These strategies aim to refine passenger experiences and address dissatisfaction at its roots.<br><br>
 Addressing potential aspects that contribute to negative correlation from those factors could help to transform this to positive correlation. <br> <br>
