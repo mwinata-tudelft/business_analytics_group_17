@@ -75,8 +75,6 @@ Besides the Basic R Functions, this project uses multiple packages to enhance th
 
     -   `DataExplorer` : used to display comprehensive and convenient interface for data exploration and data visualization.
 
--   Data Transformation
-
 -   Data Visualization
 
     -   `ggplot2` : a package that is useful to visualize data in a more complex and customizable way compared to the basic R plotting functions.
@@ -100,8 +98,14 @@ Besides the Basic R Functions, this project uses multiple packages to enhance th
     -   `pROC` : used to visualize the performance of classification models by plotting the ROC curve and further utilized to calculate the AUC (Area Under the Curve) score.
 
     -   `Information` : used to calculate the Information Value (IV) and Weight of Evidence (WOE) for each variable in the dataset.
-
--   Data Analysis
+    
+-   Other Purposes    
+    
+    -   `knitr` : used to create dynamic reports in R Markdown, allowing for the integration of code, text, and visualizations in a single document.
+    
+    -   `kableExtra` : used to create high-quality tables in R Markdown documents, enhancing the presentation of data and results.
+    
+    -   `magrittr` : used to simplify and enhance the readability of R code by providing a set of functions for data manipulation and transformation.
 
 ------------------------------------------------------------------------
 
@@ -124,6 +128,9 @@ library(ranger)
 library(randomForest)
 library(pROC)
 library(Information)
+library(knitr)
+library(kableExtra)
+library(magrittr)
 
 ```
 
