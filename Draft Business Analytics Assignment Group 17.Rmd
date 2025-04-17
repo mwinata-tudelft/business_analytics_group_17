@@ -98,7 +98,7 @@ Besides the Basic R Functions, this project uses multiple packages to enhance th
     -   `randomForest` : used to create a random forest model for the optimization of classification and decision tree.
 
     -   `pROC` : used to visualize the performance of classification models by plotting the ROC curve and further utilized to calculate the AUC (Area Under the Curve) score.
-    
+
     -   `Information` : used to calculate the Information Value (IV) and Weight of Evidence (WOE) for each variable in the dataset.
 
 -   Data Analysis
@@ -1227,9 +1227,7 @@ summarize(num=n()) %>%
 mutate(percentage=round(num*100/sum(num),2))
 ```
 
-Previously in the barplot satisfaction, we can notice that as the distance lower the rate of dissatisfied customer is increasing. **short-haul trip is having the highest dissatisfaction rate**. From the data above, this condition could be a big concern since the majority of the airline customer is taking short-haul trip (more than 60%). This is a concern for the airline, as it indicates a need to improve services for short-distance travelers, to retain them and increase satisfaction rates. Failing to retain loyalty from the majority of customers (short-haul customers) could lead to a significant loss in market share and profitability. <br> <br> Next we will try to analyze the service factors related to the customer satisfaction focusing on low satisfaction profile, starting with customer type : <br><br>
-<span style="color: #1E90FF; font-size: 16px;">**CUSTOMER TYPE: FIRST-TIME**</span><br>
-
+Previously in the barplot satisfaction, we can notice that as the distance lower the rate of dissatisfied customer is increasing. **short-haul trip is having the highest dissatisfaction rate**. From the data above, this condition could be a big concern since the majority of the airline customer is taking short-haul trip (more than 60%). This is a concern for the airline, as it indicates a need to improve services for short-distance travelers, to retain them and increase satisfaction rates. Failing to retain loyalty from the majority of customers (short-haul customers) could lead to a significant loss in market share and profitability. <br> <br> Next we will try to analyze the service factors related to the customer satisfaction focusing on low satisfaction profile, starting with customer type : <br><br> [**CUSTOMER TYPE: FIRST-TIME**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r}
 
@@ -1266,8 +1264,7 @@ As discussed above, first-timer group showed a significant dissatsifaction rate,
 
 We can identify that from the first time customer, the services that dissapointing them most are **Departure and Arrival Time Convenience, Ease of Online Booking, and Wifi Service**.While **In flight service and comfortability** having the highest satisfaction value. <br>
 
-This data can guide strategic improvements to enhance the first-time customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.<br><br>
-<span style="color: #1E90FF; font-size: 16px;">**TYPE OF TRAVEL: PERSONAL**</span><br>
+This data can guide strategic improvements to enhance the first-time customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score.<br><br> [**TYPE OF TRAVEL: PERSONAL**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r}
 
@@ -1305,8 +1302,7 @@ In the previous section, we can see that personal type of travel passenger is ha
 
 We can identify that from the Business Travel type of travel customers, the services that dissapointing them most in **Ease of online booking, In flight wifi service, online boarding**.These areas could be prioritized for enhancement to improve overall satisfaction for business travelers. The top satisfaction factors are **in flight service and Comfortability**.<br>
 
-As you can see, personal type of travel customer satisfaction data is showing similar behaviour with the first-timer passengers. Thus, improving low-rated areas like WiFi availability and online booking ease may help elevate the overall customer experience for this segment. <br><br>
-<span style="color: #1E90FF; font-size: 16px;">**CLASS: ECONOMY**</span><br>
+As you can see, personal type of travel customer satisfaction data is showing similar behaviour with the first-timer passengers. Thus, improving low-rated areas like WiFi availability and online booking ease may help elevate the overall customer experience for this segment. <br><br> [**CLASS: ECONOMY**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r}
 
@@ -1339,9 +1335,7 @@ ggplot(mean_df, aes(x = reorder(Variable, Mean), y = Mean)) +
   labs(title = "Mean of Continuous Variables", x = "Variable", y = "Mean Value")
 ```
 
-From the previous discussion, we identify that customers in economy class having high number of dissatisfaction. The graph above is helping to identify which parameters should have more attention to be improved for higher customers satisfaction rate. <br> The graph above is satisfaction data from Economy class customers. The biggest contributors to low satisfaction rate are **ease of online booking, wifi service, and online boarding**. While **In flight service and Comfortability** have the highest satisfaction rate among the Economy class customers. This data can guide strategic improvements to enhance the Economy class customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score. <br><br>
-The mean values of the continuous variables, as displayed above, provide a preliminary understanding of the dataset. However, these raw values are not directly suitable for decision-making or interpretation in their current form. Further refinement will be conducted through advanced modeling techniques, specifically classification and logistic regression, to derive actionable insights and meaningful patterns.<br>
-
+From the previous discussion, we identify that customers in economy class having high number of dissatisfaction. The graph above is helping to identify which parameters should have more attention to be improved for higher customers satisfaction rate. <br> The graph above is satisfaction data from Economy class customers. The biggest contributors to low satisfaction rate are **ease of online booking, wifi service, and online boarding**. While **In flight service and Comfortability** have the highest satisfaction rate among the Economy class customers. This data can guide strategic improvements to enhance the Economy class customer experience and increase satisfaction rates by focusing the improvement on those concerning satisfaction factors with the low score. <br><br> The mean values of the continuous variables, as displayed above, provide a preliminary understanding of the dataset. However, these raw values are not directly suitable for decision-making or interpretation in their current form. Further refinement will be conducted through advanced modeling techniques, specifically classification and logistic regression, to derive actionable insights and meaningful patterns.<br>
 
 ### Summary of Initial Plotting
 
@@ -1376,10 +1370,11 @@ After performing the univariate and bivariate analysis, we can conclude that the
 Now, since the dataset is ready to be modeled, we can assign it a more descriptive name. In this section, we will apply two modeling techniques to achieve the objectives of our analysis:
 
 1.  Dimension Reduction
+
 2.  Classification Method
-    
+
     2.1 Classification using Decision Tree Model
-    
+
     2.2 Classification using Logistic Regression Model
 
 ## Dimension Reduction <a name="3.1"></a>
@@ -2088,7 +2083,7 @@ These features show the greatest contributions to reducing impurity.<br> The fea
 
 **Notice** that in the fist plot we see non-satisfaction contributors being plotted. In the following step we will focus on possible contributors to the satisfaction by evaluating variable importance.<br> <br>
 
-<span style="color: #1E90FF; font-size: 16px;">**Type of Travel : Business**</span><br>
+[**Type of Travel : Business**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r fig.width=10, fig.height=8}
 # Subset the data on passenger with Business type of travel
@@ -2157,7 +2152,7 @@ varImpPlot(
 
 ```
 
-<span style="color: #1E90FF; font-size: 16px;">**Class: Business**</span><br>
+[**Class: Business**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r}
 # Subset the data on passenger with Business Class flight
@@ -2228,7 +2223,7 @@ varImpPlot(
 
 ```
 
-<span style="color: #1E90FF; font-size: 16px;">**Customers Type : Returning**</span><br>
+[**Customers Type : Returning**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r fig.width=10, fig.height=8}
 # Subset the data on passenger with returning customer type
@@ -2306,8 +2301,7 @@ varImpPlot(
 
 </ol>
 
-<span style="color: #1E90FF; font-size: 16px;">**Type of Travel: Personal**</span><br>
-
+[**Type of Travel: Personal**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r}
 # Subset the data on passenger with Business Class flight
@@ -2373,7 +2367,7 @@ varImpPlot(
   )
 ```
 
-<span style="color: #1E90FF; font-size: 16px;">**Class: Economy and Economy Plus**</span><br>
+[**Class: Economy and Economy Plus**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r}
 # Subset the data on passenger with Economy and Economy Plus Class flight
@@ -2443,7 +2437,7 @@ varImpPlot(
   )
 ```
 
-<span style="color: #1E90FF; font-size: 16px;">**Customers Type : First time**</span><br>
+[**Customers Type : First time**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 ```{r}
 # Subset the data on passenger with Business Class flight
@@ -2535,13 +2529,7 @@ For **Class**, high satisfaction is prominent among Business Class customers who
 
 For **Customer Type**, returning customers experience high satisfaction when services like departure and arrival time convenience, online boarding, and in-flight WiFi service cater to their need for smooth and timely travel. Meanwhile, low satisfaction among first-time customers arises from their focus on pleasant first-time experiences, valuing in-flight WiFi service, baggage handling, and in-flight service.<br>
 
-However, we can see the convergence of the results between high satisfaction and low satisfaction customers.<br>
-For business-class passengers, the key contributors to high satisfaction—such as Online Boarding, Check-in Service, and Departure and Arrival Time Convenience—show consistency across categories (e.g., travel type and class). This indicates that factors driving satisfaction are aligned, supporting the idea that a single model for the **Business segment** is sufficient. <br>
-For economy-class passengers (including Economy Plus), dissatisfaction revolves around similar factors like In-flight WiFi Service, Ease of Online Booking, and Baggage Handling across different categories. This suggests shared pain points that can be effectively captured in a unified model for the **Economy segment.**<br>
-This convergence implies that a single model for each segment (Business and Economy) can effectively address the unique needs of passengers, enhancing satisfaction and reducing dissatisfaction. <br><br>
-Reducing the models from six to two avoids over-complication and overfitting while ensuring that the key insights remain actionable. As per data, it is shown that the segmentation between Business and Economy is quite competitive, around 52% of economy combined (including economy plus) and 48% of business segment. **Next we will perform logistic regression with the two main classification of Business segment and Economy segment**.<br><br>
-Logistic regression works well when models are representative and not overly complex. Consolidating into two models ensures each has enough data points and avoids redundancy, improving the reliability of conclusions (Landwehr, 2003).
-
+However, we can see the convergence of the results between high satisfaction and low satisfaction customers.<br> For business-class passengers, the key contributors to high satisfaction—such as Online Boarding, Check-in Service, and Departure and Arrival Time Convenience—show consistency across categories (e.g., travel type and class). This indicates that factors driving satisfaction are aligned, supporting the idea that a single model for the **Business segment** is sufficient. <br> For economy-class passengers (including Economy Plus), dissatisfaction revolves around similar factors like In-flight WiFi Service, Ease of Online Booking, and Baggage Handling across different categories. This suggests shared pain points that can be effectively captured in a unified model for the **Economy segment.**<br> This convergence implies that a single model for each segment (Business and Economy) can effectively address the unique needs of passengers, enhancing satisfaction and reducing dissatisfaction. <br><br> Reducing the models from six to two avoids over-complication and overfitting while ensuring that the key insights remain actionable. As per data, it is shown that the segmentation between Business and Economy is quite competitive, around 52% of economy combined (including economy plus) and 48% of business segment. **Next we will perform logistic regression with the two main classification of Business segment and Economy segment**.<br><br> Logistic regression works well when models are representative and not overly complex. Consolidating into two models ensures each has enough data points and avoids redundancy, improving the reliability of conclusions (Landwehr, 2003).
 
 ## Logistic Regression <a name="3.3"></a>
 
@@ -2814,7 +2802,7 @@ For a 95% confidence level, the threshold of a statistically significant Z-value
 
 The first calculation method that we will use to evaluate the logistic regression model is the confusion matrix. It is is a table that describes the performance of a classification model by comparing the predicted values with the actual values. It provides insight into how well the model is performing and helps identify any misclassifications. The result will display how many variables are correctly predicted as true positive and true negative as well as wrongly classified as false positive and false negative. The confusion matrix also calculate the accuracy, sensitivity, and specificity of the model. The accuracy is the proportion of true results (both true positives and true negatives) among the total number of cases examined. Sensitivity is the proportion of true positives that are correctly identified, while specificity is the proportion of true negatives that are correctly classified.
 
-We will use the confusion matrix to evaluate the logistic regression model that includes all the data (business and economy class passengers), dubbed All Class. The logistic regression model for each economy class and business class is only used as a separator to provide the significant variables that affect the satisfaction level of each class. 
+We will use the confusion matrix to evaluate the logistic regression model that includes all the data (business and economy class passengers), dubbed All Class. The logistic regression model for each economy class and business class is only used as a separator to provide the significant variables that affect the satisfaction level of each class.
 
 ```{r}
 all_testing <- testing
@@ -3206,7 +3194,7 @@ top_5_economy <- rbind(
 ggplot(top_5_business, aes(x = reorder(Variable, Estimate), y = Estimate, fill = Category)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  labs(title = "Top Influential Aspects (Business Class)",
+  labs(title = "Top Influential Aspects: Business Class (LogReg)",
        x = "Aspect of Service",
        y = "Coefficient Estimate (log-odds)") +
   scale_fill_manual(values = c("Positive Influence" = "royalblue", "Negative Influence" = "tomato")) +
@@ -3216,24 +3204,43 @@ ggplot(top_5_business, aes(x = reorder(Variable, Estimate), y = Estimate, fill =
 ggplot(top_5_economy, aes(x = reorder(Variable, Estimate), y = Estimate, fill = Category)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  labs(title = "Top Influential Aspects (Economy Combined)",
+  labs(title = "Top Influential Aspects: Economy Combined (LogReg)",
        x = "Aspect of Service",
        y = "Coefficient Estimate (log-odds)") +
   scale_fill_manual(values = c("Positive Influence" = "yellow2", "Negative Influence" = "tomato")) +
   theme_minimal()
 ```
 
-<span style="color: #1E90FF; font-size: 16px;">**FINAL REMARKS: MODEL COMPARISON**</span><br>
+```{r fig.width=10, fig.height=8}
+
+# Plot the variable importance for business
+varImpPlot(
+  model.forest.business,
+  main = "Variable Importance for Business Class (RandomForest)",
+   pch = 16, # Use filled circles for data points
+n.var = 5
+)
+
+varImpPlot(
+  model.forest.economy,
+  main = "Variable Importance for Economy Combined (RandomForest)",
+   pch = 16, # Use filled circles for data points
+n.var = 5
+)
+```
+
+The chunks above show the important variables of satisfaction according to Logistic Regression as well as Random Forest classification. Below we will compare the results of both models, and assess the important parameters identified based on consensus.
+
+[**FINAL REMARKS: MODEL COMPARISON**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 **Model performance comparison**<br>
 
-| Model              | Accuracy |
-|--------------------|----------|
-| Random Forest      | 96%      |
+| Model               | Accuracy |
+|---------------------|----------|
+| Random Forest       | 96%      |
 | Logistic Regression | 85%      |
 
-Based on the comparison, random forest model approach showing higher model accuracy. However, as explained in the model evaluation section for each model, each model showing high performance in terms of accuracy and not overfitting.<br>
-The logistic regression model is more interpretable and easier to understand.The logistic regression model also provides a clear understanding of the relationship between the predictors and the target variable. This is important for understanding the factors that influence customer satisfaction and for making data-driven decisions to improve service quality.<br><br>
+Based on the comparison, random forest model approach showing higher model accuracy. However, as explained in the model evaluation section for each model, each model showing high performance in terms of accuracy and not overfitting.<br> The logistic regression model is more interpretable and easier to understand.The logistic regression model also provides a clear understanding of the relationship between the predictors and the target variable. This is important for understanding the factors that influence customer satisfaction and for making data-driven decisions to improve service quality.<br><br>
 
 Next we will evaluate the model predictor to define what top parameters that influence the customer satisfaction. From Random Forest, we will use variable importance to define variable significant level in driving satisfaction while in log regression we will use coefficient variable to define the significant level. The table below shows the top parameters that influence customer satisfaction in each class.<br><br>
 
@@ -3247,6 +3254,7 @@ library(kableExtra)
 library(dplyr)
 library(magrittr)  # for %>%
 ```
+
 ```{r}
 # Create the data frame
 df <- data.frame(
@@ -3285,65 +3293,70 @@ kbl(df_colored, escape = FALSE,
 
 TOP 5 is defined through the method as below:<br>
 
-1. If the parameter shows consensus from both model (Random Forest and Logistic Regression) showing significant then it is considered as top 5 parameter<br>
-2. If no significant consensus (significant on one model but not other), further analysis is performed by looking at the significant comparison compared to other parameters in the model. The higher level significant the parameter in the model, the more likely it is to be considered as top 5 parameter<br><br>
+1.  If the parameter shows consensus from both model (Random Forest and Logistic Regression) showing significant then it is considered as top 5 parameter<br>
+2.  If no significant consensus (significant on one model but not other), further analysis is performed by looking at the significant comparison compared to other parameters in the model. The higher level significant the parameter in the model, the more likely it is to be considered as top 5 parameter<br><br>
 
 Based on the result analysis, top 5 parameters that influence customer satisfaction in both classes are:<br><br>
 
-| No      | Business Top Parameters |Economy Top Parameters |
-|---------|-------------------------|-----------------------|
-| 1       | Online Boarding          | In Flight Wifi Service |
-| 2       | Departure and Arrival Time Convenience | Flight Entertainment |
-| 3       | Checkin Service         | Baggage Handling       |
-| 4       | Flight Entertainment     | Ease of Online Booking |
-| 5       | Leg room service         | In Flight Service      |
+| No  | Business Top Parameters                | Economy Top Parameters |
+|-----|----------------------------------------|------------------------|
+| 1   | Online Boarding                        | In Flight Wifi Service |
+| 2   | Departure and Arrival Time Convenience | Flight Entertainment   |
+| 3   | Checkin Service                        | Baggage Handling       |
+| 4   | Flight Entertainment                   | Ease of Online Booking |
+| 5   | Leg room service                       | In Flight Service      |
+
 <br>
 
 ## Recommendation <a name="4.2"></a>
 
 We have developed models to predict customer satisfaction based on various service aspects. Understanding satisfaction contributors is important because customers satisfaction mediates the impact of service quality on corporate braning and perceived value on brand loyalti (Hussain, 2016). The analysis revealed that the most significant predictors of satisfaction differ between Business and Economy class passengers. As we can see, the airline industry segmentation between business and economy class is quite strong, and the two classes have different preferences. Therefore, improving the satisfaction rate in business and economy segment requires different approaches.<br> <br>
 
-<span style="color: #1E90FF; font-size: 18px;">**ECONOMY SEGMENT**</span><br>
+[**ECONOMY SEGMENT**]{style="color: #1E90FF; font-size: 18px;"}<br>
 
 Economy passengers shows high dissatisfaction level compared to business passengers at around 41.9% of total passengers. As we can see from the model, the most significant predictors of satisfaction for economy passengers are: <br> <br>
 
 <ol>
-<li>**In flight wifi service** : This shows the largest coefficient in the model indicating that satisfaction on this factor significantly contributes to overall customers' satisfaction. Enhancing WiFi services should be a top priority. Invest in high-speed, reliable internet and offer free or affordable connectivity options to economy-class passengers.
-</li>
+
+<li>**In flight wifi service** : This shows the largest coefficient in the model indicating that satisfaction on this factor significantly contributes to overall customers' satisfaction. Enhancing WiFi services should be a top priority. Invest in high-speed, reliable internet and offer free or affordable connectivity options to economy-class passengers.</li>
+
 <li>**Flight entertainment**: Entertainment during flight matters for economy passengers. Increase option for entertainment by offering diverse movie, TV show, podcast, and music library. Therefore, ensuring personal screen for passengers and refresh the entertainment content regularly becomes important to drive the satisfaction</li>
+
 <li>**Baggage Handling**: Minimize mishandling and delays through real-time tracking systems and better-trained staff. Provide notifications and support channels for passengers in case of issues. Economy pasengers often experience baggage handling problem thus this parameter becomes key factor to drive their satisfaction. Improvement on this, could helpt to raise the satisfaction</li>
+
 <li>**Ease of Online Booking**: Simplify the booking interface with clear instructions, multiple payment methods, and personalized recommendations based on previous searches or preferences. Seamless experience in online booking is expected from the economy passengers, and it drives their satisfaction level</li>
+
 <li>**In Flight service**: Deliver a better cabin experience by improving meal options, training crew for attentive service, and ensuring cleanliness. Consider complimentary beverages to add a touch of hospitality. Managing high performance in in-flight service could retain the loyalty of economy passengers</li>
+
 </ol>
 
-<br>
-As we have identified through the model, concerning pain points are identified. Improving the top negative influence factors may not directly boost passenger satisfaction, but deeper analysis and mitigation strategies are essential. These efforts include aligning flight schedules with passenger preferences to improve time convenience, enhancing in-flight service by addressing specific dissatisfaction areas through surveys, and providing real-time updates with small compensations for delays. Additionally, understanding and refining features in online booking can address overlooked pain points, and adding acknowledgments for punctual flights (e.g., bonus miles) may balance unmet expectations. Together, these targeted efforts could address dissatisfaction effectively.<br>
-<br><br>
+<br> As we have identified through the model, concerning pain points are identified. Improving the top negative influence factors may not directly boost passenger satisfaction, but deeper analysis and mitigation strategies are essential. These efforts include aligning flight schedules with passenger preferences to improve time convenience, enhancing in-flight service by addressing specific dissatisfaction areas through surveys, and providing real-time updates with small compensations for delays. Additionally, understanding and refining features in online booking can address overlooked pain points, and adding acknowledgments for punctual flights (e.g., bonus miles) may balance unmet expectations. Together, these targeted efforts could address dissatisfaction effectively.<br> <br><br>
 
-<span style="color: #1E90FF; font-size: 16px;">**BUSINESS SEGMENT**</span><br>
+[**BUSINESS SEGMENT**]{style="color: #1E90FF; font-size: 16px;"}<br>
 
 Business passengers shows higher satisfaction level compared to economy passenger. More passengers in business class are satisfied compared to those who are not satisfied. However, we need to take a look on satisfaction contributors to increse the satisfaction level. As we can see from the model, the most significant predictors of satisfaction for business passengers are: <br> <br>
 
 <ol>
-<li>**Online Boarding**: For business segment, simplify the booking process by improving website navigation and offering transparent pricing. Ensure mobile compatibility for seamless access. Allow more features on online boarding for example additional service that customers expect such as pick up, business loounge information. </li>
+
+<li>**Online Boarding**: For business segment, simplify the booking process by improving website navigation and offering transparent pricing. Ensure mobile compatibility for seamless access. Allow more features on online boarding for example additional service that customers expect such as pick up, business loounge information.</li>
+
 <li>**Leg room service**: Ensure ample legroom and ergonomic seating. Highlight this feature in marketing campaigns to attract business travelers. For business segment, this is one of their intention to choose the service, spacious room for their seating.</li>
+
 <li>**Departure and Arrival Time Convenience**: Conduct market research to identify preferred travel times and align flight schedules accordingly. Provide flexible options for rescheduling flights to accommodate traveler needs. This parameter becomes important for business passengers since they expect high comfortability come to and go from airport, arrival and departure time becomes matter</li>
-<li>**Check in service**: Streamline check-in processes with dedicated counters or priority lanes for business-class passengers. Offer concierge services for added convenience. This is also the reason people choosing business service, putting attention to ensure seamless experience in check in service becomes matters. </li>
-<li>**in flight entertainment**: Provide high-quality entertainment options, including noise-canceling headphones and curated content for business travelers. Airline could include games, various option of entertainment on screen, and make sure it is up to date. </li>
+
+<li>**Check in service**: Streamline check-in processes with dedicated counters or priority lanes for business-class passengers. Offer concierge services for added convenience. This is also the reason people choosing business service, putting attention to ensure seamless experience in check in service becomes matters.</li>
+
+<li>**in flight entertainment**: Provide high-quality entertainment options, including noise-canceling headphones and curated content for business travelers. Airline could include games, various option of entertainment on screen, and make sure it is up to date.</li>
+
 </ol>
 
-<br>
-As we have identified through the model, concerning pain points are identified. Negative influence factors, while correlating with reduced satisfaction, require in-depth analysis to address underlying issues. Enhancing usability in online booking platforms and ensuring transparency in pricing could alleviate dissatisfaction. Operational improvements to reduce delays, coupled with compensatory perks, may soften the impact of unavoidable disruptions. Customizing food and drink options to cater to diverse needs and optimizing flight schedules for convenience and punctuality are further steps that could help mitigate negative perceptions effectively. These strategies aim to refine passenger experiences and address dissatisfaction at its roots.<br><br>
-Addressing potential aspects that contribute to negative correlation from those factors could help to transform this to positive correlation. <br> <br>
+<br> As we have identified through the model, concerning pain points are identified. Negative influence factors, while correlating with reduced satisfaction, require in-depth analysis to address underlying issues. Enhancing usability in online booking platforms and ensuring transparency in pricing could alleviate dissatisfaction. Operational improvements to reduce delays, coupled with compensatory perks, may soften the impact of unavoidable disruptions. Customizing food and drink options to cater to diverse needs and optimizing flight schedules for convenience and punctuality are further steps that could help mitigate negative perceptions effectively. These strategies aim to refine passenger experiences and address dissatisfaction at its roots.<br><br> Addressing potential aspects that contribute to negative correlation from those factors could help to transform this to positive correlation. <br> <br>
 
-<span style="color: #1E90FF; font-size: 16px;">**SUMMARY**</span><br>
-Airline prioritize top contributor to satisfaction level of passengers.Improvement on this areas will bring positive impact on satisfaction level. In addition to this, airline should address challenges on top negative influence on satisfaction level. Identifying potential aspects that bring the negative impact on those factors. It help to increase the satisfaction level<br>
--For **Economy Segment**, Put in flight wifi service as top priority in business improvement, while progressing improvement on other four top factors such as flight entertainment, baggage handling, ease of online booking, and in flight service. Focus to address potential aspect that could reduce satisfaction in pain points<br>
-- For **Business Segment**, Put online boarding as top priority in business improvement, while managing improvement on other top factors such as leg room service, Departure and Arrival Time Convenience, check in service, and flight entertainment.Focus to address potential aspect that could reduce satisfaction in pain points. <br><br>
+[**SUMMARY**]{style="color: #1E90FF; font-size: 16px;"}<br> Airline prioritize top contributor to satisfaction level of passengers.Improvement on this areas will bring positive impact on satisfaction level. In addition to this, airline should address challenges on top negative influence on satisfaction level. Identifying potential aspects that bring the negative impact on those factors. It help to increase the satisfaction level<br> -For **Economy Segment**, Put in flight wifi service as top priority in business improvement, while progressing improvement on other four top factors such as flight entertainment, baggage handling, ease of online booking, and in flight service. Focus to address potential aspect that could reduce satisfaction in pain points<br> - For **Business Segment**, Put online boarding as top priority in business improvement, while managing improvement on other top factors such as leg room service, Departure and Arrival Time Convenience, check in service, and flight entertainment.Focus to address potential aspect that could reduce satisfaction in pain points. <br><br>
 
 ## Further Improvement for Better Recommendation <a name="4.3"></a>
 
-Although the current prediction model and approach has shown a robust result that can be used by airlines to improve their service, the predictor model can still be improved further. The current model is based on the separation between Economy and Business class passengers, which means that the model is only considering one dimension when predicting the most important variables that affect the passengers' satisfaction level. However, based on the survey data, there are still other dimensions that can be used to predict the customer satisfaction based on the survey variables. 
+Although the current prediction model and approach has shown a robust result that can be used by airlines to improve their service, the predictor model can still be improved further. The current model is based on the separation between Economy and Business class passengers, which means that the model is only considering one dimension when predicting the most important variables that affect the passengers' satisfaction level. However, based on the survey data, there are still other dimensions that can be used to predict the customer satisfaction based on the survey variables.
 
 Among possible improvement area can be done by creating predictor model based on the combination of several dimensions that are easier to identify by the airlines, such as flight distance, which can be classified as short-haul, medium-haul, and long-haul flights, and age groups (children, youth, adult, and senior). Unlike variables like type of travel or customer type, flight distance and age groups can be quickly identified or classified by airlines without further questioning each passengers. Also, these two variables can be considered important for business decision making, such as in determining the flight route and the target market for each flight.
 
@@ -3351,7 +3364,7 @@ Among possible improvement area can be done by creating predictor model based on
     -   Passengers flying in long-haul flights may have different expectations and experiences compared to those on short-haul flights, even though both type of flights can be served in both economy and business class. By segmenting the data based on flight distance, we can identify specific service aspects that are crucial for each group. Using this approach, airlines with long haul flights, such as Amsterdam to Jakarta, can capture a more detailed insights regarding the passengers' satisfaction point preference, which can be different from a shorter duration flight such as Amsterdam to London.<br>
 2.  **Age Group**:<br>
     -   Different age groups may have varying preferences and expectations when it comes to airline services. By segmenting the data based on age, we can identify specific service aspects that are crucial for each group. For example, younger passengers may prioritize in-flight entertainment and WiFi connectivity, while older passengers may value comfort and service quality more. By understanding these differences, airlines can tailor their services to meet the needs of each age group. This is especially important for routes with popular tourist destination like the flight to Barcelona where the portion of younger passengers is likely to be higher (due to family holiday) than the flight without top tourist destinations. The airlines also can adjust the service priority during the holiday seasons to cover the increase in holiday-oriented passengers.<br>
-    
+
 The result of different set of most important variables based on flying class, flight distance, and age group can be used to create a more comprehensive recommendation for the airlines. This will help the airlines to improve their service quality and increase customer satisfaction by providing more data to support the decision-making process of airlines.
 
 ## Conclusion & Limitations <a name="4.4"></a>
@@ -3372,17 +3385,17 @@ In conclusion, this analysis presents valuable insights for airline service prov
 
 Agresti, A. (2018). *Statistical thinking: Improving business performance* (2nd ed.). Boca Raton, FL: CRC Press.<br>
 
-Biau, G. (2010). Analysis of a Random Forests Model. J. Mach. Learn. Res., 13, 1063-1095. <https://doi.org/10.5555/2503308.2343682><br> 
+Biau, G. (2010). Analysis of a Random Forests Model. J. Mach. Learn. Res., 13, 1063-1095. <https://doi.org/10.5555/2503308.2343682><br>
 
 Federal Aviation Administration. (n.d.). Types of Delay. Retrieved April 15, 2025, from <https://aspm.faa.gov/aspmhelp/index/Types_of_Delay.html><br>
 
 Hosmer, D. W., Lemeshow, S., & Sturdivant, R. X. (2013). *Applied logistic regression* (3rd ed.). Wiley<br>
 
-Hussain, R. (2016). The mediating role of customer satisfaction: evidence from the airline industry. Asia Pacific Journal of Marketing and Logistics, 28, 234-255. https://doi.org/10.1108/APJML-01-2015-0001. <br>
+Hussain, R. (2016). The mediating role of customer satisfaction: evidence from the airline industry. Asia Pacific Journal of Marketing and Logistics, 28, 234-255. <https://doi.org/10.1108/APJML-01-2015-0001>. <br>
 
 International Air Transport Association. (2024, December). *Global outlook for air transport: December 2024*. IATA. Retrieved April 3, 2025 from <https://www.iata.org/en/iata-repository/publications/economic-reports/global-outlook-for-air-transport-december-2024/><br>
 
-Landwehr, N., Hall, M., & Frank, E. (2003). Logistic Model Trees. Machine Learning, 59, 161-205. https://doi.org/10.1007/s10994-005-0466-3 <br>
+Landwehr, N., Hall, M., & Frank, E. (2003). Logistic Model Trees. Machine Learning, 59, 161-205. <https://doi.org/10.1007/s10994-005-0466-3> <br>
 
 Statista. (n.d.). *Flights - Shared Mobility*. Retrieved April 3, 2025, from <https://www.statista.com/outlook/mmo/shared-mobility/flights/worldwide> <br>
 
@@ -3392,4 +3405,4 @@ Wright, M., & Ziegler, A. (2015). ranger: A Fast Implementation of Random Forest
 
 Yan, K., & Hong, J. (2022). Adaptive cost-sensitive learning: Improving the convergence of intelligent diagnosis models under imbalanced data. Knowl. Based Syst., 241, 108296. <https://doi.org/10.1016/j.knosys.2022.108296>. <br>
 
-Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. <https://doi.org/10.1162/089976600300015178>.<br> 
+Schwenk, H., & Bengio, Y. (2000). Boosting Neural Networks. Neural Computation, 12, 1869-1887. <https://doi.org/10.1162/089976600300015178>.<br>
